@@ -6,8 +6,8 @@ import Login from "./Login";
 import Home from "./User/Home";
 import Profile from "./User/Profile";
 import Register from "./User/Register";
-
-
+import Product from "./User/Product";
+import CartShopping from "./User/CartShopping";
 
 // admin
 import HomeAdmin from "./Admin/Home";
@@ -19,6 +19,10 @@ const PublicPage=[
     {path :"/",component: Home, layout: UserLayout },
     {path :"/profile",component: Profile, layout: UserLayout },
 
+    {path :"/category/:id",component: Profile, layout: UserLayout },
+    {path :"/product/:id",component: Product, layout: UserLayout },
+    
+    {path :"/cartShopping",component: CartShopping, layout: UserLayout },
 
 
     {path :"/register",component: Register, layout: null },

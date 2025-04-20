@@ -13,6 +13,10 @@ import SearchPopup from '../../../../Popups/SearchPopup';
 import UserPopUp from '../../../../Popups/UserPopUp';
 
 import { Link } from 'react-router-dom';
+import NavPopups from '../../../../Popups/NavPopups';
+import { div } from 'framer-motion/client';
+import Image from "../../../../../assets/images/1168.png";
+
 function Header({setIsPopUp}) {
   const titles=[
     {name: "Nam", link:""},
@@ -22,9 +26,21 @@ function Header({setIsPopUp}) {
     {name: "Về chúng tôi", link:""},
   ]
 
+  const categoris=[
+    {name:"Áo",detail:["Áo thun","Áo sơ mi","Áo khoác"]},
+    {name:"Quần",detail:["Quần thun","Quần sơ mi","Quần khoác"]},
+    {name:"Áo",detail:["Áo thun","Áo sơ mi","Áo khoác"]},
+    
+  ]
+  const product={
+    name:"Túi Xách Nhỏ In Hoạ Tiết Chuyển Màu",
+    price:"699 000",
+    image: Image
+  }
   const [ismenu,setIsmenu]=useState(false);
   const [isSearch,setIsSearch]=useState(false);
   const [isUser,setIsUser]=useState(false);
+  const [isNav,setIsNav]=useState(null);
   const handleOnclickSearch=()=>{
     setIsSearch(!isSearch)
     setIsPopUp(true)
@@ -36,8 +52,8 @@ function Header({setIsPopUp}) {
     setIsSearch(false)
   }
   return (
-    <div className='relative w-full'>
-      <div className='font-kumbh flex justify-between py-5 items-center mx-5 xl:mx-20 relative'>
+    <div className='relative w-full '>
+      <div className='font-kumbh flex justify-between py-5 items-center mx-5 xl:mx-20 relative '>
         <div className='text-xl lg:text-3xl xl:hidden'>
           <HiOutlineMenuAlt1 onClick={()=>setIsmenu(!ismenu)} className='font-semibold'/>
           {
@@ -55,28 +71,50 @@ function Header({setIsPopUp}) {
         </div>
         {/* menu */}
         <div className='hidden xl:block xl:mx-20'>
-          <ul className='lg:flex text-md lg:text-lg font-semibold justify-around'>
-            {
-              titles.map((item,index)=>{
-                return(
-                  <motion.li 
-                  key={index} 
-                  className='lg:px-3 flex items-center whitespace-nowrap'
-                  whileHover={{color: "#e43131", cursor: "pointer"}}
-                  transition={{duration: 0.5}}
-                  >
-                    <p className='px-1'>
-                      {item.name}
-                    </p>
-                    <HiChevronDown className='text-sm font-bold'/>
-                  </motion.li>
-                )
-              })
-            }
-          </ul>
-        </div>
+        <ul className='xl:flex text-md lg:text-lg xl:text-xl font-semibold justify-around relative'>
+        {
+          titles.map((item,index)=>(
+            <div
+              key={index}
+              onMouseEnter={() => setIsNav(index)}
+              onMouseLeave={() => setIsNav(null)}
+              // className='relative' // phải để relative để popup định vị chuẩn
+            >
+              <motion.li 
+                className='lg:mx-3 flex items-center whitespace-nowrap h-full'
+                whileHover={{color: "#e43131", cursor: "pointer"}}
+                transition={{duration: 0.5}}
+              >
+                <p className='px-1'>
+                  {item.name}
+                </p>
+                <HiChevronDown className='text-sm font-bold'/>
+              </motion.li>
+
+              {
+                isNav === index &&
+                <motion.div 
+                  className='absolute top-full left-[-53%] w-[1380px] z-20'
+                  initial={{opacity:0, y:30}}
+                  animate={{opacity: 1, y: 0}}
+                  exit={{opacity: 0, y: 30}}
+                  transition={{duration: 0.3}}
+                >
+                  <div className='w-full h-10 opacity-0'>
+
+                  </div>
+                  <div className=''>
+                    <NavPopups categoris={categoris} product={product} setIsNav={setIsNav}/>
+                  </div>
+                </motion.div>
+              }
+            </div>
+          ))
+        }
+      </ul>
+      </div>
         {/* menu icon */}
-        <div className='lg:text-2xl grid grid-cols-2 lg:grid-cols-4 gap-x-5 font-semibold'>
+        <div className='lg:text-2xl xl:text-3xl grid grid-cols-2 lg:grid-cols-4 gap-x-5 font-semibold'>
             <p className=' my-icon' onClick={()=>handleOnclickSearch()}>
               <LuSearch/>
             </p>
@@ -87,7 +125,9 @@ function Header({setIsPopUp}) {
               <FaRegHeart/>
             </p>
             <p className=' my-icon'>
-              <LuShoppingBag/>
+              <Link to={"/cartShopping"}>
+                <LuShoppingBag/>  
+              </Link>
             </p>
 
         </div>

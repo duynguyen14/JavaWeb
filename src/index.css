@@ -24,11 +24,13 @@ body {
     .popUp:hover{
         background-color: #e9ecef;
     }
-    
   }
   @layer components {
     .btn-primary {
       @apply bg-black text-white rounded-md text-base md:text-xl lg:text-2xl cursor-pointer hover:bg-red-600 transition-all duration-500;
+    }
+    .top-menu-item {
+      @apply hover:text-red-500 relative after:absolute after:bottom-0 after:left-0 after:bg-red-500 after:h-0.5 after:w-0 hover:after:w-full after:transition-all after:ease-in-out after:duration-300;
     }
   }
   
