@@ -17,30 +17,11 @@ function Register() {
                     <p className="text-center mb-6">Vui lòng nhập đầy đủ thông tin</p>
 
                     <form className="space-y-5">
-                        {/* Số điện thoại + OTP */}
-                        <div>
-                            <label className="block font-medium mb-1">Số điện thoại <span className="text-red-600">*</span></label>
-                            <div className="flex space-x-2">
-                                <input type="text" placeholder="Nhập số điện thoại của Quý khách" className="flex-grow px-4 py-3 border rounded" />
-                                <button type="button" className="px-4 py-2 border border-black text-black rounded hover:bg-black hover:text-white transition">GỬI MÃ OTP</button>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label className="block font-medium mb-1">OTP</label>
-                            <input type="text" placeholder="Nhập mã OTP được gửi tới điện thoại của Quý khách" className="w-full px-4 py-3 border rounded" />
-                        </div>
 
                         {/* Họ tên */}
                         <div>
-                            <label className="block font-medium mb-1">Họ và tên <span className="text-red-600">*</span></label>
-                            <input type="text" placeholder="Nhập họ và tên của Quý khách" className="w-full px-4 py-3 border rounded" />
-                        </div>
-
-                        {/* Sinh nhật */}
-                        <div>
-                            <label className="block font-medium mb-1">Sinh nhật <span className="text-red-600">*</span></label>
-                            <input type="date" className="w-full px-4 py-3 border rounded" />
+                            <label className="block font-medium mb-1">Tên đăng nhập <span className="text-red-600">*</span></label>
+                            <input type="text" placeholder="Nhập tên đăng nhập " className="w-full px-4 py-3 border rounded" />
                         </div>
 
                         {/* Mật khẩu */}

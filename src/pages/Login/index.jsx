@@ -69,6 +69,22 @@ function Login() {
                         >
                             ĐĂNG NHẬP
                         </button>
+
+                        {/* đăng nhập google */}
+                        <div className="mt-4">
+                            <button
+                                type="button"
+                                className="w-full flex items-center justify-center border border-gray-300 py-3 rounded hover:bg-gray-100 transition"
+                            >
+                                <img
+                                    src="https://developers.google.com/identity/images/g-logo.png"
+                                    alt="Google"
+                                    className="w-5 h-5 mr-3"
+                                />
+                                <span className="font-medium text-gray-700">Đăng nhập bằng Google</span>
+                            </button>
+                        </div>
+
                     </form>
                 </div>
             </div>
