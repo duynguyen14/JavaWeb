@@ -2,10 +2,12 @@ import { useState } from 'react'
 import Home from './pages/Admin'
 import { PublicPage } from './pages'
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
+import ScrollToTop from './components/OtherComponent/ScrollToTop'
 function App() {
   return (
     <Router>
       <div>
+      <ScrollToTop/>
         <Routes>
           {
             PublicPage.map((page,index)=>{
@@ -34,7 +36,6 @@ function App() {
 
         </Routes>
       </div>
-
     </Router>
   )
 }

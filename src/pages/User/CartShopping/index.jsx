@@ -1,36 +1,58 @@
-import React from 'react'
-import StepProgress from './StepProgress'
-import Image1 from "../../../assets/images/1168.png"
-import CartTable from './CartTable'
-import OrderSummary from './OrderSummary'
+// pages/CartShopping.jsx
+import React, { useState } from "react";
+import Image from "../../../assets/images/1168.png";
+import CartItemList from "./CartItemList";
+import CartSummary from "./CartSummary";
+import CheckoutSteps from "./CheckoutSteps";
+import { motion } from "framer-motion";
+const products = [
+  {
+    id: 1,
+    name: "Sapline Gile - Áo Croptop Tuytsi",
+    color: "Kẻ Trắng ngà",
+    size: "M",
+    price: 1390000,
+    quantity: 1,
+    image: Image
+  },
+  {
+    id: 2,
+    name: "Sapline Gile - Áo Croptop Tuytsi",
+    color: "Kẻ Trắng ngà",
+    size: "M",
+    price: 1390000,
+    quantity: 1,
+    image: Image
+  },
+  {
+    id: 3,
+    name: "Sapline Gile - Áo Croptop Tuytsi",
+    color: "Kẻ Trắng ngà",
+    size: "M",
+    price: 1390000,
+    quantity: 1,
+    image: Image
+  }
+];
+// const products
+const handleOnclickPlus=()=>{
 
+}
+const handleOnclickSubtract=()=>{
+  
+}
 function CartShopping() {
-  const products = [
-    {
-      name: "Túi Xách Nhỏ In Hoạ Tiết Chuyển Màu",
-      price: 699000,
-      image: Image1,
-      quantity: 1,
-      size :"XL",
-    },
-    // ... các sản phẩm khác
-  ]
-
-  const formatPrice = (price) =>
-    price.toLocaleString("vi-VN", { style: "currency", currency: "VND" })
-
   return (
-    <div className="mx-5 xl:mx-20 xl:flex font-kumbh">
-      <div className="basis-[75%]">
-        {/* <StepProgress currentStep={0} /> */}
-        <CartTable products={products} formatPrice={formatPrice} />
-      </div>
-
-      <div className="basis-[25%] p-3 mt-5 xl:mt-0">
-        <OrderSummary products={products} formatPrice={formatPrice} />
+    <div className="mx-auto my-10">
+      <div className="flex flex-col lg:flex-row gap-6">
+        <div className="">
+          <CheckoutSteps/>
+          <CartItemList products={products} handleOnclickPlus={handleOnclickPlus}/>
+        </div>
+        <CartSummary products={products} handleOnclickSubtract={handleOnclickSubtract}/>
       </div>
     </div>
-  )
+  );
 }
 
-export default CartShopping
+export default CartShopping;

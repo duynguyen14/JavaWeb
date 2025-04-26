@@ -25,8 +25,8 @@ const PublicPage=[
     {path :"/cartShopping",component: CartShopping, layout: UserLayout },
 
 
-    {path :"/register",component: Register, layout: null },
-    {path :"/login",component: Login, layout: null },
+    {path :"/register",component: Register, layout: UserLayout },
+    {path :"/login",component: Login, layout: UserLayout },
 
 
     {path :"/admin",component: HomeAdmin, layout: AdminLayout },
@@ -37,6 +37,5 @@ const PublicPage=[
 const PrivatePage=[
 
 ]
-
 
 export {PublicPage,PrivatePage}

@@ -22,7 +22,11 @@ function ProductHot() {
           name:"Túi Xách Nhỏ In Hoạ Tiết Chuyển Màu",
           price:"699 000",
           images:[Image1,Image2]
-        },
+        },{
+            name:"Túi Xách Nhỏ In Hoạ Tiết Chuyển Màu",
+            price:"699 000",
+            images:[Image1,Image2]
+          },
     ]
     return (
         <motion.div
@@ -31,13 +35,13 @@ function ProductHot() {
             transition={{duration: 1.2}}
             viewport={{ once: true }}
         >
-             <p className='text-lg  md:text-xl lg:text-5xl font-semibold text-center mb-2 md:mb-4 cursor-pointer'>
-                Top bán chạy
+             <p className='text-lg  md:text-xl lg:text-4xl font-semibold text-center mb-2 md:mb-4 cursor-pointer'>
+                Best Seller
             </p>
             <p className='text-sm md:text-xl lg:text-xl font-light text-center mb-10'>
                 Lựa chọn phong cách phù hợp với bạn !
             </p>
-            <div className='grid grid-cols-2 md:grid-cols-4 gap-x-6 md:gap-x-10 gap-y-10 mb-12'>
+            <div className='grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-x-6 md:gap-x-10 gap-y-10 mb-12'>
                 {
                     product.map((item,index)=>{
                         return(

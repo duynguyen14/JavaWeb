@@ -2,15 +2,13 @@ import React from 'react'
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-// import Footer from '../../components/Layout/DefautLayout/UserLayout/Footer/index.jsx';
-// import Header from '../../components/Layout/DefautLayout/UserLayout/Header/index.jsx';
 import { IoEyeOff, IoEye } from "react-icons/io5";
 
 function Login() {
     const [showPassword, setShowPassword] = useState(false);
 
     return (
-        <div className="min-h-screen bg-white flex flex-col justify-between">
+        <div className=" bg-white flex flex-col justify-between">
 
             {/* <Header /> */}
             <div className="flex items-center justify-center flex-grow px-4">

@@ -32,14 +32,14 @@ function ProductItem({ name, price, images }) {
           animate={{ opacity: isHover ? 1 : 0, y: isHover ? 0 : 50 }}
           transition={{ duration: 0.4, ease: 'easeInOut' }}
         >
-          <button className=' text-xs xl:text-xl w-full bg-white rounded-3xl py-2  px-2 lg:px-5 lg:py-3 cursor-pointer hover:bg-black hover:text-white transition-all duration-500 whitespace-nowrap'>
+          <button className=' text-xs xl:text-base w-full bg-white rounded-3xl py-2  px-2 lg:px-3 lg:py-3 cursor-pointer hover:bg-black hover:text-white transition-all duration-500 whitespace-nowrap'>
             Thêm vào giỏ hàng
           </button>
         </motion.div>
 
         {/* action icons */}
         <motion.div
-          className='absolute top-[5%] right-[5%] text-base md:text-xl xl:text-3xl group'
+          className='absolute top-[5%] right-[5%] text-base md:text-xl xl:text-xl group'
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: isHover ? 1 : 0, y: isHover ? 0 : -20 }}
           transition={{ duration: 0.5, ease: 'easeOut' }}
@@ -55,8 +55,8 @@ function ProductItem({ name, price, images }) {
       </div>
 
       {/* name and price */}
-      <div className='text-sm md:text-base lg:text-xl mx-3'>
-        <p className='my-3 md:my-5'>{name}</p>
+      <div className='text-sm md:text-base mx-3'>
+        <p className='my-3 text-justify'>{name}</p>
         <p className='font-semibold'>{price}</p>
       </div>
     </div>

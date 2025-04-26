@@ -53,7 +53,7 @@ function Header({setIsPopUp}) {
   }
   return (
     <div className='relative w-full '>
-      <div className='font-kumbh flex justify-between py-5 items-center mx-5 xl:mx-20 relative '>
+      <div className='font-Montserrat flex justify-between py-5 items-center mx-5 xl:mx-20 relative '>
         <div className='text-xl lg:text-3xl xl:hidden'>
           <HiOutlineMenuAlt1 onClick={()=>setIsmenu(!ismenu)} className='font-semibold'/>
           {

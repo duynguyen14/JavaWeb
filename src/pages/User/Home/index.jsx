@@ -6,21 +6,18 @@ import Collections from './Collections';
 import { motion } from 'framer-motion';
 function Home() {
   return (
-    <div className="mx-5 xl:mx-20 lg:my-5 font-kumbh">
-      <Banner/>
+    <div className=" lg:my-5 font-Montserrat">
+      <Banner />
       <motion.div
-        // initial={{opacity:0 ,y:100}}
-        // whileInView={{opacity: 1, y: 0}}
-        // transition={{duration: 1.2}}
       >
         <div className='my-5 lg:my-10'>
-          <NewProduct/>
+          <NewProduct />
         </div>
         <div className='my-5 lg:my-10'>
-          <ProductHot/>
+          <ProductHot />
         </div>
         <div className='my-5 lg:my-10'>
-          <Collections/>
+          <Collections />
         </div>
         {/* <div className="relative w-64 h-24 border border-gray-300 overflow-hidden rounded-lg">
       <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-red-500 animate-fill"></div>
