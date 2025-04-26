@@ -1,4 +1,5 @@
 import UserLayout from "../components/Layout/DefautLayout/UserLayout";
+import OtherLayout from "../components/Layout/OtherLayout";
 // login
 import Login from "./Login";
 
@@ -17,7 +18,7 @@ import AdminLayout from "../components/Layout/DefautLayout/AdminLayout";
 
 const PublicPage=[
     {path :"/",component: Home, layout: UserLayout },
-    {path :"/profile",component: Profile, layout: UserLayout },
+    {path :"/profile",component: Profile, layout: OtherLayout },
 
     {path :"/category/:id",component: Profile, layout: UserLayout },
     {path :"/product/:id",component: Product, layout: UserLayout },
