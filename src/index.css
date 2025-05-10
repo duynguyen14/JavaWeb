@@ -24,6 +24,39 @@ body {
     .popUp:hover{
         background-color: #e9ecef;
     }
+
+    
+    .animate-fade-in {
+      animation: fadeIn 0.2s ease-out;
+    }
+    
+    .animate-slide-in {
+      animation: slideIn 0.3s ease-out;
+    }
+    
+    .animate-slide-out {
+      animation: slideOut 0.3s ease-in;
+    }
+    
+    /* Scrollbar styles */
+    .scrollbar-thin {
+      scrollbar-width: thin;
+      scrollbar-color: theme('colors.orange.200') theme('colors.orange.50');
+    }
+    
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 4px;
+    }
+    
+    .scrollbar-thin::-webkit-scrollbar-track {
+      background: theme('colors.orange.50');
+    }
+    
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background-color: theme('colors.orange.200');
+      border-radius: 10px;
+    } 
+
   }
   @layer components {
     .btn-primary {
@@ -34,3 +67,41 @@ body {
     }
   }
   
+  /* Định nghĩa keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+/* Truy vấn media cho thiết bị tối ưu */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

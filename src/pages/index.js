@@ -10,9 +10,21 @@ import Product from "./User/Product";
 import CartShopping from "./User/CartShopping";
 
 // admin
-import HomeAdmin from "./Admin/Home";
+import DashboardAdmin from "./Admin/Dashboard";
 import ProfileAdmin from "./Admin/Profile";
 import AdminLayout from "../components/Layout/DefautLayout/AdminLayout";
+import Users from "./Admin/Users";
+// import Catalogs from "./Admin/Catalogs";
+// import Categories from "./Admin/Categories";
+// import Employees from "./Admin/Employees";
+// import Messages from "./Admin/Messages";
+// import Orders from "./Admin/Orders";
+// import Products from "./Admin/Products";
+// import Revenues from "./Admin/Revenues";
+// import Settings from "./Admin/Settings";
+
+
+
 
 
 const PublicPage=[
@@ -29,8 +41,18 @@ const PublicPage=[
     {path :"/login",component: Login, layout: null },
 
 
-    {path :"/admin",component: HomeAdmin, layout: AdminLayout },
+    {path :"/admin",component: DashboardAdmin, layout: AdminLayout },
     {path :"/admin/profile",component: ProfileAdmin, layout: AdminLayout },
+    {path :"/admin/users",component: Users, layout: AdminLayout },
+    // { path: "/admin/catalogs", component: Catalogs, layout: AdminLayout },
+    // { path: "/admin/categories", component: Categories, layout: AdminLayout },
+    // { path: "/admin/employees", component: Employees, layout: AdminLayout },
+    // { path: "/admin/messages", component: Messages, layout: AdminLayout },
+    // { path: "/admin/orders", component: Orders, layout: AdminLayout },
+    // { path: "/admin/products", component: Products, layout: AdminLayout },
+    // { path: "/admin/revenues", component: Revenues, layout: AdminLayout },
+    // { path: "/admin/settings", component: Settings, layout: AdminLayout },
+    
 
 ]
 
