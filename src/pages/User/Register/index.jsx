@@ -1,53 +1,86 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-<<<<<<< HEAD
-// import Footer from '../../../components/Layout/DefautLayout/UserLayout/Footer/index.jsx';
-// import Header from '../../../components/Layout/DefautLayout/UserLayout/Header/index.jsx';
-=======
->>>>>>> f717db6c5fc83ad1d81b89e440bb55838b4f2280
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
-
+import { request } from '../../../untils/request';
+import axios from 'axios';
 function Register() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
+    const [user, setUser] = useState({
+        userName: "",
+        email: "",
+        password: "",
+        confirmPassword: ""
+    });
+
+    const handleOnChangeInput = (e) => {
+        const { name, value } = e.target;
+        setUser(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (user.password !== user.confirmPassword) {
+            alert("Mật khẩu xác nhận không khớp!");
+            return;
+        }
+
+        try {
+            const { confirmPassword, ...userData } = user; // bỏ confirm trước khi gửi
+            const response = await request.post("user/register", userData);
+            console.log(response);
+            alert("Đăng ký thành công!");
+        } catch (error) {
+            console.log("Lỗi đăng ký:", error);
+            alert("Đăng ký thất bại!");
+        }
+    };
 
     return (
-        <div className="min-h-screen bg-white flex flex-col justify-between">
-<<<<<<< HEAD
-            {/* <Header /> */}
-            <div className="flex flex-col items-center justify-center px-4 pt-10">
-                <div className="w-full max-w-xl">
-                    <h2 className="text-3xl font-bold uppercase text-center mb-2">Đăng ký tài khoản</h2>
-                    <p className="text-center mb-6">Vui lòng nhập đầy đủ thông tin</p>
-=======
+        <div className="border-gray-300 border-y-[1px] bg-white flex flex-col justify-between">
             <div className="flex flex-grow items-center justify-center px-4 py-12">
-                <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2     gap-8">
->>>>>>> f717db6c5fc83ad1d81b89e440bb55838b4f2280
+                <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-8">
 
                     {/* Left -register */}
-
                     <div className="w-full max-w-xl">
                         <h2 className="text-3xl font-bold uppercase text-center mb-2">Đăng ký tài khoản</h2>
                         <p className="text-center mb-6">Vui lòng nhập đầy đủ thông tin</p>
 
-                        <form className="space-y-5">
-
-                            {/* Họ tên */}
+                        <form className="space-y-5" onSubmit={handleSubmit}>
+                            {/* Tên đăng nhập */}
                             <div>
-                                <label className="block font-medium mb-1">Tên đăng nhập <span className="text-red-600">*</span></label>
-                                <input type="text" placeholder="Nhập tên đăng nhập " className="w-full px-4 py-3 border rounded" />
+                                <label className="block font-medium mb-1">
+                                    Tên đăng nhập <span className="text-red-600">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    name="userName"
+                                    placeholder="Nhập tên đăng nhập"
+                                    className="w-full px-4 py-3 border rounded"
+                                    value={user.userName}
+                                    onChange={handleOnChangeInput}
+                                />
                             </div>
 
                             {/* Mật khẩu */}
                             <div>
-                                <label className="block font-medium mb-1">Mật khẩu <span className="text-red-600">*</span></label>
+                                <label className="block font-medium mb-1">
+                                    Mật khẩu <span className="text-red-600">*</span>
+                                </label>
                                 <div className="relative">
                                     <input
                                         type={showPassword ? "text" : "password"}
-                                        placeholder="Nhập mật khẩu của Quý khách"
+                                        name="password"
+                                        placeholder="Nhập mật khẩu"
                                         className="w-full px-4 py-3 border rounded"
+                                        value={user.password}
+                                        onChange={handleOnChangeInput}
                                     />
-                                    <div className="absolute top-3.5 right-3 cursor-pointer text-xl text-gray-600" onClick={() => setShowPassword(!showPassword)}>
+                                    <div
+                                        className="absolute top-3.5 right-3 cursor-pointer text-xl text-gray-600"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                    >
                                         {showPassword ? <IoEyeOutline /> : <IoEyeOffOutline />}
                                     </div>
                                 </div>
@@ -59,10 +92,16 @@ function Register() {
                                 <div className="relative">
                                     <input
                                         type={showConfirm ? "text" : "password"}
-                                        placeholder="Xác nhận mật khẩu đã nhập ở trên"
+                                        name="confirmPassword"
+                                        placeholder="Xác nhận mật khẩu"
                                         className="w-full px-4 py-3 border rounded"
+                                        value={user.confirmPassword}
+                                        onChange={handleOnChangeInput}
                                     />
-                                    <div className="absolute top-3.5 right-3 cursor-pointer text-xl text-gray-600" onClick={() => setShowConfirm(!showConfirm)}>
+                                    <div
+                                        className="absolute top-3.5 right-3 cursor-pointer text-xl text-gray-600"
+                                        onClick={() => setShowConfirm(!showConfirm)}
+                                    >
                                         {showConfirm ? <IoEyeOutline /> : <IoEyeOffOutline />}
                                     </div>
                                 </div>
@@ -71,9 +110,15 @@ function Register() {
                             {/* Email */}
                             <div>
                                 <label className="block font-medium mb-1">Email</label>
-                                <input type="email" placeholder="Nhập email của Quý khách" className="w-full px-4 py-3 border rounded" />
+                                <input
+                                    type="email"
+                                    name="email"
+                                    placeholder="Nhập email"
+                                    className="w-full px-4 py-3 border rounded"
+                                    value={user.email}
+                                    onChange={handleOnChangeInput}
+                                />
                             </div>
-
 
                             {/* Checkbox */}
                             <div className="space-y-2 text-sm">
@@ -88,7 +133,10 @@ function Register() {
                             </div>
 
                             {/* Submit */}
-                            <button type="submit" className="w-full bg-black text-white py-3 rounded-full hover:bg-red-600 transition uppercase">
+                            <button
+                                // type="submit"
+                                className="cursor-pointer w-full bg-black text-white py-3 rounded-full hover:bg-red-600 transition uppercase"
+                            >
                                 Đăng ký ngay
                             </button>
                         </form>
@@ -103,7 +151,7 @@ function Register() {
                         </p>
                         <Link
                             to="/login"
-                            className="block text-center bg-black text-white py-3 rounded-full hover:bg-red-600 transition uppercase"
+                            className="cursor-pointer block text-center bg-black text-white py-3 rounded-full hover:bg-red-600 transition uppercase"
                         >
                             ĐĂNG NHẬP
                         </Link>
@@ -111,10 +159,6 @@ function Register() {
 
                 </div>
             </div>
-<<<<<<< HEAD
-            {/* <Footer /> */}
-=======
->>>>>>> f717db6c5fc83ad1d81b89e440bb55838b4f2280
         </div>
     );
 }

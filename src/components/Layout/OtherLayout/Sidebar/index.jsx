@@ -18,11 +18,11 @@ function Sidebar() {
     }, []);
 
     const menuItems = [
-        { icon: <User size={18} />, label: 'Thông tin tài khoản', to: '#' },
-        { icon: <Truck size={18} />, label: 'Quản lý đơn hàng', to: '#' },
-        { icon: <MapPin size={18} />, label: 'Thiết lập địa chỉ', to: '#' },
-        { icon: <Heart size={18} />, label: 'Sản phẩm yêu thích', to: '#' },
-        { icon: <HelpCircle size={18} />, label: 'Hỗ trợ tài khoản', to: '#' },
+        { icon: <User size={18} />, label: 'Thông tin tài khoản', link: '/profile' },
+        { icon: <Truck size={18} />, label: 'Quản lý đơn hàng', link: '/order' },
+        { icon: <MapPin size={18} />, label: 'Thiết lập địa chỉ', link: '/address' },
+        { icon: <Heart size={18} />, label: 'Sản phẩm yêu thích', link: '/product/love' },
+        { icon: <HelpCircle size={18} />, label: 'Hỗ trợ tài khoản', link: '/support' },
         { icon: <LogOut size={18} />, label: 'Đăng xuất', to: '#', special: true },
     ];
 
@@ -59,7 +59,7 @@ function Sidebar() {
                         {menuItems.map((item, index) => (
                             <li key={index}>
                                 <Link
-                                    to={item.to}
+                                    to={item.link}
                                     className={`flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition ${
                                         item.special ? 'text-blue-600 font-semibold hover:underline' : ''
                                     }`}

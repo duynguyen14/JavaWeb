@@ -8,7 +8,7 @@ function Login() {
     const [showPassword, setShowPassword] = useState(false);
 
     return (
-        <div className="min-h-screen bg-white flex flex-col justify-between">
+        <div className=" bg-white flex flex-col justify-between border-gray-300 border-y-[1px]">
             <div className="flex flex-grow items-center justify-center px-4 py-12">
                 <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-8">
 
@@ -58,8 +58,8 @@ function Login() {
 
 
                             <button
-                                type="submit"
-                                className="w-full bg-black text-white py-3 rounded-full hover:bg-red-600 transition uppercase"
+                                // type="submit"
+                                className="cursor-pointer w-full bg-black text-white py-3 rounded-full hover:bg-red-600 transition uppercase"
                             >
                                 ĐĂNG NHẬP
                             </button>
@@ -67,8 +67,8 @@ function Login() {
                             {/* đăng nhập google */}
                             <div className="mt-4">
                                 <button
-                                    type="button"
-                                    className="w-full flex items-center justify-center border border-gray-300 py-3 rounded hover:bg-gray-100 transition"
+                                    // type="button"
+                                    className="cursor-pointer w-full flex items-center justify-center border border-gray-300 py-3 rounded hover:bg-gray-100 transition"
                                 >
                                     <img
                                         src="https://developers.google.com/identity/images/g-logo.png"
@@ -91,7 +91,7 @@ function Login() {
                         </p>
                         <Link
                             to="/register"
-                            className="block text-center bg-black text-white py-3 rounded-full hover:bg-red-600 transition uppercase"
+                            className="cursor-pointer block text-center bg-black text-white py-3 rounded-full hover:bg-red-600 transition uppercase"
                         >
                             ĐĂNG KÝ
                         </Link>

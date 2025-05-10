@@ -16,6 +16,8 @@ import { Link } from 'react-router-dom';
 import NavPopups from '../../../../Popups/NavPopups';
 import { div } from 'framer-motion/client';
 import Image from "../../../../../assets/images/1168.png";
+import CartShoppingPopup from '../../../../Popups/CartShoppingPopup';
+import WishlistPopup from '../../../../Popups/WishlistPopup';
 
 function Header({setIsPopUp}) {
   const titles=[
@@ -41,6 +43,8 @@ function Header({setIsPopUp}) {
   const [isSearch,setIsSearch]=useState(false);
   const [isUser,setIsUser]=useState(false);
   const [isNav,setIsNav]=useState(null);
+  const [isCart,setIsCart]=useState(false);
+  const [isLove,setIsLove]=useState(false)
   const handleOnclickSearch=()=>{
     setIsSearch(!isSearch)
     setIsPopUp(true)
@@ -51,6 +55,7 @@ function Header({setIsPopUp}) {
     setIsPopUp(true)
     setIsSearch(false)
   }
+
   return (
     <div className='relative w-full '>
       <div className='font-Montserrat flex justify-between py-5 items-center mx-5 xl:mx-20 relative '>
@@ -121,13 +126,15 @@ function Header({setIsPopUp}) {
             <p className='hidden lg:block my-icon' onClick={()=>handleOnclickUser()}>
               <FiUser/>
             </p>
-            <p className='hidden lg:block my-icon'>
+            <p className='hidden lg:block my-icon'
+              onClick={()=>setIsLove(true)}
+            >
               <FaRegHeart/>
             </p>
-            <p className=' my-icon'>
-              <Link to={"/cartShopping"}>
+            <p className=' my-icon'onClick={()=>setIsCart(!isCart)} >
+              {/* <Link to={"/cartShopping"}> */}
                 <LuShoppingBag/>  
-              </Link>
+              {/* </Link> */}
             </p>
 
         </div>
@@ -144,6 +151,18 @@ function Header({setIsPopUp}) {
         isUser&&
         <div className='absolute right-10 mt-2 w-[350px] bg-white rounded-2xl shadow-md z-10'>
           <UserPopUp setIsUser={setIsUser} setIsPopUp={setIsPopUp}/>
+        </div>
+      }
+      {
+        isCart &&
+        <div className='w-[350px] md:w-[400px] absolute right-0 top-0 z-10 ' >
+          <CartShoppingPopup isCart={isCart} setIsCart={setIsCart}/>
+        </div>
+      }
+      {
+        isLove &&
+        <div className='w-[350px] md:w-[400px] absolute right-0 top-0 z-10 ' >
+          <WishlistPopup isLove={isLove} setIsLove={setIsLove}/>
         </div>
       }
     </div>
