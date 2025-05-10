@@ -35,7 +35,7 @@ function Footer() {
     {title:"Chính sách thành viên", link:""},
   ]
   return (
-    <div className='lg:flex justify-between items-start mx-5 xl:mx-20 xl:my-30 font-kumbh gap-10 grid grid-rows-4'>
+    <div className='lg:flex justify-between items-start mx-5 xl:mx-20 xl:my-30 gap-10 grid grid-rows-4'>
       {/* CỘT 1: Logo + Info */}
       <div className='flex-1'>
         <p className='text-xl font-semibold md:text-3xl mb-6'>

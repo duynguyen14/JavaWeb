@@ -1,4 +1,5 @@
 import UserLayout from "../components/Layout/DefautLayout/UserLayout";
+import OtherLayout from "../components/Layout/OtherLayout";
 // login
 import Login from "./Login";
 
@@ -29,7 +30,7 @@ import Users from "./Admin/Users";
 
 const PublicPage=[
     {path :"/",component: Home, layout: UserLayout },
-    {path :"/profile",component: Profile, layout: UserLayout },
+    {path :"/profile",component: Profile, layout: OtherLayout },
 
     {path :"/category/:id",component: Profile, layout: UserLayout },
     {path :"/product/:id",component: Product, layout: UserLayout },
@@ -37,8 +38,8 @@ const PublicPage=[
     {path :"/cartShopping",component: CartShopping, layout: UserLayout },
 
 
-    {path :"/register",component: Register, layout: null },
-    {path :"/login",component: Login, layout: null },
+    {path :"/register",component: Register, layout: UserLayout },
+    {path :"/login",component: Login, layout: UserLayout },
 
 
     {path :"/admin",component: DashboardAdmin, layout: AdminLayout },
@@ -59,6 +60,5 @@ const PublicPage=[
 const PrivatePage=[
 
 ]
-
 
 export {PublicPage,PrivatePage}

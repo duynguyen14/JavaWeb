@@ -3,25 +3,35 @@ import React from 'react'
 import ProductItem from '../../../components/OtherComponent/ProductItem'
 import Image1 from "../../../assets/images/1169.png"
 import Image2 from "../../../assets/images/1168.png"
+import { Link } from 'react-router-dom'
 function NewProduct() {
     const product=[
         {
+        id:1,
           name:"Túi Xách Nhỏ In Hoạ Tiết Chuyển Màu",
           price:"699 000",
           images:[Image1,Image2]
         },
         {
+            id:2,
           name:"Túi Xách Nhỏ In Hoạ Tiết Chuyển Màu",
           price:"699 000",
           images:[Image1,Image2]
         },{
+            id:3,
           name:"Túi Xách Nhỏ In Hoạ Tiết Chuyển Màu",
           price:"699 000",
           images:[Image1,Image2]
         },{
+            id:4,
           name:"Túi Xách Nhỏ In Hoạ Tiết Chuyển Màu",
           price:"699 000",
           images:[Image1,Image2]
+        },{
+            id:5,
+            name:"Túi Xách Nhỏ In Hoạ Tiết Chuyển Màu",
+            price:"699 000",
+            images:[Image1,Image2]
         },
     ]
     return (
@@ -31,13 +41,13 @@ function NewProduct() {
             transition={{duration: 1.2}}
             viewport={{ once: true }}
         >
-             <p className='text-lg  md:text-xl lg:text-5xl font-semibold text-center mb-2 md:mb-4 cursor-pointer'>
-                Sản phẩm mới
+             <p className='text-lg  md:text-xl lg:text-4xl font-semibold text-center mb-2 md:mb-4 cursor-pointer'>
+                New arrival
             </p>
             <p className='text-sm md:text-xl lg:text-xl font-light text-center mb-12'>
                 Phong cách mới nâng tầm vẻ ngoài của bạn !
             </p>
-            <div className='grid grid-cols-2 md:grid-cols-4 gap-x-6 md:gap-x-10 gap-y-10 mb-10'>
+            <div className='grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-x-6 md:gap-x-10 gap-y-10 mb-10'>
                 {
                     product.map((item,index)=>{
                         return(
@@ -46,8 +56,10 @@ function NewProduct() {
                                         whileInView={{opacity: 1, y: 0}}
                                         transition={{duration: 1.2}}
                                         viewport={{ once: true }}
-                            >
-                                <ProductItem name={item.name} price={item.price} images={item.images}/>
+                            >   
+                            <Link to={`product/${item.id}`}>
+                                <ProductItem name={item.name} price={item.price} images={item.images}/>   
+                            </Link>
 
                             </motion.div>
                         )

@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
 @import "tailwindcss";
 /* @theme{
     --font-  : "Kumbh Sans", sans-serif;
@@ -13,9 +14,16 @@ body {
     .font-kumbh {
       font-family: 'Kumbh Sans', sans-serif;
     }
+    .font-Montserrat{
+      font-family: 'Montserrat', sans-serif;
+    }
     .text-primary{
         color: #e43131;
     }
+    .text-secondary{
+      color: #f7f7f7
+    }
+
     .my-icon:hover {
         color: #e43131; /* accent hoặc màu khác */
         cursor: pointer;
@@ -24,6 +32,7 @@ body {
     .popUp:hover{
         background-color: #e9ecef;
     }
+<<<<<<< HEAD
 
     
     .animate-fade-in {
@@ -57,10 +66,18 @@ body {
       border-radius: 10px;
     } 
 
+=======
+    .bg-primary{
+      background-color: #f7f7f7;
+    }
+    .bg-secondary{
+      background-color: #6C6D70;
+    }
+>>>>>>> 9bd841321b1a552b44ee33e0bcc2990cf3ae49e1
   }
   @layer components {
     .btn-primary {
-      @apply bg-black text-white rounded-md text-base md:text-xl lg:text-2xl cursor-pointer hover:bg-red-600 transition-all duration-500;
+      @apply bg-black text-white rounded-md text-base md:text-xl  cursor-pointer hover:bg-red-600 transition-all duration-500;
     }
     .top-menu-item {
       @apply hover:text-red-500 relative after:absolute after:bottom-0 after:left-0 after:bg-red-500 after:h-0.5 after:w-0 hover:after:w-full after:transition-all after:ease-in-out after:duration-300;
