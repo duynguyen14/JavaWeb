@@ -32,8 +32,6 @@ body {
     .popUp:hover{
         background-color: #e9ecef;
     }
-
-    
     .animate-fade-in {
       animation: fadeIn 0.2s ease-out;
     }

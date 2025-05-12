@@ -1,14 +1,38 @@
-import React from 'react'
-
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { IoEyeOff, IoEye } from "react-icons/io5";
+import { request } from '../../untils/request';
 
 function Login() {
     const [showPassword, setShowPassword] = useState(false);
+    const [user, setUser] = useState({
+        email: "",
+        password: "",
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setUser((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+    const handleOnclickLogin= async()=>{
+        try{
+            const response =await request.post("user/login",user);
+            console.log(response.data);
+            alert("thành công");
+            localStorage.setItem("token",response.data.result.accessToken);
+        }
+        catch(e){
+            alert("lỗi");
+            console.log("Lỗi ",e);
+        }
+        
+    }
 
     return (
-        <div className=" bg-white flex flex-col justify-between border-gray-300 border-y-[1px]">
+        <div className="bg-white flex flex-col justify-between border-gray-300 border-y-[1px]">
             <div className="flex flex-grow items-center justify-center px-4 py-12">
                 <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-8">
 
@@ -25,6 +49,9 @@ function Login() {
                                 </label>
                                 <input
                                     type="text"
+                                    name="email"
+                                    value={user.email}
+                                    onChange={handleChange}
                                     placeholder="Nhập email hoặc số điện thoại của Quý khách"
                                     className="w-full px-4 py-3 border rounded focus:outline-none focus:ring-2 focus:ring-black"
                                 />
@@ -37,6 +64,9 @@ function Login() {
                                 <div className="relative">
                                     <input
                                         type={showPassword ? 'text' : 'password'}
+                                        name="password"
+                                        value={user.password}
+                                        onChange={handleChange}
                                         placeholder="Nhập mật khẩu"
                                         className="w-full px-4 py-3 border rounded focus:outline-none focus:ring-2 focus:ring-black"
                                     />
@@ -56,10 +86,10 @@ function Login() {
                                 </label>
                             </div>
 
-
                             <button
-                                // type="submit"
+                                type="button"
                                 className="cursor-pointer w-full bg-black text-white py-3 rounded-full hover:bg-red-600 transition uppercase"
+                                onClick={()=>handleOnclickLogin()}
                             >
                                 ĐĂNG NHẬP
                             </button>
@@ -67,7 +97,7 @@ function Login() {
                             {/* đăng nhập google */}
                             <div className="mt-4">
                                 <button
-                                    // type="button"
+                                    type="button"
                                     className="cursor-pointer w-full flex items-center justify-center border border-gray-300 py-3 rounded hover:bg-gray-100 transition"
                                 >
                                     <img
@@ -78,7 +108,6 @@ function Login() {
                                     <span className=" font-medium text-gray-700">Đăng nhập bằng Google</span>
                                 </button>
                             </div>
-
                         </form>
                     </div>
 

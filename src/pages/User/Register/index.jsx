@@ -36,7 +36,6 @@ function Register() {
             alert("Đăng ký thất bại!");
         }
     };
-
     return (
         <div className="border-gray-300 border-y-[1px] bg-white flex flex-col justify-between">
             <div className="flex flex-grow items-center justify-center px-4 py-12">
