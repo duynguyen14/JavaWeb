@@ -32,7 +32,6 @@ body {
     .popUp:hover{
         background-color: #e9ecef;
     }
-<<<<<<< HEAD
 
     
     .animate-fade-in {
@@ -66,14 +65,12 @@ body {
       border-radius: 10px;
     } 
 
-=======
     .bg-primary{
       background-color: #f7f7f7;
     }
     .bg-secondary{
       background-color: #6C6D70;
     }
->>>>>>> 9bd841321b1a552b44ee33e0bcc2990cf3ae49e1
   }
   @layer components {
     .btn-primary {

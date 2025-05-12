@@ -20,11 +20,8 @@
     "react-icons": "^5.5.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.4.1",
-<<<<<<< HEAD
     "recharts": "^2.15.3",
-=======
     "react-toastify": "^11.0.5",
->>>>>>> 9bd841321b1a552b44ee33e0bcc2990cf3ae49e1
     "redux": "^5.0.1",
     "tailwindcss": "^4.0.17"
   },
