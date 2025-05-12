@@ -52,7 +52,7 @@ function CartShoppingPopup({ isCart, setIsCart }) {
       initial={{ opacity: 0, x: 50 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.5 }}
-      className='w-full max-w-sm md:max-w-md lg:max-w-lg bg-white z-50 h-screen font-Montserrat border-l border-gray-200 rounded-l-md fixed top-0 right-0 shadow-xl flex flex-col justify-between'
+      className='w-full md:max-w-md lg:max-w-lg bg-white z-50 h-screen font-Montserrat border-l border-gray-200 rounded-l-md fixed top-0 right-0 shadow-xl flex flex-col justify-between'
     >
       {/* Header */}
       <div className='flex justify-between items-center px-4 py-6 text-xl md:text-2xl font-semibold border-b border-gray-200'>

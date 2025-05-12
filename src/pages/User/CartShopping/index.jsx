@@ -1,5 +1,5 @@
 // pages/CartShopping.jsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "../../../assets/images/1168.png";
 import CartItemList from "./CartItemList";
 import CartSummary from "./CartSummary";
@@ -8,6 +8,7 @@ import CheckoutSteps from "./CheckoutSteps";
 // import { Toaster, toast } from 'react-hot-toast';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {request} from "../../../untils/request.js"
 const data = [
   {
     id: 1,
@@ -40,6 +41,8 @@ const data = [
 
 function CartShopping() {
   const [products,setProduct]=useState(data);
+  const token= localStorage.getItem("token")
+  console.log("token : ",token);
   const handleOnclickPlus=(item)=>{
    const updateProducts= products.map((product,index)=>{
     return product.id === item.id ? {...product, quantity: product.quantity+1}: product
@@ -79,6 +82,25 @@ function CartShopping() {
     });
     setProduct(updateProducts);
   }
+  useEffect(()=>{
+    const fetch=async()=>{
+      try{
+        const response =await request.get("admin/demo",
+          {
+            headers: {
+              Authorization :`Bearer ${token}`,
+              "Content-Type": "application/json"
+            }
+          }
+        )
+        console.log(response.data)
+      }
+      catch(e){
+        console.log("Lỗi ",e.response.data)
+      }
+    }
+    fetch();
+  },[])
   return (
     <div className="mx-auto py-10 border-gray-300 border-y-[1px]">
       <ToastContainer />

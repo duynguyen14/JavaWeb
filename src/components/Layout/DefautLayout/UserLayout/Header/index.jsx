@@ -155,7 +155,7 @@ function Header({setIsPopUp}) {
       }
       {
         isCart &&
-        <div className='w-[350px] md:w-[400px] absolute right-0 top-0 z-10 ' >
+        <div className='w-[300px] md:w-[400px] absolute right-0 top-0 z-10 ' >
           <CartShoppingPopup isCart={isCart} setIsCart={setIsCart}/>
         </div>
       }

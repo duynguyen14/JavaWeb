@@ -4,7 +4,7 @@ import ProductItem from '../../../components/OtherComponent/ProductItem'
 import Image1 from "../../../assets/images/1169.png"
 import Image2 from "../../../assets/images/1168.png"
 import { Link } from 'react-router-dom'
-function NewProduct() {
+function NewProduct({newProduct}) {
     const product=[
         {
         id:1,
