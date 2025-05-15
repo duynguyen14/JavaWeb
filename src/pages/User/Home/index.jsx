@@ -9,14 +9,19 @@ import { request } from '../../../untils/request';
 function Home() {
 
   const [newProduct,setNewProduct] =useState([]);
+  const[saleProduct,setSaleProduct] =useState([])
 
+  const handleOnclickLove=()=>{
+      
+  }
   useEffect(()=>{
     const fetch=async()=>{
       try{
-        const response =await request.get("products")
+        const response =await request.get("products/home")
         console.log(response.data)
         if(response.data.code ===1000){
-          setNewProduct(response.data.result);
+          setNewProduct(response.data.result.productsNew);
+          setSaleProduct(response.data.result.productsSale)
         }
       }
       catch(e){
@@ -36,7 +41,7 @@ function Home() {
           <NewProduct newProduct={newProduct}/>
         </div>
         <div className='my-5 lg:my-10'>
-          <ProductHot />
+          <ProductHot saleProduct={saleProduct}/>
         </div>
         <div className='my-5 lg:my-10'>
           <Collections />

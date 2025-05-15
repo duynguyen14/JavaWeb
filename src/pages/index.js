@@ -15,6 +15,7 @@ import DashboardAdmin from "./Admin/Dashboard";
 import ProfileAdmin from "./Admin/Profile";
 import AdminLayout from "../components/Layout/DefautLayout/AdminLayout";
 import Users from "./Admin/Users";
+import Order from "./User/Order";
 // import Catalogs from "./Admin/Catalogs";
 // import Categories from "./Admin/Categories";
 // import Employees from "./Admin/Employees";
@@ -36,8 +37,9 @@ const PublicPage=[
     {path :"/product/:id",component: Product, layout: UserLayout },
     
     {path :"/cartShopping",component: CartShopping, layout: UserLayout },
+    {path :"/order",component: Order, layout: UserLayout },
 
-
+    
     {path :"/register",component: Register, layout: UserLayout },
     {path :"/login",component: Login, layout: UserLayout },
 

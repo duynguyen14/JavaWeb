@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { IoEyeOff, IoEye } from "react-icons/io5";
 import { request } from '../../untils/request';
-
+import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
+import { showLoading, hideLoading } from '../../redux/actions';
+import Loading from '../../components/OtherComponent/Loading';
 function Login() {
     const [showPassword, setShowPassword] = useState(false);
     const [user, setUser] = useState({
         email: "",
         password: "",
     });
-
+    const dispatch =useDispatch();
+    const loading =useSelector(state=>state.loading)
+    console.log(loading);
+    const navigate =useNavigate();
     const handleChange = (e) => {
         const { name, value } = e.target;
         setUser((prev) => ({
@@ -21,14 +27,16 @@ function Login() {
         try{
             const response =await request.post("user/login",user);
             console.log(response.data);
-            alert("thành công");
+            alert("Đăng nhập thành công")
             localStorage.setItem("token",response.data.result.accessToken);
+            setTimeout(() => {
+                // navigate("/");
+            }, 1000);
         }
         catch(e){
-            alert("lỗi");
+            alert("Đăng nhập thất bại");
             console.log("Lỗi ",e);
         }
-        
     }
 
     return (
