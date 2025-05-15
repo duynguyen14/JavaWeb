@@ -16,6 +16,7 @@ import ProfileAdmin from "./Admin/Profile";
 import AdminLayout from "../components/Layout/DefautLayout/AdminLayout";
 import Users from "./Admin/Users";
 import Order from "./User/Order";
+import OrderManagement from "./User/OrderManagement";
 // import Catalogs from "./Admin/Catalogs";
 // import Categories from "./Admin/Categories";
 // import Employees from "./Admin/Employees";
@@ -32,6 +33,7 @@ import Order from "./User/Order";
 const PublicPage=[
     {path :"/",component: Home, layout: UserLayout },
     {path :"/profile",component: Profile, layout: OtherLayout },
+    {path :"/ordermanagement",component: OrderManagement, layout: OtherLayout },
 
     {path :"/category/:id",component: Profile, layout: UserLayout },
     {path :"/product/:id",component: Product, layout: UserLayout },

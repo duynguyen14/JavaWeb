@@ -1,79 +1,130 @@
 import React, { useState, useEffect } from 'react';
+import { Menu, LogOut, User, Truck, MapPin, Heart, HelpCircle, X, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { Menu, LogOut, User, Truck, MapPin, Heart, HelpCircle, X } from 'lucide-react';
 
 function Sidebar() {
-    const [showMenu, setShowMenu] = useState(true);
-    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [showMenu, setShowMenu] = useState(true);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [activeItem, setActiveItem] = useState('/profile'); // Assume we're on profile page
 
-    useEffect(() => {
-        const handleResize = () => {
-            const mobile = window.innerWidth < 768;
-            setIsMobile(mobile);
-            if (!mobile) setShowMenu(true);
-        };
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      if (!mobile) setShowMenu(true);
+    };
 
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
-    const menuItems = [
-        { icon: <User size={18} />, label: 'Thông tin tài khoản', link: '/profile' },
-        { icon: <Truck size={18} />, label: 'Quản lý đơn hàng', link: '/order' },
-        { icon: <MapPin size={18} />, label: 'Thiết lập địa chỉ', link: '/address' },
-        { icon: <Heart size={18} />, label: 'Sản phẩm yêu thích', link: '/product/love' },
-        { icon: <HelpCircle size={18} />, label: 'Hỗ trợ tài khoản', link: '/support' },
-        { icon: <LogOut size={18} />, label: 'Đăng xuất', to: '#', special: true },
-    ];
+  const menuItems = [
+    { icon: <User size={20} />, label: 'Thông tin cá nhân', link: '/profile' },
+    { icon: <Truck size={20} />, label: 'Quản lý đơn hàng', link: '/ordermanagement' },
+    { icon: <MapPin size={20} />, label: 'Thiết lập địa chỉ', link: '/address' },
+    { icon: <Heart size={20} />, label: 'Sản phẩm yêu thích', link: '/product/love' },
+    { icon: <HelpCircle size={20} />, label: 'Hỗ trợ tài khoản', link: '/support' },
+    { icon: <LogOut size={20} />, label: 'Đăng xuất', link: '#', special: true },
+  ];
 
-    return (
-        <>
-            {isMobile && !showMenu && (
-                <button
-                    className="fixed top-4 left-4 z-50 flex items-center gap-2 text-white bg-gray-600 px-3 py-2 rounded shadow-md hover:bg-gray-700 transition"
-                    onClick={() => setShowMenu(true)}
-                >
-                    <Menu size={20} />
-                    Menu
-                </button>
-            )}
+  return (
+    <>
+      {isMobile && !showMenu && (
+        <button
+          className="fixed top-6 left-6 z-50 flex items-center gap-2 text-white bg-gradient-to-r from-gray-600 to-gray-700 px-4 py-3 rounded-full shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300"
+          onClick={() => setShowMenu(true)}
+        >
+          <Menu size={20} />
+          <span className="font-medium">Menu</span>
+        </button>
+      )}
 
-            {/* Sidebar */}
-            <div
-                className={`bg-white shadow-md md:static fixed top-0 left-0 z-40 h-full w-64 transition-transform duration-300 ${
-                    showMenu ? 'translate-x-0' : '-translate-x-full'
-                }`}
-            >
-                {/* Mobile Header */}
-                {isMobile && (
-                    <div className="flex justify-between items-center px-4 py-3 border-b">
-                        <span className="font-semibold text-lg text-gray-800">Menu</span>
-                        <button onClick={() => setShowMenu(false)} className="text-gray-600 hover:text-red-500">
-                            <X size={24} />
-                        </button>
-                    </div>
-                )}
-
-                <div className="px-6 py-4 mt-4 md:mt-6">
-                    <ul className="space-y-4 text-sm font-medium text-gray-700">
-                        {menuItems.map((item, index) => (
-                            <li key={index}>
-                                <Link
-                                    to={item.link}
-                                    className={`flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition ${
-                                        item.special ? 'text-blue-600 font-semibold hover:underline' : ''
-                                    }`}
-                                >
-                                    {item.icon}
-                                    {item.label}
-                                </Link>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
+      {/* Sidebar Overlay */}
+      {isMobile && showMenu && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-30 transition-opacity duration-300"
+          onClick={() => setShowMenu(false)}
+        ></div>
+      )}
+      <div className="mt-31 mb-90">
+      {/* Sidebar */}
+      <div
+        className={`bg-white md:bg-gradient-to-b md:from-gray-50 md:to-white shadow-xl md:shadow-lg md:static fixed top-0 left-0 z-40 h-full w-72 transition-all duration-300 ${
+          showMenu ? 'translate-x-0' : '-translate-x-full'
+        } rounded-r-3xl md:rounded-xl overflow-hidden border-r md:border-gray-50`}
+      >
+        {/* Header */}
+        <div className="bg-gradient-to-r from-gray-600 to-gray-800 text-white px-6 py-5">
+          <div className="flex justify-between items-center">
+            <div>
+              <h2 className="font-bold text-xl">Foxy Store</h2>
+              <p className="text-blue-100 text-sm mt-1">Tài khoản của bạn</p>
             </div>
-        </>
-    );
+            
+            {isMobile && (
+              <button 
+                onClick={() => setShowMenu(false)} 
+                className="p-2 hover:bg-blue-700 rounded-full transition-colors"
+              >
+                <X size={20} />
+              </button>
+            )}
+          </div>
+          </div>
+
+        {/* User Info */}
+        <div className="px-6 py-4 border-b">
+          <div className="flex items-center gap-3">
+            <div className="bg-gradient-to-r from-purple-400 to-blue-500 h-12 w-12 rounded-full flex items-center justify-center text-white text-lg font-bold">
+              NA
+            </div>
+            <div>
+              <h3 className="font-medium text-gray-800">Nguyễn Văn A</h3>
+              <p className="text-gray-500 text-sm">foxystore.com@gmail.com</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Menu Items */}
+        <div className="px-4 py-5">
+          <ul className="space-y-1 text-gray-700">
+            {menuItems.map((item, index) => (
+              <Link key={index} 
+                to={item.link}
+                  onClick={(e) => {
+                    setActiveItem(item.link);
+                  }}
+                  className={`flex items-center justify-between px-4 py-3 rounded-xl transition-all ${
+                    activeItem === item.link
+                      ? 'bg-blue-50 text-blue-700 font-medium shadow-sm'
+                      : item.special 
+                        ? 'text-red-600 hover:bg-red-50 hover:text-red-700' 
+                        : 'hover:bg-gray-50'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`${activeItem === item.link ? 'text-blue-600' : item.special ? 'text-red-500' : 'text-gray-500'}`}>
+                      {item.icon}
+                    </div>
+                    <span>{item.label}</span>
+                  </div>
+                  
+                  {!item.special && (
+                    <ChevronRight 
+                      size={16} 
+                      className={`${activeItem === item.link ? 'opacity-500' : 'opacity-0'} text-blue-600 transition-opacity`} 
+                    />
+                  )}
+                
+              </Link>
+            ))}
+          </ul>
+        </div>
+      </div>
+      
+      </div>
+    </>
+  );
 }
 
 export default Sidebar;

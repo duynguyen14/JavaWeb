@@ -46,12 +46,6 @@ function Home() {
         <div className='my-5 lg:my-10'>
           <Collections />
         </div>
-        {/* <div className="relative w-64 h-24 border border-gray-300 overflow-hidden rounded-lg">
-      <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-red-500 animate-fill"></div>
-      <div className="relative z-10 text-center leading-[6rem] text-white font-semibold">
-        Đổ màu đỏ
-      </div>
-    </div> */}
       </motion.div>
     </div>
   )
