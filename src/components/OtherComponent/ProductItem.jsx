@@ -3,9 +3,15 @@ import { motion } from 'framer-motion';
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { FaRegHeart } from "react-icons/fa";
 import { FiShoppingBag } from "react-icons/fi";
-function ProductItem({ name, price, images,soldCount }) {
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { request } from '../../untils/request';
+function ProductItem({ id, name, price, images, soldCount, sizes, discountPercent }) {
   const [isHover, setIsHover] = useState(false);
-
+  const [showSizes, setShowSizes] = useState(false);
+  const [selectedSize, setSelectedSize] = useState(null);
+  const navigate =useNavigate();
+  const token =localStorage.getItem("token");
   const toLocalePrice = (value) => {
     return value.toLocaleString('vi-VN', {
       style: 'currency',
@@ -13,39 +19,74 @@ function ProductItem({ name, price, images,soldCount }) {
     });
   };
 
+  const handleSelectSize = async(size) => {
+    if(!window.confirm("Bạn xác nhận thêm sản phẩm này vào giỏ hàng")){
+      return;
+    }
+      console.log(id)
+    try{
+      // call api
+      const response = await request.post("/cart",{
+        
+          productId :id,
+          quantity: 1,
+          size: size.sizeName
+      },
+    {
+      headers:{
+        Authorization: `Bearer ${token}`
+      }
+    }
+    )
+    console.log(response.data)
+      setSelectedSize(size);
+      setShowSizes(false);
+      toast("Xoá sản phẩm thành công!", {
+            theme: "colored",
+            type: "success",
+            position: "bottom-right",
+            autoClose: 5000,
+
+          });
+    }
+    catch(e){
+      alert("Lỗi khi thêm sản phẩm vào giỏ")
+      if(e.data.code==2000){
+        alert("Phiên của bạn đã hết hạn vui lòng đăng nhập lại")
+        navigate("/login")
+      }
+      console.log(e.data);
+    }
+  };
+
   return (
-    <div className=''>
+    <div className="relative">
       {/* Image + hover effect */}
       <div
         className='overflow-hidden relative rounded-md cursor-pointer'
         onMouseEnter={() => setIsHover(true)}
         onMouseLeave={() => setIsHover(false)}
       >
-        {/* NEW badge */}
-        {/* Product image */}
-        <motion.img
-          key={isHover ? "hover" : "normal"}
-          src={isHover ? `http://localhost:8080/images/${images[0]}.png` : `http://localhost:8080/images/${images[1]}.png`}
-          alt={name}
-          initial={{ opacity: 0.8, scale: 1 }}
-          animate={{ opacity: 1, scale: 1.02 }}
-          transition={{ duration: 0.8, ease: "easeInOut" }}
-          className="rounded-xs w-full object-cover  md:h-[350px]"
-        />
+        <Link to={`product/${id}`}>
+          <motion.img
+            key={isHover ? "hover" : "normal"}
+            src={isHover ? `http://localhost:8080/images/${images[0]}.png` : `http://localhost:8080/images/${images[1]}.png`}
+            alt={name}
+            initial={{ opacity: 0.8, scale: 1 }}
+            animate={{ opacity: 1, scale: 1.02 }}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
+            className="rounded-xs w-full object-cover md:h-[350px]"
+          />
+        </Link>
 
-        {/* Add to cart button */}
-        {/* <motion.div
-          className='absolute bottom-[10%] right-[5%] w-[90%]'
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: isHover ? 1 : 0, y: isHover ? 0 : 50 }}
-          transition={{ duration: 0.4, ease: 'easeInOut' }}
-        >
-          <button className='text-xs xl:text-base w-full bg-white rounded-3xl py-2 px-2 lg:px-3 lg:py-3 cursor-pointer hover:bg-black hover:text-white transition-all duration-500 whitespace-nowrap'>
-            Thêm vào giỏ hàng
-          </button>
-        </motion.div> */}
+        {/* Discount badge */}
+        {discountPercent && (
+          <div className="absolute top-0 right-0 bg-orange-500 text-white text-xs md:text-sm font-bold px-2 py-1 rounded-bl-md z-10">
+            -{discountPercent}%
+          </div>
+        )}
 
-        {/* Action icons */}
+        {/* Hover buttons */}
         <motion.div
           className='absolute top-[5%] right-[5%] text-base md:text-xl xl:text-xl group'
           initial={{ opacity: 0, y: -20 }}
@@ -64,14 +105,65 @@ function ProductItem({ name, price, images,soldCount }) {
       {/* Product name and price */}
       <div className='text-sm md:text-base mx-1'>
         <p className='my-3 text-justify h-[55px]'>{name.length > 60 ? name.slice(0, 30) + '...' : name}</p>
-        <div className='flex justify-between'>
+        <div className='flex justify-between items-center relative'>
           <div>
-            <p className='font-semibold'>{toLocalePrice(price)}</p>
+            <div className='flex'>
+              <p className='font-semibold line-through'
+                style={discountPercent!=null?{textDecorationLine: "line-through"}:{textDecorationLine: "none"}}
+              >{toLocalePrice(price)}</p>
+              {
+                discountPercent&& <p className='pl-4 font-semibold text-red-500'>
+                  {toLocalePrice(price -price*discountPercent/100)}
+                </p>
+              }
+            </div>
             <p className='font-base text-gray-400 pt-2'>Đã bán {soldCount}</p>
+            {selectedSize && (
+              <p className="text-sm text-green-600 mt-1">
+                Size đã chọn: {selectedSize.name || selectedSize.sizeName || selectedSize}
+              </p>
+            )}
           </div>
-          <div className='text-lg p-2  h-10 btn-secondary'>
-            <FiShoppingBag/>
+          <div
+            className='text-lg p-2 h-10 btn-secondary cursor-pointer'
+            onClick={() => setShowSizes(!showSizes)}
+            title="Chọn size"
+          >
+            <FiShoppingBag />
           </div>
+
+          {/* Size selector popup */}
+          {showSizes && (
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0, y: -10 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              className="absolute bottom-full right-0 mt-2 bg-white rounded-lg shadow-lg p-4 w-30 z-50"
+            >
+              <h3 className="text-sm font-semibold mb-2 text-center">Chọn size</h3>
+              <ul className="max-h-40 overflow-y-auto text-sm">
+                {sizes && sizes.length > 0 ? (
+                  sizes.map((size, index) => (
+                    <li
+                      key={index}
+                      className="p-1 cursor-pointer hover:bg-gray-200 rounded text-center"
+                      onClick={() => handleSelectSize(size)}
+                    >
+                      {size.sizeName}
+                    </li>
+                  ))
+                ) : (
+                  <p>Không có size nào.</p>
+                )}
+              </ul>
+              <button
+                className="mt-2 w-full px-2 py-1 bg-gray-200 rounded hover:bg-gray-300 text-xs"
+                onClick={() => setShowSizes(false)}
+              >
+                Đóng
+              </button>
+            </motion.div>
+          )}
         </div>
       </div>
     </div>

@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { HiOutlineX } from "react-icons/hi";
 import Image from "../../assets/images/1168.png";
 import { useNavigate } from 'react-router-dom';
+import { request } from '../../untils/request';
 
 const data = [
   {
@@ -44,9 +45,30 @@ const data = [
 ];
 
 function CartShoppingPopup({ isCart, setIsCart }) {
-  const [products] = useState(data);
+  const [products,setProduct] = useState([]);
   const navigate = useNavigate();
-
+  const token =localStorage.getItem("token");
+  useEffect(()=>{
+    const fetch =async()=>{
+      try{
+        const response =await request.get("/cart",{
+          headers :{
+            Authorization: `Bearer ${token}`
+          }
+        })
+        setProduct(response.data.result)
+        console.log(response);
+      }
+      catch(e){
+        if(e.response.code==2000){
+          alert("Phiên của bạn đã hết hạn vui lòng đăng nhập lại")
+          navigate("/")
+        }
+        console.log("loi",e)
+      }
+    }
+    fetch()
+  },[])
   return (
     <motion.div
       initial={{ opacity: 0, x: 50 }}
@@ -67,15 +89,15 @@ function CartShoppingPopup({ isCart, setIsCart }) {
 
       {/* List sản phẩm */}
       <div className='flex-1 overflow-y-auto px-4 py-5 space-y-5'>
-        {products.length === 0 ? (
+        {products&&products.length === 0 ? (
           <p className='text-center text-gray-500'>Không có sản phẩm nào trong giỏ hàng.</p>
         ) : (
-          products.map((product) => (
-            <div key={product.id} className='flex gap-4 items-center border-b border-gray-200 pb-4'>
-              <img src={product.image} alt={product.name} className='w-28 h-36 object-cover rounded-md' />
+          products.map((product,index) => (
+            <div key={index} className='flex gap-4 items-center border-b border-gray-200 pb-4'>
+              <img src={`http://localhost:8080/images/${product.images[0]}.png`} alt={product.productName} className='w-28 h-36 object-cover rounded-md' />
               <div className='flex-1'>
-                <h3 className='text-sm md:text-base font-semibold'>{product.name}</h3>
-                <p className='text-sm text-gray-600'>Màu: {product.color} - Size: {product.size}</p>
+                <h3 className='text-sm md:text-base font-semibold'>{product.productName}</h3>
+                <p className='text-sm text-gray-600'>Size: {product.sizeName}</p>
                 <p className='text-sm text-gray-800'>SL: {product.quantity}</p>
                 <p className='text-sm font-medium text-red-500'>
                   {(product.price * product.quantity).toLocaleString()}đ

@@ -29,15 +29,15 @@ function ProductHot({saleProduct}) {
                                         transition={{duration: 1.2}}
                                         viewport={{ once: true }}
                             >
-                            <Link to={`product/${item.id}`}>
+                            
 
                                 <div className='relative'>
-                                    <ProductItem name={item.name} price={item.price} images={item.images} soldCount={item.soldCount}/>   
+                                    <ProductItem discountPercent={item.discountPercent} id={item.id} sizes={item.productSizeDTOS} name={item.name} price={item.price} images={item.images} soldCount={item.soldCount}/>   
                                     <div className="absolute top-0 left-0 bg-red-700 text-white text-xs font-semibold px-2 py-1 rounded-br-3xl z-10">
                                             Best seller
                                     </div>
                                 </div>
-                            </Link>
+                
 
                             </motion.div>
                         )

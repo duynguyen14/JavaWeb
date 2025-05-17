@@ -30,7 +30,7 @@ function Login() {
             alert("Đăng nhập thành công")
             localStorage.setItem("token",response.data.result.accessToken);
             setTimeout(() => {
-                // navigate("/");
+                navigate("/");
             }, 1000);
         }
         catch(e){
