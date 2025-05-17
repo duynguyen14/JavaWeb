@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { 
+import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell, LineChart, Line, AreaChart, Area
 } from 'recharts';
-import { 
-  ShoppingBag, Users, DollarSign, TrendingUp, Star, Truck, Package
+import {
+  ShoppingBag, Users, DollarSign, TrendingUp, Star, Truck, Package, BarChart2, LineChart as LineChartIcon, AreaChart as AreaChartIcon, PieChart as PieChartIcon
 } from 'lucide-react';
 
 // Dữ liệu mẫu (tối thiểu, sẽ được thay thế bởi API)
@@ -50,26 +50,26 @@ const recentOrders = [
 ];
 
 const customerComments = [
-  { 
-    name: 'Minh Anh', 
-    avatar: '/api/placeholder/40/40', 
-    date: '07/05/2025', 
+  {
+    name: 'Minh Anh',
+    avatar: '/api/placeholder/40/40',
+    date: '07/05/2025',
     comment: 'Áo sơ mi chất lượng tốt, vải mát, đường may đẹp. Mình rất hài lòng với sản phẩm này.',
     rating: 5,
     product: 'Áo sơ mi trắng FOXY'
   },
-  { 
-    name: 'Thanh Hà', 
-    avatar: '/api/placeholder/40/40', 
-    date: '06/05/2025', 
+  {
+    name: 'Thanh Hà',
+    avatar: '/api/placeholder/40/40',
+    date: '06/05/2025',
     comment: 'Quần jean rất đẹp và đúng kích thước. Giao hàng nhanh.',
     rating: 4,
     product: 'Quần jean nữ cạp cao'
   },
-  { 
-    name: 'Hồng Nhung', 
-    avatar: '/api/placeholder/40/40', 
-    date: '05/05/2025', 
+  {
+    name: 'Hồng Nhung',
+    avatar: '/api/placeholder/40/40',
+    date: '05/05/2025',
     comment: 'Túi xách đẹp, chất liệu tốt nhưng màu hơi khác một chút so với hình.',
     rating: 4,
     product: 'Túi xách Mini FOXY'
@@ -77,60 +77,78 @@ const customerComments = [
 ];
 
 const bestSellers = [
-  { 
-    name: 'Áo sơ mi trắng FOXY', 
-    image: '/api/placeholder/80/80', 
-    sold: 124, 
+  {
+    name: 'Áo sơ mi trắng FOXY',
+    image: '/api/placeholder/80/80',
+    sold: 124,
     price: '450,000 đ',
     category: 'Áo'
   },
-  { 
-    name: 'Quần jean nữ cạp cao', 
-    image: '/api/placeholder/80/80', 
-    sold: 98, 
+  {
+    name: 'Quần jean nữ cạp cao',
+    image: '/api/placeholder/80/80',
+    sold: 98,
     price: '650,000 đ',
     category: 'Quần'
   },
-  { 
-    name: 'Giày thể thao FOXY AIR', 
-    image: '/api/placeholder/80/80', 
-    sold: 87, 
+  {
+    name: 'Giày thể thao FOXY AIR',
+    image: '/api/placeholder/80/80',
+    sold: 87,
     price: '850,000 đ',
     category: 'Giày'
   },
 ];
 
 const newProducts = [
-  { 
-    name: 'Áo polo FOXY Summer', 
-    image: '/api/placeholder/80/80', 
-    date: '05/05/2025', 
+  {
+    name: 'Áo polo FOXY Summer',
+    image: '/api/placeholder/80/80',
+    date: '05/05/2025',
     price: '380,000 đ',
     category: 'Áo'
   },
-  { 
-    name: 'Váy hoa FOXY Blossom', 
-    image: '/api/placeholder/80/80', 
-    date: '04/05/2025', 
+  {
+    name: 'Váy hoa FOXY Blossom',
+    image: '/api/placeholder/80/80',
+    date: '04/05/2025',
     price: '550,000 đ',
     category: 'Váy'
   },
 ];
 
 const featuredProducts = [
-  { 
-    name: 'Bộ sưu tập Hè 2025', 
-    image: '/api/placeholder/320/150', 
+  {
+    name: 'Bộ sưu tập Hè 2025',
+    image: '/api/placeholder/320/150',
     description: 'Những thiết kế mới nhất cho mùa hè sôi động'
   },
-  { 
-    name: 'Bộ sưu tập công sở', 
+  {
+    name: 'Bộ sưu tập công sở',
     image: '/api/placeholder/320/150',
     description: 'Lịch lãm và chuyên nghiệp cho môi trường làm việc'
   },
 ];
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+
+// Thêm gradient cho biểu đồ
+const GradientDefs = () => (
+  <defs>
+    <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stopColor="#a78bfa" />
+      <stop offset="100%" stopColor="#6366f1" />
+    </linearGradient>
+    <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="5%" stopColor="#a78bfa" stopOpacity={0.8} />
+      <stop offset="95%" stopColor="#6366f1" stopOpacity={0.2} />
+    </linearGradient>
+    <linearGradient id="barCategoryGradient" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stopColor="#34d399" />
+      <stop offset="100%" stopColor="#10b981" />
+    </linearGradient>
+  </defs>
+);
 
 export default function Dashboard() {
   // State cho các loại biểu đồ
@@ -140,7 +158,7 @@ export default function Dashboard() {
 
   // Chọn dữ liệu dựa trên khung thời gian
   const getSalesData = () => {
-    switch(salesTimeFrame) {
+    switch (salesTimeFrame) {
       case 'daily':
         return dailyData;
       case 'quarterly':
@@ -159,51 +177,107 @@ export default function Dashboard() {
   // Render biểu đồ doanh thu dựa trên loại đã chọn
   const renderSalesChart = () => {
     const data = getSalesData();
-    
-    switch(salesChartType) {
+
+    switch (salesChartType) {
       case 'line':
         return (
           <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+            <GradientDefs />
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
             <Tooltip formatter={(value) => new Intl.NumberFormat('vi-VN').format(value) + ' đ'} />
             <Legend />
-            <Line type="monotone" dataKey="value" name="Doanh thu" stroke="#8884d8" activeDot={{ r: 8 }} />
+            {/* Sửa stroke về màu HEX, không dùng gradient */}
+            <Line type="monotone" dataKey="value" name="Doanh thu" stroke="#a78bfa" strokeWidth={3} dot={{ r: 5, fill: "#a78bfa" }} activeDot={{ r: 8 }} animationDuration={800} />
           </LineChart>
         );
       case 'area':
         return (
           <AreaChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+            <GradientDefs />
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
             <Tooltip formatter={(value) => new Intl.NumberFormat('vi-VN').format(value) + ' đ'} />
             <Legend />
-            <Area type="monotone" dataKey="value" name="Doanh thu" stroke="#8884d8" fill="#8884d8" />
+            <Area type="monotone" dataKey="value" name="Doanh thu" stroke="#a78bfa" fill="url(#areaGradient)" strokeWidth={2} animationDuration={800} />
           </AreaChart>
         );
       case 'bar':
       default:
         return (
           <BarChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+            <GradientDefs />
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
             <Tooltip formatter={(value) => new Intl.NumberFormat('vi-VN').format(value) + ' đ'} />
             <Legend />
-            <Bar dataKey="value" name="Doanh thu" fill="#8884d8" />
+            {/* Sử dụng màu HEX trực tiếp và barSize để đảm bảo hiển thị */}
+            <Bar dataKey="value" name="Doanh thu" fill="#a78bfa" radius={[8, 8, 0, 0]} barSize={40} animationDuration={800} />
           </BarChart>
         );
     }
   };
 
+  // Render biểu đồ danh mục (chỉ cho phép BarChart/PieChart)
+  const renderCategoryChart = () => {
+    const data = getCategoryData();
+    if (categoryView === 'distribution') {
+      return (
+        <PieChart>
+          <GradientDefs />
+          <Pie
+            data={data}
+            cx="50%"
+            cy="50%"
+            labelLine={false}
+            outerRadius={90}
+            fill="#a78bfa"
+            dataKey="value"
+            label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+            isAnimationActive={true}
+          >
+            {data.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            ))}
+          </Pie>
+          <Tooltip formatter={(value) => `${value}%`} />
+          <Legend
+            verticalAlign="bottom"
+            iconType="circle"
+            wrapperStyle={{ fontSize: 14, marginTop: 10 }}
+          />
+        </PieChart>
+      );
+    }
+    // categoryView === 'sales'
+    return (
+      <BarChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+        <GradientDefs />
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Tooltip formatter={(value) => new Intl.NumberFormat('vi-VN').format(value) + ' đ'} />
+        <Legend />
+        <Bar dataKey="value" name="Doanh thu" fill="#34d399" radius={[8, 8, 0, 0]} barSize={40} animationDuration={800} />
+      </BarChart>
+    );
+  };
+
+  // Render nút chuyển đổi dạng biểu đồ với icon
+  const chartTypes = [
+    { key: 'bar', icon: <BarChart2 className="w-5 h-5" />, label: 'Cột' },
+    { key: 'line', icon: <LineChartIcon className="w-5 h-5" />, label: 'Đường' },
+    { key: 'area', icon: <AreaChartIcon className="w-5 h-5" />, label: 'Vùng' }
+  ];
+
   return (
-    <div className="bg-gray-100 min-h-screen p-4">
-      
+    <div className="bg-gradient-to-br from-indigo-50 to-purple-100 min-h-screen p-4">
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white rounded-lg shadow p-4 flex items-center">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="bg-white rounded-2xl shadow-lg p-5 flex items-center transition-transform hover:-translate-y-1 hover:shadow-2xl">
           <div className="rounded-full bg-blue-100 p-3 mr-4">
             <DollarSign className="h-6 w-6 text-blue-600" />
           </div>
@@ -213,8 +287,8 @@ export default function Dashboard() {
             <p className="text-green-500 text-xs">↑ 12.5% so với tháng trước</p>
           </div>
         </div>
-        
-        <div className="bg-white rounded-lg shadow p-4 flex items-center">
+
+        <div className="bg-white rounded-2xl shadow-lg p-5 flex items-center transition-transform hover:-translate-y-1 hover:shadow-2xl">
           <div className="rounded-full bg-purple-100 p-3 mr-4">
             <ShoppingBag className="h-6 w-6 text-purple-600" />
           </div>
@@ -224,8 +298,8 @@ export default function Dashboard() {
             <p className="text-green-500 text-xs">↑ 8.2% so với tháng trước</p>
           </div>
         </div>
-        
-        <div className="bg-white rounded-lg shadow p-4 flex items-center">
+
+        <div className="bg-white rounded-2xl shadow-lg p-5 flex items-center transition-transform hover:-translate-y-1 hover:shadow-2xl">
           <div className="rounded-full bg-yellow-100 p-3 mr-4">
             <Users className="h-6 w-6 text-yellow-600" />
           </div>
@@ -235,8 +309,8 @@ export default function Dashboard() {
             <p className="text-green-500 text-xs">↑ 5.3% so với tháng trước</p>
           </div>
         </div>
-        
-        <div className="bg-white rounded-lg shadow p-4 flex items-center">
+
+        <div className="bg-white rounded-2xl shadow-lg p-5 flex items-center transition-transform hover:-translate-y-1 hover:shadow-2xl">
           <div className="rounded-full bg-green-100 p-3 mr-4">
             <TrendingUp className="h-6 w-6 text-green-600" />
           </div>
@@ -247,16 +321,16 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-      
+
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         {/* Sales Chart with controls */}
-        <div className="bg-white rounded-lg shadow p-4">
+        <div className="bg-white rounded-2xl shadow-lg p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold">Biểu đồ doanh thu</h2>
-            <div className="flex space-x-2">
-              <select 
-                className="border rounded p-1 text-sm" 
+            <h2 className="text-xl font-bold text-purple-700">Biểu đồ doanh thu</h2>
+            <div className="flex items-center space-x-2">
+              <select
+                className="border rounded px-2 py-1 text-sm focus:ring-2 focus:ring-purple-400"
                 value={salesTimeFrame}
                 onChange={(e) => setSalesTimeFrame(e.target.value)}
               >
@@ -264,30 +338,36 @@ export default function Dashboard() {
                 <option value="monthly">Theo tháng</option>
                 <option value="quarterly">Theo quý</option>
               </select>
-              <select 
-                className="border rounded p-1 text-sm"
-                value={salesChartType}
-                onChange={(e) => setSalesChartType(e.target.value)}
-              >
-                <option value="bar">Biểu đồ cột</option>
-                <option value="line">Biểu đồ đường</option>  
-                <option value="area">Biểu đồ vùng</option>
-              </select>
+              <div className="flex space-x-1 ml-2">
+                {chartTypes.map((type) => (
+                  <button
+                    key={type.key}
+                    className={`p-2 rounded-full border transition-all duration-200 flex items-center justify-center
+                      ${salesChartType === type.key
+                        ? 'bg-purple-600 text-white border-purple-600 shadow'
+                        : 'bg-gray-100 text-purple-600 border-transparent hover:bg-purple-100'}`}
+                    onClick={() => setSalesChartType(type.key)}
+                    title={`Biểu đồ ${type.label}`}
+                  >
+                    {type.icon}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
-          <div className="h-64">
+          <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               {renderSalesChart()}
             </ResponsiveContainer>
           </div>
         </div>
-        
+
         {/* Category Chart with controls */}
-        <div className="bg-white rounded-lg shadow p-4">
+        <div className="bg-white rounded-2xl shadow-lg p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold">Phân tích danh mục</h2>
-            <select 
-              className="border rounded p-1 text-sm"
+            <h2 className="text-xl font-bold text-purple-700">Phân tích danh mục</h2>
+            <select
+              className="border rounded px-2 py-1 text-sm focus:ring-2 focus:ring-purple-400"
               value={categoryView}
               onChange={(e) => setCategoryView(e.target.value)}
             >
@@ -295,46 +375,18 @@ export default function Dashboard() {
               <option value="sales">Doanh thu theo danh mục</option>
             </select>
           </div>
-          <div className="h-64 flex items-center justify-center">
+          <div className="h-72 flex items-center justify-center">
             <ResponsiveContainer width="100%" height="100%">
-              {categoryView === 'distribution' ? (
-                <PieChart>
-                  <Pie
-                    data={getCategoryData()}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                  >
-                    {getCategoryData().map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip formatter={(value) => categoryView === 'distribution' ? `${value}%` : `${new Intl.NumberFormat('vi-VN').format(value)} đ`} />
-                  <Legend />
-                </PieChart>
-              ) : (
-                <BarChart data={getCategoryData()} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip formatter={(value) => new Intl.NumberFormat('vi-VN').format(value) + ' đ'} />
-                  <Legend />
-                  <Bar dataKey="value" name="Doanh thu" fill="#00C49F" />
-                </BarChart>
-              )}
+              {renderCategoryChart()}
             </ResponsiveContainer>
           </div>
         </div>
       </div>
-      
+
       {/* Featured Products */}
-      <div className="bg-white rounded-lg shadow p-4 mb-6">
-        <h2 className="text-lg font-semibold mb-4">Bộ sưu tập nổi bật</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
+        <h2 className="text-xl font-bold text-purple-700 mb-4">Bộ sưu tập nổi bật</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {featuredProducts.map((product, index) => (
             <div key={index} className="bg-gray-50 rounded-lg overflow-hidden flex flex-col">
               <img src={product.image} alt={product.name} className="w-full h-40 object-cover" />
@@ -347,13 +399,13 @@ export default function Dashboard() {
           ))}
         </div>
       </div>
-      
+
       {/* Products Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         {/* Best Selling Products */}
-        <div className="bg-white rounded-lg shadow p-4">
+        <div className="bg-white rounded-2xl shadow-lg p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold">Sản phẩm bán chạy</h2>
+            <h2 className="text-xl font-bold text-purple-700">Sản phẩm bán chạy</h2>
             <button className="text-purple-600 text-sm hover:underline">Xem tất cả</button>
           </div>
           <div className="space-y-4">
@@ -375,11 +427,11 @@ export default function Dashboard() {
             ))}
           </div>
         </div>
-        
+
         {/* New Products */}
-        <div className="bg-white rounded-lg shadow p-4">
+        <div className="bg-white rounded-2xl shadow-lg p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold">Sản phẩm mới</h2>
+            <h2 className="text-xl font-bold text-purple-700">Sản phẩm mới</h2>
             <button className="text-purple-600 text-sm hover:underline">Xem tất cả</button>
           </div>
           <div className="space-y-4">
@@ -402,13 +454,13 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-      
+
       {/* Orders Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         {/* Recent Orders */}
-        <div className="bg-white rounded-lg shadow p-4">
+        <div className="bg-white rounded-2xl shadow-lg p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold">Đơn hàng gần đây</h2>
+            <h2 className="text-xl font-bold text-purple-700">Đơn hàng gần đây</h2>
             <button className="text-purple-600 text-sm hover:underline">Xem tất cả</button>
           </div>
           <div className="overflow-x-auto">
@@ -430,10 +482,10 @@ export default function Dashboard() {
                     <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{order.date}</td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-800">{order.amount}</td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm">
-                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                        ${order.status === 'Hoàn thành' ? 'bg-green-100 text-green-800' : 
-                          order.status === 'Đang xử lý' ? 'bg-yellow-100 text-yellow-800' : 
-                          order.status === 'Đã giao' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'}`}>
+                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                        ${order.status === 'Hoàn thành' ? 'bg-green-100 text-green-800' :
+                          order.status === 'Đang xử lý' ? 'bg-yellow-100 text-yellow-800' :
+                            order.status === 'Đã giao' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'}`}>
                         {order.status}
                       </span>
                     </td>
@@ -443,10 +495,10 @@ export default function Dashboard() {
             </table>
           </div>
         </div>
-        
+
         {/* Shipping Status */}
-        <div className="bg-white rounded-lg shadow p-4">
-          <h2 className="text-lg font-semibold mb-4">Trạng thái vận chuyển</h2>
+        <div className="bg-white rounded-2xl shadow-lg p-6">
+          <h2 className="text-xl font-bold text-purple-700 mb-4">Trạng thái vận chuyển</h2>
           <div className="space-y-4">
             <div className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
               <div className="flex items-center">
@@ -460,7 +512,7 @@ export default function Dashboard() {
               </div>
               <span className="text-blue-600 font-medium">24%</span>
             </div>
-            
+
             <div className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
               <div className="flex items-center">
                 <div className="rounded-full bg-yellow-100 p-2 mr-3">
@@ -473,7 +525,7 @@ export default function Dashboard() {
               </div>
               <span className="text-yellow-600 font-medium">42%</span>
             </div>
-            
+
             <div className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
               <div className="flex items-center">
                 <div className="rounded-full bg-green-100 p-2 mr-3">
@@ -489,11 +541,11 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-      
+
       {/* Customer Comments */}
-      <div className="bg-white rounded-lg shadow p-4 mb-6">
+      <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold">Đánh giá từ khách hàng</h2>
+          <h2 className="text-xl font-bold text-purple-700">Đánh giá từ khách hàng</h2>
           <button className="text-purple-600 text-sm hover:underline">Xem tất cả</button>
         </div>
         <div className="space-y-4">

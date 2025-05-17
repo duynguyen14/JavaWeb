@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { IoEyeOff, IoEye } from "react-icons/io5";
 import { request } from '../../untils/request';
+import authService from '../../untils/auth';
 
 function Login() {
     const [showPassword, setShowPassword] = useState(false);
@@ -17,18 +18,18 @@ function Login() {
             [name]: value,
         }));
     };
-    const handleOnclickLogin= async()=>{
-        try{
-            const response =await request.post("user/login",user);
+    const handleOnclickLogin = async () => {
+        try {
+            const response = await request.post("user/login", user);
             console.log(response.data);
             alert("thành công");
-            localStorage.setItem("token",response.data.result.accessToken);
+            localStorage.setItem("token", response.data.result.accessToken);
         }
-        catch(e){
+        catch (e) {
             alert("lỗi");
-            console.log("Lỗi ",e);
+            console.log("Lỗi ", e);
         }
-        
+
     }
 
     return (
@@ -89,7 +90,7 @@ function Login() {
                             <button
                                 type="button"
                                 className="cursor-pointer w-full bg-black text-white py-3 rounded-full hover:bg-red-600 transition uppercase"
-                                onClick={()=>handleOnclickLogin()}
+                                onClick={() => handleOnclickLogin()}
                             >
                                 ĐĂNG NHẬP
                             </button>
@@ -99,6 +100,11 @@ function Login() {
                                 <button
                                     type="button"
                                     className="cursor-pointer w-full flex items-center justify-center border border-gray-300 py-3 rounded hover:bg-gray-100 transition"
+                                    onClick={() => {
+
+                                        authService.login();
+                                    }}
+
                                 >
                                     <img
                                         src="https://developers.google.com/identity/images/g-logo.png"

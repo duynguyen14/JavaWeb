@@ -6,6 +6,9 @@ import {
   ChevronDown,
   Menu,
   X,
+  User,
+  Settings,
+  LogOut,
 } from "lucide-react";
 
 function Header({ onToggleSidebar }) {
@@ -46,7 +49,7 @@ function Header({ onToggleSidebar }) {
   // Kiểm tra kích thước màn hình
   useEffect(() => {
     const checkScreenSize = () => {
-      setIsMobile(window.innerWidth < 1024); // Thay đổi từ 768 thành 1024 để phù hợp với AdminLayout
+      setIsMobile(window.innerWidth < 1024);
       if (window.innerWidth >= 1024) {
         setIsSearchOpen(false);
       }
@@ -100,23 +103,30 @@ function Header({ onToggleSidebar }) {
   }, []);
 
   return (
-    <header className="bg-white shadow-sm border-b border-orange-100 h-16 flex items-center justify-between px-4 sm:px-6 sticky top-0 z-30">
+    <header className="bg-gradient-to-r from-indigo-50 to-purple-100 shadow-sm border-b border-indigo-100 h-16 flex items-center justify-between px-4 sm:px-8 sticky top-0 z-30">
       {/* Left - Menu Toggle & Logo */}
       <div className="flex items-center space-x-4">
         <button
           onClick={onToggleSidebar}
-          className="lg:hidden text-gray-500 hover:text-orange-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 p-1 rounded-md"
+          className="lg:hidden text-indigo-600 hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-400 p-2 rounded-full transition"
           aria-label="Chuyển đổi sidebar"
         >
           <Menu size={22} />
         </button>
-
-        {/* <div className="lg:hidden">
+        <div className="lg:hidden">
           <div className="flex items-center">
-            <div className="h-8 w-8 bg-orange-200 rounded-full flex items-center justify-center text-orange-600 font-bold">
+            <div className="h-9 w-9 bg-gradient-to-br from-indigo-200 to-purple-200 rounded-full flex items-center justify-center text-indigo-700 font-bold shadow">
               🦊
             </div>
           </div>
+        </div>
+        {/* <div className="hidden lg:flex items-center space-x-2">
+          <div className="h-9 w-9 bg-gradient-to-br from-indigo-200 to-purple-200 rounded-full flex items-center justify-center text-indigo-700 font-bold shadow">
+            🦊
+          </div>
+          <span className="text-lg font-bold text-indigo-700 tracking-wide drop-shadow-sm">
+            Foxy Admin
+          </span>
         </div> */}
       </div>
 
@@ -124,10 +134,10 @@ function Header({ onToggleSidebar }) {
       <div
         ref={searchRef}
         className={`
-          relative 
+          relative
           ${
             isSearchOpen
-              ? "absolute top-0 left-0 right-0 p-3 bg-white z-50 h-16 flex items-center border-b border-orange-100"
+              ? "absolute top-0 left-0 right-0 p-3 bg-white z-50 h-16 flex items-center border-b border-indigo-100 shadow-lg"
               : "w-full max-w-xs hidden lg:block"
           }
         `}
@@ -135,23 +145,22 @@ function Header({ onToggleSidebar }) {
         {isSearchOpen && (
           <button
             onClick={() => setIsSearchOpen(false)}
-            className="mr-2 text-gray-500 hover:text-orange-500"
+            className="mr-2 text-gray-500 hover:text-indigo-600"
             aria-label="Đóng tìm kiếm"
           >
             <X size={20} />
           </button>
         )}
-
         <div className="relative flex-1">
           <Search
-            size={16}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-orange-400"
+            size={18}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-indigo-400"
           />
           <input
             ref={searchInputRef}
             type="text"
             placeholder="Tìm kiếm..."
-            className="pl-10 pr-4 py-2 w-full text-sm rounded-lg border border-orange-200 bg-orange-50 focus:ring-1 focus:ring-orange-300 focus:border-orange-300 focus:outline-none"
+            className="pl-10 pr-4 py-2 w-full text-sm rounded-xl border border-indigo-200 bg-indigo-50 focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 focus:outline-none shadow-sm transition"
           />
         </div>
       </div>
@@ -161,7 +170,7 @@ function Header({ onToggleSidebar }) {
         {/* Nút Search - Mobile */}
         <button
           onClick={() => setIsSearchOpen(!isSearchOpen)}
-          className="lg:hidden p-2 rounded-md hover:bg-orange-100 text-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+          className="lg:hidden p-2 rounded-full hover:bg-indigo-100 text-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-400 transition"
           aria-label="Tìm kiếm"
         >
           <Search size={18} />
@@ -174,22 +183,22 @@ function Header({ onToggleSidebar }) {
               setIsNotificationOpen(!isNotificationOpen);
               setIsProfileOpen(false);
             }}
-            className="p-2 rounded-md hover:bg-orange-100 text-orange-600 relative focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+            className="p-2 rounded-full hover:bg-indigo-100 text-indigo-600 relative focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-400 transition"
             aria-label="Thông báo"
           >
             <Bell size={18} />
             {notifications.filter((n) => n.unread).length > 0 && (
-              <span className="absolute top-1 right-1 bg-red-500 h-2 w-2 rounded-full"></span>
+              <span className="absolute top-1 right-1 bg-red-500 h-2 w-2 rounded-full animate-pulse"></span>
             )}
           </button>
-          {/* thông báo */}
+          {/* thông báo dropdown */}
           {isNotificationOpen && (
-            <div className="absolute right-0 mt-2 w-72 sm:w-80 bg-white shadow-lg rounded-lg border border-orange-100 z-20">
-              <div className="px-4 py-2 border-b border-orange-100 text-sm font-semibold text-gray-700 bg-orange-50 flex justify-between items-center">
+            <div className="absolute right-0 mt-2 w-72 sm:w-80 bg-white shadow-2xl rounded-xl border border-indigo-100 z-20 animate-fade-in">
+              <div className="px-4 py-2 border-b border-indigo-100 text-sm font-semibold text-gray-700 bg-gradient-to-r from-indigo-50 to-purple-50 flex justify-between items-center rounded-t-xl">
                 <span>Thông báo</span>
                 <button
                   onClick={() => setIsNotificationOpen(false)}
-                  className="text-gray-500 hover:text-orange-500 lg:hidden"
+                  className="text-gray-500 hover:text-indigo-600 lg:hidden"
                   aria-label="Đóng thông báo"
                 >
                   <X size={16} />
@@ -200,12 +209,12 @@ function Header({ onToggleSidebar }) {
                   notifications.map((n) => (
                     <div
                       key={n.id}
-                      className={`px-4 py-2 text-sm border-b ${
-                        n.unread ? "bg-orange-50" : "bg-white"
-                      }`}
+                      className={`px-4 py-2 text-sm border-b last:border-0
+                        ${n.unread ? "bg-indigo-50" : "bg-white"}
+                        hover:bg-indigo-100 transition`}
                     >
                       <div className="flex justify-between">
-                        <span className="font-medium">{n.title}</span>
+                        <span className="font-medium text-indigo-700">{n.title}</span>
                         <span className="text-xs text-gray-400">{n.time}</span>
                       </div>
                       <p className="text-xs text-gray-500">{n.message}</p>
@@ -217,10 +226,10 @@ function Header({ onToggleSidebar }) {
                   </div>
                 )}
               </div>
-              <div className="px-4 py-2 border-t bg-orange-50 text-center">
+              <div className="px-4 py-2 border-t bg-gradient-to-r from-indigo-50 to-purple-50 text-center rounded-b-xl">
                 <a
                   href="/notifications"
-                  className="text-xs text-orange-600 hover:underline"
+                  className="text-xs text-indigo-600 hover:underline font-semibold"
                 >
                   Xem tất cả
                 </a>
@@ -229,6 +238,14 @@ function Header({ onToggleSidebar }) {
           )}
         </div>
 
+        {/* Messages Button */}
+        <button
+          className="p-2 rounded-full hover:bg-indigo-100 text-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-400 transition"
+          aria-label="Tin nhắn"
+        >
+          <MessageSquare size={18} />
+        </button>
+
         {/* User Profile */}
         <div className="relative" ref={profileRef}>
           <button
@@ -236,35 +253,35 @@ function Header({ onToggleSidebar }) {
               setIsProfileOpen(!isProfileOpen);
               setIsNotificationOpen(false);
             }}
-            className="flex items-center space-x-2 bg-orange-50 p-1.5 rounded-md hover:bg-orange-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+            className="flex items-center space-x-2 bg-gradient-to-r from-indigo-50 to-purple-50 p-1.5 rounded-full hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-400 transition"
             aria-label="Menu người dùng"
             aria-expanded={isProfileOpen}
           >
-            <div className="h-8 w-8 bg-orange-200 text-orange-700 rounded-full flex items-center justify-center text-sm font-semibold">
+            <div className="h-9 w-9 bg-gradient-to-br from-indigo-200 to-purple-200 text-indigo-700 rounded-full flex items-center justify-center text-base font-bold shadow">
               AD
             </div>
             <div className="hidden lg:flex flex-col text-left">
-              <span className="text-sm font-medium text-gray-700">Admin</span>
-              <span className="text-xs text-orange-500">Quản trị viên</span>
+              <span className="text-sm font-semibold text-gray-700">Admin</span>
+              <span className="text-xs text-indigo-600">Quản trị viên</span>
             </div>
             <ChevronDown
-              size={14}
-              className="text-orange-400 hidden lg:block"
+              size={16}
+              className="text-indigo-400 hidden lg:block"
             />
           </button>
-          {/* profile */}
+          {/* Dropdown */}
           {isProfileOpen && (
-            <div className="absolute right-0 mt-2 w-72 bg-white shadow-lg rounded-lg border border-orange-100 z-20">
-              <div className="px-4 py-3 border-b bg-orange-50 flex justify-between items-center">
+            <div className="absolute right-0 mt-2 w-72 bg-white shadow-2xl rounded-xl border border-indigo-100 z-20 animate-fade-in">
+              <div className="px-4 py-3 border-b bg-gradient-to-r from-indigo-50 to-purple-50 flex justify-between items-center rounded-t-xl">
                 <div>
-                  <p className="text-sm font-semibold text-gray-700">Admin</p>
-                  <p className="text-xs text-orange-500">
+                  <p className="text-sm font-bold text-gray-700">Admin</p>
+                  <p className="text-xs text-indigo-600">
                     admin@foxyfashion.com
                   </p>
                 </div>
                 <button
                   onClick={() => setIsProfileOpen(false)}
-                  className="text-gray-500 hover:text-orange-500 lg:hidden"
+                  className="text-gray-500 hover:text-indigo-600 lg:hidden"
                   aria-label="Đóng menu"
                 >
                   <X size={16} />
@@ -273,26 +290,69 @@ function Header({ onToggleSidebar }) {
 
               {/* Thông tin người dùng */}
               <div className="p-4 space-y-2">
-                <div>
+                <div className="flex items-center gap-2">
+                  <User size={16} className="text-indigo-400" />
                   <span className="text-gray-500 text-sm">Họ tên:</span>
                   <p className="font-medium text-gray-700">Nguyễn Văn A</p>
                 </div>
-                <div>
+                <div className="flex items-center gap-2">
+                  <MailIcon className="text-indigo-400" />
                   <span className="text-gray-500 text-sm">Email:</span>
                   <p className="font-medium text-gray-700">
                     admin@foxyfashion.com
                   </p>
                 </div>
-                <div>
+                <div className="flex items-center gap-2">
+                  <Settings size={16} className="text-indigo-400" />
                   <span className="text-gray-500 text-sm">Vai trò:</span>
                   <p className="font-medium text-gray-700">Quản trị viên</p>
                 </div>
+              </div>
+
+              {/* Menu Actions */}
+              <div className="border-t border-indigo-100 p-2">
+                <a
+                  href="/profile"
+                  className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 rounded-md transition"
+                >
+                  <User size={16} /> Hồ sơ cá nhân
+                </a>
+                <a
+                  href="/settings"
+                  className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 rounded-md transition"
+                >
+                  <Settings size={16} /> Cài đặt
+                </a>
+                <a
+                  href="/logout"
+                  className="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md transition"
+                >
+                  <LogOut size={16} /> Đăng xuất
+                </a>
               </div>
             </div>
           )}
         </div>
       </div>
     </header>
+  );
+}
+
+// Icon bổ sung cho email
+function MailIcon(props) {
+  return (
+    <svg
+      width={16}
+      height={16}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      viewBox="0 0 24 24"
+      {...props}
+    >
+      <rect x={3} y={5} width={18} height={14} rx={2} />
+      <path d="M3 7l9 6 9-6" />
+    </svg>
   );
 }
 

@@ -1,56 +1,57 @@
-import React from 'react';
-import { Heart, Mail, Phone, MapPin } from 'lucide-react';
+import React from "react";
+import { Home, Mail, MessageSquare, Users, Settings } from "lucide-react";
 
 function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="mt-auto pt-6 bg-orange-50">
-      <div className="max-w-screen-xl mx-auto px-6 py-8 shadow-lg">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-gray-600">
-          {/* Logo + Giới thiệu */}
-          <div>
-            <div className="flex items-center space-x-2 mb-4">
-              <div className="h-10 w-10 bg-orange-300 rounded-md flex items-center justify-center">
-                <span className="font-bold text-white text-xl">F</span>
-              </div>
-              <span className="text-lg font-semibold text-gray-800">Foxy Fashion</span>
+    <footer className="bg-gradient-to-r from-indigo-50 to-purple-100 border-t border-indigo-100 shadow-inner pt-6 pb-2">
+      {/* Footer trên */}
+      <div className="container mx-auto px-4">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          {/* Logo và thông tin */}
+          <div className="flex items-center space-x-3">
+            <div className="h-10 w-10 bg-gradient-to-br from-indigo-200 to-purple-200 text-indigo-700 rounded-full flex items-center justify-center font-bold text-xl shadow-md border-2 border-purple-200">
+              🦊
             </div>
-            <p className="text-xs text-gray-500">
-              Foxy – Nơi mua sắm thời trang hàng đầu dành cho bạn. Phong cách, chất lượng, và sự hài lòng.
-            </p>
+            <h3 className="text-indigo-800 font-bold text-xl tracking-wide drop-shadow">Foxy Admin</h3>
           </div>
-
-          {/* Thông tin liên hệ */}
-          <div>
-            <h4 className="font-medium text-gray-700 mb-4">Liên hệ</h4>
-            <ul className="space-y-2 text-xs">
-              <li className="flex items-center text-gray-600">
-                <MapPin className="w-4 h-4 mr-2" /> 123 Đường Thời Trang, TP.HCM
-              </li>
-              <li className="flex items-center text-gray-600">
-                <Mail className="w-4 h-4 mr-2" /> support@foxy.vn
-              </li>
-              <li className="flex items-center text-gray-600">
-                <Phone className="w-4 h-4 mr-2" /> 0123 456 789
-              </li>
-            </ul>
-          </div>
-
-          {/* Chính sách & điều khoản */}
-          <div className="flex flex-col space-y-3 md:items-end">
-            <a href="/terms" className="text-xs text-gray-600 hover:text-orange-500 transition-colors">Điều khoản dịch vụ</a>
-            <a href="/privacy" className="text-xs text-gray-600 hover:text-orange-500 transition-colors">Chính sách bảo mật</a>
-            <a href="/help" className="text-xs text-gray-600 hover:text-orange-500 transition-colors">Trung tâm trợ giúp</a>
+          {/* Menu footer */}
+          <div className="flex items-center space-x-6">
+            <a href="/admin" className="text-gray-600 hover:text-indigo-700 text-sm flex items-center gap-1.5 font-medium transition">
+              <Home size={18} />
+              <span>Trang chủ</span>
+            </a>
+            <a href="/admin/users" className="text-gray-600 hover:text-indigo-700 text-sm flex items-center gap-1.5 font-medium transition">
+              <Users size={18} />
+              <span>Người dùng</span>
+            </a>
+            <a href="/messages" className="text-gray-600 hover:text-indigo-700 text-sm flex items-center gap-1.5 font-medium transition">
+              <MessageSquare size={18} />
+              <span>Tin nhắn</span>
+            </a>
+            <a href="/settings" className="text-gray-600 hover:text-indigo-700 text-sm flex items-center gap-1.5 font-medium transition">
+              <Settings size={18} />
+              <span>Cài đặt</span>
+            </a>
           </div>
         </div>
+      </div>
 
-        {/* Line dưới cùng */}
-        <div className="mt-8 border-t border-orange-200 pt-4 flex flex-col md:flex-row justify-between items-center text-xs text-gray-400">
-          <p className="mb-2 md:mb-0">&copy; {currentYear} Foxy. Đã đăng ký bản quyền.</p>
-          <p className="flex items-center text-gray-600">
-            Phát triển với <Heart size={10} className="text-red-500 mx-1" fill="currentColor" /> bởi Team Foxy
-          </p>
+      {/* Divider */}
+      <div className="my-4 border-t border-indigo-100" />
+
+      {/* Footer dưới */}
+      <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-2">
+        <p className="text-gray-500 text-sm flex items-center gap-2">
+          <span className="font-bold text-indigo-600">© {currentYear} FoxyStore Admin</span>
+          <span className="hidden md:inline">·</span>
+          <span className="hidden md:inline">All rights reserved.</span>
+        </p>
+        <div className="flex items-center space-x-4">
+          <a href="/terms" className="text-xs text-indigo-600 hover:underline hover:text-purple-600 font-semibold transition">Điều khoản</a>
+          <a href="/privacy" className="text-xs text-indigo-600 hover:underline hover:text-purple-600 font-semibold transition">Chính sách</a>
+          <a href="/cookies" className="text-xs text-indigo-600 hover:underline hover:text-purple-600 font-semibold transition">Cookies</a>
         </div>
       </div>
     </footer>
