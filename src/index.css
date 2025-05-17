@@ -74,6 +74,9 @@ body {
     .btn-primary {
       @apply bg-black text-white rounded-md text-base md:text-xl  cursor-pointer hover:bg-red-600 transition-all duration-500;
     }
+    .btn-secondary{
+      @apply bg-black text-white cursor-pointer hover:bg-white hover:text-black transition-all duration-300 rounded-tr-2xl rounded-bl-2xl border-[1px] border-black
+    }
     .top-menu-item {
       @apply hover:text-red-500 relative after:absolute after:bottom-0 after:left-0 after:bg-red-500 after:h-0.5 after:w-0 hover:after:w-full after:transition-all after:ease-in-out after:duration-300;
     }
@@ -124,3 +127,7 @@ body {
     scroll-behavior: auto !important;
   }
 }
+/* @keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+} */

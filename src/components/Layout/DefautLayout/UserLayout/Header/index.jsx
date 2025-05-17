@@ -14,7 +14,6 @@ import UserPopUp from '../../../../Popups/UserPopUp';
 
 import { Link } from 'react-router-dom';
 import NavPopups from '../../../../Popups/NavPopups';
-import { div } from 'framer-motion/client';
 import Image from "../../../../../assets/images/1168.png";
 import CartShoppingPopup from '../../../../Popups/CartShoppingPopup';
 import WishlistPopup from '../../../../Popups/WishlistPopup';
@@ -44,7 +43,7 @@ function Header({setIsPopUp}) {
   const [isUser,setIsUser]=useState(false);
   const [isNav,setIsNav]=useState(null);
   const [isCart,setIsCart]=useState(false);
-  const [isLove,setIsLove]=useState(false)
+  const [isLove,setIsLove]=useState(false);
   const handleOnclickSearch=()=>{
     setIsSearch(!isSearch)
     setIsPopUp(true)

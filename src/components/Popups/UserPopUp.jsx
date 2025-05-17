@@ -14,6 +14,11 @@ function UserPopUp({setIsUser,setIsPopUp}) {
         setIsPopUp(false)
         setIsUser(false)
     }
+    const handleOnclickLogin=()=>{
+        setIsUser(false)
+        setIsPopUp(false)
+        navigate("/login")
+    }
     return (
         <motion.div
         className='px-2 pt-3 pb-14 font-kumbh'
@@ -44,10 +49,12 @@ function UserPopUp({setIsUser,setIsPopUp}) {
                 :
                 <div>
                 <div className='flex justify-center items-center mb-10'>
-                    <button className='btn-primary px-20 py-3'>
-                        <Link to={"/login"}>
+                    <button className='btn-primary px-20 py-3'
+                        onClick={()=>handleOnclickLogin()}
+                    >
+                        
                             Đăng nhập 
-                        </Link>
+                    
                     </button>
                 </div>
                 <p className='text-xl flex justify-center pb-5 border-b-1 border-gray-200'>

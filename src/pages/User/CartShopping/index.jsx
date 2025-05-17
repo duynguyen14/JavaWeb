@@ -9,6 +9,7 @@ import CheckoutSteps from "./CheckoutSteps";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {request} from "../../../untils/request.js"
+import { useNavigate } from "react-router-dom";
 const data = [
   {
     id: 1,
@@ -43,6 +44,7 @@ function CartShopping() {
   const [products,setProduct]=useState(data);
   const token= localStorage.getItem("token")
   console.log("token : ",token);
+  const navigate =useNavigate();
   const handleOnclickPlus=(item)=>{
    const updateProducts= products.map((product,index)=>{
     return product.id === item.id ? {...product, quantity: product.quantity+1}: product
@@ -101,15 +103,18 @@ function CartShopping() {
     }
     fetch();
   },[])
+  const handleOnclickOrder=()=>{
+    navigate("/order")
+  }
   return (
     <div className="mx-auto py-10 border-gray-300 border-y-[1px]">
       <ToastContainer />
       <div className="flex flex-col lg:flex-row gap-6">
         <div className="">
-          <CheckoutSteps/>
+          <CheckoutSteps currentStep={1}/>
           <CartItemList products={products} handleOnclickSubtract={handleOnclickSubtract} handleOnclickPlus={handleOnclickPlus} setProduct={setProduct} handeleOnclickDelete={handeleOnclickDelete}/>
         </div>
-        <CartSummary products={products} setProduct={setProduct}/>
+        <CartSummary products={products} setProduct={setProduct} handleOnclickOrder={handleOnclickOrder}/>
       </div>
     </div>
   );

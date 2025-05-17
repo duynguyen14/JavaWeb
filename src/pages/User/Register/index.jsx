@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 import { request } from '../../../untils/request';
 import axios from 'axios';
 function Register() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
+    const navigate =useNavigate()
     const [user, setUser] = useState({
         userName: "",
         email: "",
@@ -31,6 +32,10 @@ function Register() {
             const response = await request.post("user/register", userData);
             console.log(response);
             alert("Đăng ký thành công!");
+            setTimeout(()=>{
+                navigate("/login")
+            },1000)
+            
         } catch (error) {
             console.log("Lỗi đăng ký:", error);
             alert("Đăng ký thất bại!");
