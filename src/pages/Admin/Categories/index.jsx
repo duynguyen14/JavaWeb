@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Plus, Pencil, Trash2, X } from "lucide-react";
+import { Plus, Pencil, Trash2, X, ChevronDown, ChevronUp } from "lucide-react";
 
 // Mock data for demo
 const mockCatalogs = [
@@ -11,6 +11,8 @@ const mockCategories = [
   { CategoryId: 1, Name: "Áo", CatalogId: 1 },
   { CategoryId: 2, Name: "Quần", CatalogId: 1 },
   { CategoryId: 3, Name: "Váy", CatalogId: 2 },
+  { CategoryId: 4, Name: "Áo khoác", CatalogId: 1 },
+  { CategoryId: 5, Name: "Đầm", CatalogId: 2 },
 ];
 
 function CategoryManagement() {
@@ -21,14 +23,33 @@ function CategoryManagement() {
   const [modalType, setModalType] = useState("add"); // add | edit
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [form, setForm] = useState({ Name: "", CatalogId: "" });
+  const [expandedCatalog, setExpandedCatalog] = useState(null);
+
+  // Toggle xem thể loại trong catalog
+  const toggleExpand = (catalogId) => {
+    setExpandedCatalog(expandedCatalog === catalogId ? null : catalogId);
+  };
+
+  // Bỏ tích thể loại khỏi danh mục
+  const handleToggleCategory = (categoryId, catalogId) => {
+    setCategories((categories) =>
+      categories.map((cat) =>
+        cat.CategoryId === categoryId
+          ? { ...cat, CatalogId: cat.CatalogId === catalogId ? null : catalogId }
+          : cat
+      )
+    );
+  };
 
   // Lọc danh mục
-  const filteredCategories = categories.filter(
-    (c) =>
-      c.Name.toLowerCase().includes(search.toLowerCase()) ||
-      catalogs.find((cat) => cat.CatalogId === c.CatalogId)?.Name
-        .toLowerCase()
-        .includes(search.toLowerCase())
+  const filteredCatalogs = catalogs.filter(
+    (cat) =>
+      cat.Name.toLowerCase().includes(search.toLowerCase()) ||
+      categories.some(
+        (c) =>
+          c.CatalogId === cat.CatalogId &&
+          c.Name.toLowerCase().includes(search.toLowerCase())
+      )
   );
 
   // Mở modal
@@ -88,7 +109,7 @@ function CategoryManagement() {
   return (
     <div>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-        <h2 className="text-2xl font-bold">Quản lý danh mục</h2>
+        <h2 className="text-2xl font-bold">Quản lý danh mục & thể loại</h2>
         <button
           className="flex items-center bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition"
           onClick={() => openModal("add")}
@@ -100,7 +121,7 @@ function CategoryManagement() {
         <div className="relative w-full md:w-1/3">
           <input
             type="text"
-            placeholder="Tìm kiếm danh mục hoặc catalog..."
+            placeholder="Tìm kiếm danh mục hoặc thể loại..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-indigo-50"
@@ -115,36 +136,95 @@ function CategoryManagement() {
           <thead className="bg-indigo-50 text-indigo-700">
             <tr>
               <th className="p-3 font-semibold">Tên danh mục</th>
-              <th className="p-3 font-semibold">Catalog</th>
+              <th className="p-3 font-semibold">Số thể loại</th>
               <th className="p-3 text-center font-semibold">Hành động</th>
             </tr>
           </thead>
           <tbody>
-            {filteredCategories.map((category) => (
-              <tr key={category.CategoryId} className="border-t hover:bg-indigo-50 transition">
-                <td className="p-3">{category.Name}</td>
-                <td className="p-3">
-                  {catalogs.find((c) => c.CatalogId === category.CatalogId)?.Name || ""}
-                </td>
-                <td className="p-3 flex justify-center space-x-2">
-                  <button
-                    className="text-indigo-600 hover:text-indigo-800 p-2 rounded-full hover:bg-indigo-100 transition"
-                    title="Sửa"
-                    onClick={() => openModal("edit", category)}
-                  >
-                    <Pencil size={18} />
-                  </button>
-                  <button
-                    className="text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-100 transition"
-                    title="Xóa"
-                    onClick={() => handleDelete(category.CategoryId)}
-                  >
-                    <Trash2 size={18} />
-                  </button>
-                </td>
-              </tr>
-            ))}
-            {filteredCategories.length === 0 && (
+            {catalogs.map((catalog) => {
+              const categoryList = categories.filter((c) => c.CatalogId === catalog.CatalogId);
+              return (
+                <React.Fragment key={catalog.CatalogId}>
+                  <tr className="border-t hover:bg-indigo-50 transition">
+                    <td
+                      className="p-3 font-semibold cursor-pointer"
+                      onClick={() => toggleExpand(catalog.CatalogId)}
+                    >
+                      <span className="flex items-center gap-2">
+                        {catalog.Name}
+                        {expandedCatalog === catalog.CatalogId ? (
+                          <ChevronUp size={16} />
+                        ) : (
+                          <ChevronDown size={16} />
+                        )}
+                      </span>
+                    </td>
+                    <td className="p-3">
+                      <span className="bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded text-xs font-semibold">
+                        {categoryList.length}
+                      </span>
+                    </td>
+                    <td className="p-3 flex justify-center space-x-2">
+                      <button
+                        className="text-indigo-600 hover:text-indigo-800 p-2 rounded-full hover:bg-indigo-100 transition"
+                        title="Sửa"
+                        onClick={() => openModal("edit", catalog)}
+                      >
+                        <Pencil size={18} />
+                      </button>
+                      <button
+                        className="text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-100 transition"
+                        title="Xóa"
+                        onClick={() => {
+                          if (window.confirm("Xóa danh mục này?")) {
+                            setCategories(categories =>
+                              categories.map(cat =>
+                                cat.CatalogId === catalog.CatalogId
+                                  ? { ...cat, CatalogId: null }
+                                  : cat
+                              )
+                            );
+                            setCatalogs(catalogs.filter(c => c.CatalogId !== catalog.CatalogId));
+                          }
+                        }}
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </td>
+                  </tr>
+                  {expandedCatalog === catalog.CatalogId && (
+                    <tr>
+                      <td colSpan={3} className="bg-indigo-50 p-4">
+                        <div className="font-semibold mb-2 text-indigo-700">Quản lý thể loại thuộc danh mục này:</div>
+                        <div className="flex flex-wrap gap-3">
+                          {categories.length === 0 && (
+                            <span className="text-gray-400 italic">Chưa có thể loại nào.</span>
+                          )}
+                          {categories.map(cat => (
+                            <label
+                              key={cat.CategoryId}
+                              className="flex items-center gap-2 bg-white px-3 py-1 rounded shadow border"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={cat.CatalogId === catalog.CatalogId}
+                                onChange={() => handleToggleCategory(cat.CategoryId, catalog.CatalogId)}
+                                className="accent-indigo-600"
+                              />
+                              <span className="text-sm">{cat.Name}</span>
+                            </label>
+                          ))}
+                        </div>
+                        <div className="text-xs text-gray-400 mt-2">
+                          Bỏ tích để loại bỏ thể loại khỏi danh mục này.
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
+              );
+            })}
+            {catalogs.length === 0 && (
               <tr>
                 <td colSpan="3" className="text-center p-4 text-gray-500">
                   Không tìm thấy danh mục.
@@ -181,7 +261,7 @@ function CategoryManagement() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Catalog</label>
+                <label className="block text-sm font-medium mb-1">Thuộc catalog</label>
                 <select
                   required
                   value={form.CatalogId}

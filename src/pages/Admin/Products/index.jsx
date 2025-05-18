@@ -230,6 +230,40 @@ function ProductManagement() {
     setPopupIndex((prev) => (prev === popupImages.length - 1 ? 0 : prev + 1));
   };
 
+  // Slide state for product detail
+  const [showDetail, setShowDetail] = useState(false);
+  const [detailProduct, setDetailProduct] = useState(null);
+  const [detailImageIdx, setDetailImageIdx] = useState(0);
+  const [expandedRow, setExpandedRow] = useState(null);
+
+  // Open product detail slide
+  const handleOpenDetail = (product) => {
+    setDetailProduct(product);
+    setDetailImageIdx(0);
+    setShowDetail(true);
+  };
+
+  // Close product detail slide
+  const handleCloseDetail = () => {
+    setShowDetail(false);
+    setDetailProduct(null);
+    setDetailImageIdx(0);
+  };
+
+  // Next/Prev image in detail slide
+  const handleDetailPrevImage = () => {
+    if (!detailProduct?.Images?.length) return;
+    setDetailImageIdx((prev) =>
+      prev === 0 ? detailProduct.Images.length - 1 : prev - 1
+    );
+  };
+  const handleDetailNextImage = () => {
+    if (!detailProduct?.Images?.length) return;
+    setDetailImageIdx((prev) =>
+      prev === detailProduct.Images.length - 1 ? 0 : prev + 1
+    );
+  };
+
   // Render
   return (
     <div>
@@ -333,53 +367,67 @@ function ProductManagement() {
           </thead>
           <tbody>
             {filteredProducts.map(product => (
-              <tr key={product.ProductId} className="border-t hover:bg-indigo-50 transition">
-                <td className="p-3">
-                  {product.Images && product.Images.length > 0 ? (
-                    <img
-                      src={product.Images[0].Image}
-                      alt={product.Name}
-                      className="w-16 h-16 object-cover rounded shadow cursor-pointer"
-                      onClick={() => handleOpenImagePopup(product.Images.map(img => img.Image))}
-                      title="Xem tất cả ảnh"
-                    />
-                  ) : (
-                    <span className="text-gray-400"><ImageIcon size={32} /></span>
-                  )}
-                </td>
-                <td className="p-3">{product.Name}</td>
-                <td className="p-3">{formatPrice(product.Price)}</td>
-                <td className="p-3">{product.Quantity}</td>
-                <td className="p-3">{categories.find(c => c.CategoryId === product.CategoryId)?.Name || ""}</td>
-                <td className="p-3">
-                  <span className={`px-2 py-1 rounded-full text-xs font-semibold
-                    ${product.Status === "Còn hàng" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
-                    {product.Status}
-                  </span>
-                </td>
-                <td className="p-3">
-                  {product.Sizes && product.Sizes.length > 0
-                    ? product.Sizes.map(sid => mockSizes.find(s => s.SizeId === sid)?.SizeName).join(", ")
-                    : <span className="text-gray-400">-</span>
-                  }
-                </td>
-                <td className="p-3 flex justify-center space-x-2">
-                  <button
-                    className="text-indigo-600 hover:text-indigo-800 p-2 rounded-full hover:bg-indigo-100 transition"
-                    title="Sửa"
-                    onClick={() => openModal("edit", product)}
-                  >
-                    <Pencil size={18} />
-                  </button>
-                  <button
-                    className="text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-100 transition"
-                    title="Xóa"
-                    onClick={() => handleDelete(product.ProductId)}
-                  >
-                    <Trash2 size={18} />
-                  </button>
-                </td>
-              </tr>
+              <React.Fragment key={product.ProductId}>
+                <tr
+                  className={`border-t hover:bg-indigo-50 transition cursor-pointer`}
+                  onClick={() => setExpandedRow(expandedRow === product.ProductId ? null : product.ProductId)}
+                >
+                  <td className="p-3">
+                    {product.Images && product.Images.length > 0 ? (
+                      <img
+                        src={product.Images[0].Image}
+                        alt={product.Name}
+                        className="w-16 h-16 object-cover rounded shadow"
+                        title="Xem chi tiết sản phẩm"
+                      />
+                    ) : (
+                      <span className="text-gray-400"><ImageIcon size={32} /></span>
+                    )}
+                  </td>
+                  <td className="p-3">{product.Name}</td>
+                  <td className="p-3">{formatPrice(product.Price)}</td>
+                  <td className="p-3">{product.Quantity}</td>
+                  <td className="p-3">{categories.find(c => c.CategoryId === product.CategoryId)?.Name || ""}</td>
+                  <td className="p-3">
+                    <span className={`px-2 py-1 rounded-full text-xs font-semibold
+                      ${product.Status === "Còn hàng" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+                      {product.Status}
+                    </span>
+                  </td>
+                  <td className="p-3">
+                    {product.Sizes && product.Sizes.length > 0
+                      ? product.Sizes.map(sid => mockSizes.find(s => s.SizeId === sid)?.SizeName).join(", ")
+                      : <span className="text-gray-400">-</span>
+                    }
+                  </td>
+                  <td className="p-3 flex justify-center space-x-2">
+                    <button
+                      className="text-indigo-600 hover:text-indigo-800 p-2 rounded-full hover:bg-indigo-100 transition"
+                      title="Sửa"
+                      onClick={e => { e.stopPropagation(); openModal("edit", product); }}
+                    >
+                      <Pencil size={18} />
+                    </button>
+                    <button
+                      className="text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-100 transition"
+                      title="Xóa"
+                      onClick={e => { e.stopPropagation(); handleDelete(product.ProductId); }}
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </td>
+                </tr>
+                {expandedRow === product.ProductId && (
+                  <tr>
+                    <td colSpan={8} className="bg-indigo-50 p-6 animate-fade-in">
+                      <div>
+                        <span className="font-medium">Mô tả: </span>
+                        <span>{product.Description || <span className="italic text-gray-400">Không có mô tả</span>}</span>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </React.Fragment>
             ))}
             {filteredProducts.length === 0 && (
               <tr>
@@ -526,9 +574,92 @@ function ProductManagement() {
         </div>
       )}
 
+      {showDetail && detailProduct && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-60 transition-all">
+          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-0 flex flex-col md:flex-row overflow-hidden">
+            {/* Ảnh slide */}
+            <div className="flex flex-col items-center justify-center bg-indigo-50 p-6 md:w-1/2 min-h-[340px]">
+              <div className="flex items-center gap-3">
+                <button
+                  className="p-2 rounded-full bg-gray-100 hover:bg-indigo-100 text-indigo-600 transition"
+                  onClick={handleDetailPrevImage}
+                  aria-label="Trước"
+                >
+                  <ChevronLeft size={28} />
+                </button>
+                <img
+                  src={detailProduct.Images[detailImageIdx]?.Image}
+                  alt="Ảnh sản phẩm"
+                  className="max-h-[260px] max-w-[220px] rounded-lg shadow border bg-white"
+                  style={{ objectFit: "contain" }}
+                />
+                <button
+                  className="p-2 rounded-full bg-gray-100 hover:bg-indigo-100 text-indigo-600 transition"
+                  onClick={handleDetailNextImage}
+                  aria-label="Sau"
+                >
+                  <ChevronRight size={28} />
+                </button>
+              </div>
+              <div className="flex gap-2 mt-3">
+                {detailProduct.Images.map((img, idx) => (
+                  <img
+                    key={idx}
+                    src={img.Image}
+                    alt="thumb"
+                    className={`w-10 h-10 object-cover rounded border cursor-pointer ${idx === detailImageIdx ? "ring-2 ring-indigo-500" : ""}`}
+                    onClick={() => setDetailImageIdx(idx)}
+                  />
+                ))}
+              </div>
+            </div>
+            {/* Thông tin sản phẩm */}
+            <div className="flex-1 p-6 flex flex-col justify-between">
+              <button
+                className="absolute top-3 right-3 text-gray-400 hover:text-red-500"
+                onClick={handleCloseDetail}
+                aria-label="Đóng"
+              >
+                <X size={24} />
+              </button>
+              <div>
+                <h3 className="text-2xl font-bold text-indigo-700 mb-2">{detailProduct.Name}</h3>
+                <div className="mb-2 text-lg font-semibold text-indigo-600">{formatPrice(detailProduct.Price)}</div>
+                <div className="mb-2">
+                  <span className="font-medium">Danh mục: </span>
+                  {categories.find(c => c.CategoryId === detailProduct.CategoryId)?.Name || ""}
+                </div>
+                <div className="mb-2">
+                  <span className="font-medium">Số lượng: </span>
+                  {detailProduct.Quantity}
+                </div>
+                <div className="mb-2">
+                  <span className="font-medium">Trạng thái: </span>
+                  <span className={`px-2 py-1 rounded-full text-xs font-semibold
+                    ${detailProduct.Status === "Còn hàng" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+                    {detailProduct.Status}
+                  </span>
+                </div>
+                <div className="mb-2">
+                  <span className="font-medium">Size: </span>
+                  {detailProduct.Sizes && detailProduct.Sizes.length > 0
+                    ? detailProduct.Sizes.map(sid => sizes.find(s => s.SizeId === sid)?.SizeName).join(", ")
+                    : <span className="text-gray-400">-</span>
+                  }
+                </div>
+                <div className="mb-2">
+                  <span className="font-medium">Mô tả: </span>
+                  <span>{detailProduct.Description}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Popup xem nhiều ảnh */}
       {showImagePopup && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 transition-all">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-60 transition-all">
           <div className="relative bg-white rounded-xl shadow-2xl p-4 flex flex-col items-center max-w-lg w-full">
             <button
               className="absolute top-2 right-2 text-gray-400 hover:text-red-500"

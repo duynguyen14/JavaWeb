@@ -4,7 +4,7 @@ import Image2 from "../../../assets/images/1168.png"
 import { motion } from 'framer-motion'
 import ProductItem from '../../../components/OtherComponent/ProductItem'
 import { Link } from 'react-router-dom'
-function ProductHot({saleProduct}) {
+function ProductHot({saleProduct = []}) {
     
     return (
         <motion.div
