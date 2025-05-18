@@ -16,7 +16,6 @@ function Register() {
   });
 
   const [errors, setErrors] = useState({});
-
   const validateField = (name, value) => {
     let error = "";
     switch (name) {

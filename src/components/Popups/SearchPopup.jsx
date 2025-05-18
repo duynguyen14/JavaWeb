@@ -12,7 +12,7 @@ import ProductItem from '../OtherComponent/ProductItem';
 
 
 function SearchPopup({setIsSearch,setIsPopUp}) {
-  const hotSearchs=["Áo sơ mi", "Đồ ngủ nam", "Đồ bơi", "Hà Hoàng Anh óc bò "]
+  const hotSearchs=["Áo sơ mi", "Đồ ngủ nam", "Đồ bơi",]
   const product=[
     {
       name:"Túi Xách Nhỏ In Hoạ Tiết Chuyển Màu",

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Pencil, Trash2, Plus, Search, X, UserPlus, Lock, Unlock } from 'lucide-react';
-
+import {request} from "../../../untils/request.js"
 // Dữ liệu mẫu
 const mockUsers = [
   {
@@ -32,11 +32,11 @@ const mockUsers = [
   },
 ];
 
-const roles = ['Admin', 'User'];
+const roles = ['ADMIN', 'USER'];
 const genders = ['Nam', 'Nữ', 'Khác'];
 
 function UserManagement() {
-  const [users, setUsers] = useState(mockUsers);
+  const [users, setUsers] = useState([]);
   const [search, setSearch] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState('add'); // 'add' | 'edit'
@@ -44,27 +44,42 @@ function UserManagement() {
 
   // Form state
   const [form, setForm] = useState({
-    name: '',
+    userName: '',
     email: '',
-    role: 'User',
+    roleName: 'USER',
     status: 'Hoạt động',
     gender: 'Nam',
     dob: '',
   });
+  
+  useEffect(()=>{
+    const fetch = async()=>{
+      try{
+        const response =await request.get("user/list");
+        setUsers(response.data.result);
+        console.log(response)
+      }
+      catch(e){
+        console.log("Loi ",e)
+      }
+    }
+    fetch();
+  },[])
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 5;
+  const pageSize = 8;
   const totalPages = Math.ceil(users.length / pageSize);
-
   // Lọc người dùng
-  const filteredUsers = users.filter(user =>
-    user.name.toLowerCase().includes(search.toLowerCase()) ||
-    user.email.toLowerCase().includes(search.toLowerCase())
-  );
-
+  // const filteredUsers = users.length>0 ? users.filter(user =>
+  //   user.userName.includes(search.toLowerCase()) ||
+  //   user.email.includes(search.toLowerCase())
+  // ):
+  // []
+  // ;
+  // console.log(filteredUsers)
   // Lấy dữ liệu trang hiện tại
-  const paginatedUsers = filteredUsers.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  // const paginatedUsers = filteredUsers.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   // Khi search thay đổi thì về trang 1
   React.useEffect(() => {
@@ -72,25 +87,25 @@ function UserManagement() {
   }, [search, users.length]);
 
   // Mở modal thêm/sửa
-  const openModal = (type, user = null) => {
+  const openModal = (type, user) => {
     setModalType(type);
     setShowModal(true);
     if (type === 'edit' && user) {
       setSelectedUser(user);
       setForm({
-        name: user.name,
+        userName: user.userName,
         email: user.email,
-        role: user.role,
+        roleName: user.roleName,
         status: user.status,
-        gender: user.gender || 'Nam',
+        gender: user.gender || 'Nam', 
         dob: user.dob ? user.dob.slice(0, 10) : '',
       });
     } else {
       setSelectedUser(null);
       setForm({
-        name: '',
+        userName: '',
         email: '',
-        role: 'User',
+        roleName: 'USER',
         status: 'Hoạt động',
         gender: 'Nam',
         dob: '',
@@ -102,7 +117,7 @@ function UserManagement() {
   const closeModal = () => {
     setShowModal(false);
     setSelectedUser(null);
-    setForm({ name: '', email: '', role: 'User', status: 'Hoạt động', gender: 'Nam', dob: '' });
+    setForm({ userName: '', email: '', roleName: 'USER', status: 'Hoạt động', gender: 'Nam', dob: '' });
   };
 
   // Xử lý thêm/sửa người dùng
@@ -111,32 +126,33 @@ function UserManagement() {
     if (modalType === 'add') {
       const newUser = {
         ...form,
-        id: users.length ? Math.max(...users.map(u => u.id)) + 1 : 1,
       };
       setUsers([newUser, ...users]);
     } else if (modalType === 'edit' && selectedUser) {
-      setUsers(users.map(u => u.id === selectedUser.id ? { ...form, id: selectedUser.id } : u));
+      setUsers(users.map(u => u.email === selectedUser.email ? { ...form, email: selectedUser.email } : u));
     }
     closeModal();
   };
 
   // Xóa người dùng
-  const handleDelete = (userId) => {
+  const handleDelete = (email) => {
     if (window.confirm('Bạn có chắc chắn muốn xóa người dùng này?')) {
-      setUsers(users.filter(u => u.id !== userId));
+      alert("Xoá người dùng thành công")
+      setUsers(users.filter(u => u.email !== email));
     }
   };
 
   // Khóa/Mở khóa người dùng
-  const toggleStatus = (user) => {
+  const toggleStatus = (email) => {
     setUsers(users.map(u =>
-      u.id === user.id
+      u.email === email
         ? { ...u, status: u.status === 'Hoạt động' ? 'Bị khóa' : 'Hoạt động' }
         : u
     ));
   };
 
   return (
+    users&& users.length>0 &&
     <div>
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold">Quản lý người dùng</h2>
@@ -175,17 +191,23 @@ function UserManagement() {
             </tr>
           </thead>
           <tbody>
-            {paginatedUsers.map(user => (
-              <tr key={user.id} className="border-t hover:bg-indigo-50 transition">
-                <td className="p-3">{user.name}</td>
+            {users.map((user,index) => (
+              <tr key={index} className="border-t hover:bg-indigo-50 transition">
+                <td className="p-3">{user.userName}</td>
                 <td className="p-3">{user.email}</td>
-                <td className="p-3">{user.gender || ''}</td>
-                <td className="p-3">{user.dob ? new Date(user.dob).toLocaleDateString('vi-VN') : ''}</td>
+                <td className="p-3">{user.gender || 'Chưa thiết lập'}</td>
+                <td className="p-3">{user.dob ? new Date(user.dob).toLocaleDateString('vi-VN') : 'Chưa thiết lập'}</td>
                 <td className="p-3">
-                  <span className={`px-2 py-1 rounded-full text-xs font-semibold
-                    ${user.role === 'Admin' ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-700'}`}>
-                    {user.role}
-                  </span>
+                  {
+                    user.roleName&&
+                        <span className={`px-2 py-1 rounded-full text-xs font-semibold
+                          ${user.roleName === 'ADMIN' ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-700'}`}
+                          
+                          >
+                          {user.roleName}
+                        </span>
+
+                  }
                 </td>
                 <td className="p-3">
                   <span className={`px-2 py-1 rounded-full text-xs font-semibold
@@ -204,24 +226,24 @@ function UserManagement() {
                   <button
                     className="text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-100 transition"
                     title="Xóa"
-                    onClick={() => handleDelete(user.id)}
+                    onClick={() => handleDelete(user.email)}
                   >
                     <Trash2 size={18} />
                   </button>
                   <button
-                    className={`p-2 rounded-full transition ${user.status === 'Hoạt động'
+                    className={`p-2 rounded-full transition ${user.status.toLowerCase() === 'Hoạt động'.toLowerCase()
                       ? 'text-yellow-600 hover:text-yellow-800 hover:bg-yellow-100'
                       : 'text-green-600 hover:text-green-800 hover:bg-green-100'
                     }`}
-                    title={user.status === 'Hoạt động' ? 'Khóa tài khoản' : 'Mở khóa tài khoản'}
-                    onClick={() => toggleStatus(user)}
+                    title={user.status.toLowerCase() === 'Hoạt động'.toLowerCase() ? 'Khóa tài khoản' : 'Mở khóa tài khoản'}
+                    onClick={() => toggleStatus(user.email)}
                   >
-                    {user.status === 'Hoạt động' ? <Lock size={18} /> : <Unlock size={18} />}
+                    {user.status.toLowerCase()==='Hoạt động'.toLowerCase() ? <Lock size={18} /> : <Unlock size={18} />}
                   </button>
                 </td>
               </tr>
             ))}
-            {paginatedUsers.length === 0 && (
+            {users.length === 0 && (
               <tr>
                 <td colSpan="7" className="text-center p-4 text-gray-500">Không tìm thấy người dùng.</td>
               </tr>
@@ -277,14 +299,14 @@ function UserManagement() {
               {modalType === 'add' ? <UserPlus size={22} /> : <Pencil size={20} />}
               {modalType === 'add' ? 'Thêm người dùng' : 'Chỉnh sửa người dùng'}
             </h3>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={(e)=>handleSubmit(e)} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Họ tên</label>
                 <input
                   type="text"
                   required
-                  value={form.name}
-                  onChange={e => setForm({ ...form, name: e.target.value })}
+                  value={form.userName}
+                  onChange={e => setForm({ ...form, userName: e.target.value })}
                   className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 bg-indigo-50"
                 />
               </div>
@@ -322,8 +344,8 @@ function UserManagement() {
               <div>
                 <label className="block text-sm font-medium mb-1">Vai trò</label>
                 <select
-                  value={form.role}
-                  onChange={e => setForm({ ...form, role: e.target.value })}
+                  value={form.roleName}
+                  onChange={e => setForm({ ...form, roleName: e.target.value })}
                   className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 bg-indigo-50"
                 >
                   {roles.map(role => (

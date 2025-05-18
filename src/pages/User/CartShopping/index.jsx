@@ -6,8 +6,6 @@ import CartSummary from "./CartSummary";
 import CheckoutSteps from "./CheckoutSteps";
 // import { motion } from "framer-motion";
 // import { Toaster, toast } from 'react-hot-toast';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import {request} from "../../../untils/request.js"
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
@@ -20,7 +18,7 @@ function CartShopping() {
   const navigate =useNavigate();
   const handleOnclickPlus=(item)=>{
    const updateProducts= products.map((product,index)=>{
-    return product.id === item.id ? {...product, quantity: product.quantity+1}: product
+    return product.productId === item.productId ? {...product, quantity: product.quantity+1}: product
    })
    setProduct(updateProducts);
    console.log("product",products);
@@ -28,18 +26,19 @@ function CartShopping() {
   const handleOnclickSubtract=(item)=>{
     if(item.quantity==1){
       if(window.confirm("Bạn chắc chắn muốn xoá sản phẩm này khỏi giỏ hàng")){
-         const updateProducts= products.filter(product=>product.id!=item.id);
+         const updateProducts= products.filter(product=>product.productId!=item.productId);
          setProduct(updateProducts)
-         toast("Xoá sản phẩm thành công!", {
-          theme: "colored",
-          type: "success",
-          position: "bottom-right",
-        });
+        //  toast("Xoá sản phẩm thành công!", {
+        //   theme: "colored",
+        //   type: "success",
+        //   position: "bottom-right",
+        // });
+        alert("Xoá sản phẩm khỏi giỏ hàng thành công!")
         return;
       }
     }
     const updateProducts= products.map((product,index)=>{
-      return product.id === item.id ? {...product, quantity: product.quantity-1}: product
+      return product.productId === item.productId ? {...product, quantity: product.quantity-1}: product
      })
      setProduct(updateProducts);
      console.log("product",products);
@@ -48,13 +47,8 @@ function CartShopping() {
     if(!window.confirm("Bạn chắc chắn muốn xoá sản phẩm này khỏi giỏ hàng")){
       return;
     }
-    const updateProducts= products.filter(product=>product.id!=item.id);
-    toast("Xoá sản phẩm thành công!", {
-      theme: "colored",
-      type: "success",
-      position: "bottom-right",
-
-    });
+    const updateProducts= products.filter(product=>product.productId!=item.productId);
+    alert("xoá sản phẩm thành công")
     setProduct(updateProducts);
   }
   // useEffect(()=>{
@@ -81,7 +75,7 @@ function CartShopping() {
   }
   return (
     <div className="mx-auto py-10 border-gray-300 border-y-[1px]">
-      <ToastContainer />
+      {/* <ToastContainer /> */}
       <div className="flex flex-col lg:flex-row gap-6">
         <div className="">
           <CheckoutSteps currentStep={1}/>
