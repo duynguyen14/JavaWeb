@@ -1,0 +1,110 @@
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { HiOutlineX } from "react-icons/hi";
+import Image from "../../assets/images/1168.png";
+import { useNavigate } from 'react-router-dom';
+
+const data = [
+  {
+    id: 1,
+    name: "Sapline Gile - Áo Croptop Tuytsi",
+    color: "Kẻ Trắng ngà",
+    size: "M",
+    price: 1390000,
+    quantity: 1,
+    image: Image
+  },
+  {
+    id: 2,
+    name: "Sapline Gile - Áo Croptop Tuytsi",
+    color: "Kẻ Trắng ngà",
+    size: "M",
+    price: 1390000,
+    quantity: 1,
+    image: Image
+  },
+  {
+    id: 3,
+    name: "Sapline Gile - Áo Croptop Tuytsi",
+    color: "Kẻ Trắng ngà",
+    size: "M",
+    price: 1390000,
+    quantity: 1,
+    image: Image
+  },
+  {
+    id: 4,
+    name: "Sapline Gile - Áo Croptop Tuytsi",
+    color: "Kẻ Trắng ngà",
+    size: "M",
+    price: 1390000,
+    quantity: 1,
+    image: Image
+  }
+];
+
+function CartShoppingPopup({ isCart, setIsCart }) {
+  const [products] = useState(data);
+  const navigate = useNavigate();
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 50 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.5 }}
+      className='w-full md:max-w-md lg:max-w-lg bg-white z-50 h-screen font-Montserrat border-l border-gray-200 rounded-l-md fixed top-0 right-0 shadow-xl flex flex-col justify-between'
+    >
+      {/* Header */}
+      <div className='flex justify-between items-center px-4 py-6 text-xl md:text-2xl font-semibold border-b border-gray-200'>
+        <p>Giỏ hàng ({products.length})</p>
+        <p
+          onClick={() => setIsCart(false)}
+          className='cursor-pointer hover:scale-125 rounded-full bg-gray-200 p-2 transition-transform'
+        >
+          <HiOutlineX />
+        </p>
+      </div>
+
+      {/* List sản phẩm */}
+      <div className='flex-1 overflow-y-auto px-4 py-5 space-y-5'>
+        {products.length === 0 ? (
+          <p className='text-center text-gray-500'>Không có sản phẩm nào trong giỏ hàng.</p>
+        ) : (
+          products.map((product) => (
+            <div key={product.id} className='flex gap-4 items-center border-b border-gray-200 pb-4'>
+              <img src={product.image} alt={product.name} className='w-28 h-36 object-cover rounded-md' />
+              <div className='flex-1'>
+                <h3 className='text-sm md:text-base font-semibold'>{product.name}</h3>
+                <p className='text-sm text-gray-600'>Màu: {product.color} - Size: {product.size}</p>
+                <p className='text-sm text-gray-800'>SL: {product.quantity}</p>
+                <p className='text-sm font-medium text-red-500'>
+                  {(product.price * product.quantity).toLocaleString()}đ
+                </p>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Footer: Nút xem giỏ hàng hoặc đặt hàng */}
+      <div className='p-4 border-t border-gray-200'>
+        <button
+          onClick={() => {
+            setIsCart(false);
+            navigate("/cartShopping");
+          }}
+          className='btn-primary w-full py-3 rounded-lg'
+        >
+          Xem giỏ hàng
+        </button>
+
+        {/* Nếu muốn thêm nút đặt hàng, bật đoạn này lên */}
+        {/* <button className='mt-3 w-full bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 transition'>
+          Đặt hàng ngay
+        </button> */}
+      </div>
+    </motion.div>
+  );
+}
+
+export default CartShoppingPopup;
