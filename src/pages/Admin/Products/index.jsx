@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Plus, Pencil, Trash2, X, Image as ImageIcon, Layers, Filter, ChevronDown, ChevronUp, ChevronLeft, ChevronRight } from "lucide-react";
-
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 // Mock data for demo
 const mockCategories = [
   { CategoryId: 1, Name: "Áo" },
@@ -188,10 +189,16 @@ function ProductManagement() {
       Sizes: form.Sizes,
       Status: form.Quantity > 0 ? "Còn hàng" : "Hết hàng"
     };
+    if(!newProduct.Description || !newProduct.CategoryId || !newProduct.Name || !newProduct.Price || !newProduct.Quantity){
+      alert("vui lòng điền đầy đủ thông tin")
+      return;
+    }
     if (modalType === "add") {
       setProducts([newProduct, ...products]);
+      alert("thêm sản phẩm thành công")
     } else {
       setProducts(products.map(p => p.ProductId === selectedProduct.ProductId ? newProduct : p));
+      alert("cập nhật thông tin sản phẩm thành công")
     }
     closeModal();
   };
@@ -267,6 +274,17 @@ function ProductManagement() {
   // Render
   return (
     <div>
+      <ToastContainer 
+        position="top-right"
+        autoClose={10000} // tự động đóng sau 3 giây
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
         <h2 className="text-2xl font-bold">Quản lý sản phẩm</h2>
         <button
@@ -459,7 +477,7 @@ function ProductManagement() {
                   <label className="block text-sm font-medium mb-1">Tên sản phẩm</label>
                   <input
                     type="text"
-                    required
+                    // required
                     value={form.Name}
                     onChange={e => setForm(f => ({ ...f, Name: e.target.value }))}
                     className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 bg-indigo-50"
@@ -469,7 +487,7 @@ function ProductManagement() {
                   <label className="block text-sm font-medium mb-1">Giá</label>
                   <input
                     type="number"
-                    required
+                    // required
                     min={0}
                     value={form.Price}
                     onChange={e => setForm(f => ({ ...f, Price: e.target.value }))}
@@ -480,7 +498,7 @@ function ProductManagement() {
                   <label className="block text-sm font-medium mb-1">Số lượng</label>
                   <input
                     type="number"
-                    required
+                    // required
                     min={0}
                     value={form.Quantity}
                     onChange={e => setForm(f => ({ ...f, Quantity: e.target.value }))}
@@ -490,7 +508,7 @@ function ProductManagement() {
                 <div>
                   <label className="block text-sm font-medium mb-1">Danh mục</label>
                   <select
-                    required
+                    // required
                     value={form.CategoryId}
                     onChange={e => setForm(f => ({ ...f, CategoryId: e.target.value }))}
                     className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 bg-indigo-50"
