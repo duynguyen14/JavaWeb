@@ -41,13 +41,9 @@ function ProductItem({ id, name, price, images, soldCount, sizes, discountPercen
     console.log(response.data)
       setSelectedSize(size);
       setShowSizes(false);
-      toast("Xoá sản phẩm thành công!", {
-            theme: "colored",
-            type: "success",
-            position: "bottom-right",
-            autoClose: 5000,
-
-          });
+     if(response.data.code==1000){
+      alert("Thêm sản phẩm thành công")
+     }
     }
     catch(e){
       alert("Lỗi khi thêm sản phẩm vào giỏ")

@@ -5,45 +5,6 @@ import Image from "../../assets/images/1168.png";
 import { useNavigate } from 'react-router-dom';
 import { request } from '../../untils/request';
 
-const data = [
-  {
-    id: 1,
-    name: "Sapline Gile - Áo Croptop Tuytsi",
-    color: "Kẻ Trắng ngà",
-    size: "M",
-    price: 1390000,
-    quantity: 1,
-    image: Image
-  },
-  {
-    id: 2,
-    name: "Sapline Gile - Áo Croptop Tuytsi",
-    color: "Kẻ Trắng ngà",
-    size: "M",
-    price: 1390000,
-    quantity: 1,
-    image: Image
-  },
-  {
-    id: 3,
-    name: "Sapline Gile - Áo Croptop Tuytsi",
-    color: "Kẻ Trắng ngà",
-    size: "M",
-    price: 1390000,
-    quantity: 1,
-    image: Image
-  },
-  {
-    id: 4,
-    name: "Sapline Gile - Áo Croptop Tuytsi",
-    color: "Kẻ Trắng ngà",
-    size: "M",
-    price: 1390000,
-    quantity: 1,
-    image: Image
-  }
-];
-
 function CartShoppingPopup({ isCart, setIsCart }) {
   const [products,setProduct] = useState([]);
   const navigate = useNavigate();
@@ -113,7 +74,7 @@ function CartShoppingPopup({ isCart, setIsCart }) {
         <button
           onClick={() => {
             setIsCart(false);
-            navigate("/cartShopping");
+            navigate("/cartShopping", { state: { products } });
           }}
           className='btn-primary w-full py-3 rounded-lg'
         >

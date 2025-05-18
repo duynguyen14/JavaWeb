@@ -21,7 +21,7 @@ function ProductHot({saleProduct}) {
             </p>
             <div className='grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-x-6 md:gap-x-10 gap-y-10 mb-12'>
                 {
-                    saleProduct.map((item,index)=>{
+                   saleProduct&& saleProduct.map((item,index)=>{
                         return(
                             <motion.div key={index} 
                                         initial={{opacity:0 ,y: (index+1)*20}}

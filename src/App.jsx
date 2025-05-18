@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Home from './pages/Admin'
 import { PublicPage } from './pages'
+import OAuthRedirect from './untils/OAuthRedirect';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import ScrollToTop from './components/OtherComponent/ScrollToTop'
 import { ToastContainer } from 'react-toastify';

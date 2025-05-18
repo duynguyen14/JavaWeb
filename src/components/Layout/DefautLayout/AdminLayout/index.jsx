@@ -32,7 +32,7 @@ function AdminLayout({ children }) {
   };
 
   return (
-    <div className="min-h-screen font-sans flex bg-gray-50">
+    <div className="font-Montserrat min-h-screen font-sans flex bg-gray-50">
       <Sidebar collapsed={sidebarCollapsed} setCollapsed={setSidebarCollapsed} />
       
       <div className={`transition-all duration-300 min-h-screen flex flex-col flex-1 ${

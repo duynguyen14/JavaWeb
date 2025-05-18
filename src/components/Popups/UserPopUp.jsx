@@ -5,6 +5,7 @@ import { HiOutlineX } from 'react-icons/hi';
 function UserPopUp({setIsUser,setIsPopUp}) {
     const token =localStorage.getItem("token");
     const navigate=useNavigate()
+    
     const handleOnclickProfile=()=>{
         setIsUser(false)
         navigate("/profile")
