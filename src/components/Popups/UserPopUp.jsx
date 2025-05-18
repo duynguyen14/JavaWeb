@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { HiOutlineX } from 'react-icons/hi';
 function UserPopUp({setIsUser,setIsPopUp}) {
-    var user =false;
+    const token =localStorage.getItem("token");
     const navigate=useNavigate()
     
     const handleOnclickProfile=()=>{
@@ -36,7 +36,7 @@ function UserPopUp({setIsUser,setIsPopUp}) {
                 </motion.div>
             </div>
             {   
-                user? 
+                token? 
                 <div>
                     <div className='flex justify-center items-center mb-10'
                         onClick={()=>handleOnclickProfile()}

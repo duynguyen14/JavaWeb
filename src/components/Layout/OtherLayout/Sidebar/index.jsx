@@ -29,27 +29,17 @@ function Sidebar() {
 
   return (
     <>
-      {isMobile && !showMenu && (
-        <button
-          className="fixed top-6 left-6 z-50 flex items-center gap-2 text-white bg-gradient-to-r from-gray-600 to-gray-700 px-4 py-3 rounded-full shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300"
-          onClick={() => setShowMenu(true)}
-        >
-          <Menu size={20} />
-          <span className="font-medium">Menu</span>
-        </button>
-      )}
-
-      {/* Sidebar Overlay */}
-      {isMobile && showMenu && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-30 transition-opacity duration-300"
-          onClick={() => setShowMenu(false)}
-        ></div>
-      )}
-      <div className="mt-31 mb-90">
+      
+      <div className="mt-10 ">
       {/* Sidebar */}
+      <div className="flex items-center space-x-2 display-hover pb-10">
+          <p className="text-gray-500">Trang chủ -</p>
+          <p className="text-black">
+            {menuItems.filter(item=>item.link==activeItem)[0].label}
+          </p>
+      </div>
       <div
-        className={`bg-white md:bg-gradient-to-b md:from-gray-50 md:to-white shadow-xl md:shadow-lg md:static fixed top-0 left-0 z-40 h-full w-72 transition-all duration-300 ${
+        className={`bg-white md:bg-gradient-to-b md:from-gray-50 md:to-white  md:static fixed top-0 left-0 z-40 h-full w-72 transition-all duration-300 ${
           showMenu ? 'translate-x-0' : '-translate-x-full'
         } rounded-r-3xl md:rounded-xl overflow-hidden border-r md:border-gray-50`}
       >

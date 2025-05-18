@@ -14,7 +14,11 @@ function OtherLayout({children}) {
                 <div className='hidden lg:block'>
                     <Sidebar/>
                 </div>
-                {children}
+                <div className="flex-1">
+                    {React.isValidElement(children)
+                        ? React.cloneElement(children, { isPopUp,setIsPopUp })
+                        : children}
+                </div>
             </div>
             <Footer/>
         </div>

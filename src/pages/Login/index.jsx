@@ -2,19 +2,12 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { IoEyeOff, IoEye } from "react-icons/io5";
 import { request } from '../../untils/request';
-import { toast } from 'react-toastify';
-import { useDispatch, useSelector } from 'react-redux';
-import { showLoading, hideLoading } from '../../redux/actions';
-import Loading from '../../components/OtherComponent/Loading';
 function Login() {
     const [showPassword, setShowPassword] = useState(false);
     const [user, setUser] = useState({
         email: "",
         password: "",
     });
-    const dispatch =useDispatch();
-    const loading =useSelector(state=>state.loading)
-    console.log(loading);
     const navigate =useNavigate();
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -24,13 +17,18 @@ function Login() {
         }));
     };
     const handleOnclickLogin = async () => {
+        if(!user.email || !user.password){
+            alert("Vui lòng điền đầy đủ thông tin đăng nhập")
+            return;
+        }
+
         try {
             const response = await request.post("user/login", user);
             console.log(response.data);
             alert("Đăng nhập thành công")
             localStorage.setItem("token",response.data.result.accessToken);
             setTimeout(() => {
-                // navigate("/");
+                navigate("/");
             }, 1000);
         }
         catch(e){
@@ -53,14 +51,14 @@ function Login() {
                         <form className="space-y-4">
                             <div>
                                 <label className="block font-medium mb-1">
-                                    Email / Số điện thoại <span className="text-red-600">*</span>
+                                    Email / Tên đăng nhập <span className="text-red-600">*</span>
                                 </label>
                                 <input
                                     type="text"
                                     name="email"
                                     value={user.email}
                                     onChange={handleChange}
-                                    placeholder="Nhập email hoặc số điện thoại của Quý khách"
+                                    placeholder="Nhập email hoặc tên đăng nhập của Quý khách"
                                     className="w-full px-4 py-3 border rounded focus:outline-none focus:ring-2 focus:ring-black"
                                 />
                             </div>

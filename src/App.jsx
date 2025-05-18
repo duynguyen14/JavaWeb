@@ -5,15 +5,13 @@ import OAuthRedirect from './untils/OAuthRedirect';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import ScrollToTop from './components/OtherComponent/ScrollToTop'
 import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import Loading from './components/OtherComponent/Loading'
 function App() {
   return (
     <Router>
       <div>
       <ScrollToTop/>
-      <ToastContainer
-      />
+      {/* <ToastContainer
+      /> */}
         <Routes>
           {
             PublicPage.map((page,index)=>{
@@ -39,7 +37,6 @@ function App() {
               }
             })
           }
-
         </Routes>
       </div>
     </Router>

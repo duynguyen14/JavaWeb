@@ -10,37 +10,10 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {request} from "../../../untils/request.js"
 import { useNavigate } from "react-router-dom";
-const data = [
-  {
-    id: 1,
-    name: "Sapline Gile - Áo Croptop Tuytsi",
-    color: "Kẻ Trắng ngà",
-    size: "M",
-    price: 1390000,
-    quantity: 1,
-    image: Image
-  },
-  {
-    id: 2,
-    name: "Sapline Gile - Áo Croptop Tuytsi",
-    color: "Kẻ Trắng ngà",
-    size: "M",
-    price: 1390000,
-    quantity: 1,
-    image: Image
-  },
-  {
-    id: 3,
-    name: "Sapline Gile - Áo Croptop Tuytsi",
-    color: "Kẻ Trắng ngà",
-    size: "M",
-    price: 1390000,
-    quantity: 1,
-    image: Image
-  }
-];
-
+import { useLocation } from "react-router-dom";
 function CartShopping() {
+  const location = useLocation();
+  const data = location.state?.products || [];
   const [products,setProduct]=useState(data);
   const token= localStorage.getItem("token")
   console.log("token : ",token);
@@ -84,27 +57,27 @@ function CartShopping() {
     });
     setProduct(updateProducts);
   }
-  useEffect(()=>{
-    const fetch=async()=>{
-      try{
-        const response =await request.get("admin/demo",
-          {
-            headers: {
-              Authorization :`Bearer ${token}`,
-              "Content-Type": "application/json"
-            }
-          }
-        )
-        console.log(response.data)
-      }
-      catch(e){
-        console.log("Lỗi ",e.response.data)
-      }
-    }
-    fetch();
-  },[])
+  // useEffect(()=>{
+  //   const fetch=async()=>{
+  //     try{
+  //       const response =await request.get("admin/demo",
+  //         {
+  //           headers: {
+  //             Authorization :`Bearer ${token}`,
+  //             "Content-Type": "application/json"
+  //           }
+  //         }
+  //       )
+  //       console.log(response.data)
+  //     }
+  //     catch(e){
+  //       console.log("Lỗi ",e.response.data)
+  //     }
+  //   }
+  //   fetch();
+  // },[])
   const handleOnclickOrder=()=>{
-    navigate("/order")
+    navigate("/order", { state: { products } })
   }
   return (
     <div className="mx-auto py-10 border-gray-300 border-y-[1px]">

@@ -10,6 +10,9 @@ import Profile from "./User/Profile";
 import Register from "./User/Register";
 import Product from "./User/Product";
 import CartShopping from "./User/CartShopping";
+import OrderManagementUser from "./User/OrderManagementUser/index.jsx";
+import Order from "./User/Order/index.jsx";
+
 
 // admin
 import DashboardAdmin from "./Admin/Dashboard";
@@ -26,6 +29,9 @@ import Payment from "./Admin/Payment";
 import Revenue from "./Admin/Revenue";
 import Messages from "./Admin/Messages";
 import Employees from "./Admin/Employees";
+import { label, path } from "framer-motion/client";
+import OrderManagement from "./Admin/Orders";
+import Address from "./User/Address/index.jsx";
 
 
 
@@ -37,8 +43,11 @@ const PublicPage=[
 
     {path :"/category/:id",component: Profile, layout: UserLayout },
     {path :"/product/:id",component: Product, layout: UserLayout },
-    
+    {path:"/order",component:Order, layout:UserLayout},
     {path :"/cartShopping",component: CartShopping, layout: UserLayout },
+
+    {path:"/ordermanagement", component: OrderManagementUser ,layout: OtherLayout},
+    {path:"/address",component :Address , layout:OtherLayout},
 
 
     {path :"/register",component: Register, layout: UserLayout },

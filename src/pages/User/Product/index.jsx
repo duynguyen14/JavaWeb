@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Heart, Share, Truck, HelpCircle, Eye, Minus, Plus } from 'lucide-react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { request } from '../../../untils/request';
 import ProductReviews from './ProductReviews';
 import ProductShowcase from './ProductShowcase';
@@ -10,6 +10,8 @@ function Product() {
   const {id}=useParams();
   const [product,setProduct]=useState(null);
   const [imageIndex,setImageIndex]=useState(0);
+  const token =localStorage.getItem("token")
+  const navigate =useNavigate();
   const incrementQuantity = () => {
     setQuantity(prev => prev + 1);
   };
@@ -39,9 +41,41 @@ function Product() {
     }
     fetch();
   },[])
-
+  const handleOnclickAddCart=async()=>{
+    if(selectedSize==null){
+      alert("Bạn chưa chọn size ")
+      return;
+    }
+    if(!window.confirm("Bạn xác nhận thêm sản phẩm này vào giỏ")){
+      return;
+    }
+    try{
+      const response = await request.post("/cart",{
+              
+                productId :product.id,
+                quantity: quantity,
+                size: selectedSize
+            },
+            {
+              headers:{
+                Authorization: `Bearer ${token}`
+            }
+            }
+          )
+          console.log(response.data)
+          if(response.data.code==1000){
+            alert("thêm sản phẩm vào giỏ hàng thành công")
+          }
+    }
+    catch(e){
+      if(e.response.data.code==2000){
+        alert("Phiên của bạn đã hết hạn vui lòng đăng nhập lại")
+        navigate("/login")
+      }
+      console.log("Loi ",e)
+    }
+  }
   return (
-
     product&&
     <div>
 
@@ -93,8 +127,6 @@ function Product() {
         <div className="flex items-center gap-2 mb-4">
           <span className="text-2xl font-bold">{toLocalePrice(product.price)}</span>
         </div>
-
-
         Live Viewers
         <div className="flex items-center gap-2 mb-6 text-sm">
           <Eye size={16} />
@@ -107,25 +139,25 @@ function Product() {
             <button className="text-sm underline">Loại Size</button>
           </div>
           <div className="flex gap-2">
-            {product.sizes.map((size) => (
+            {product.productSizeDTOS.map((size,index) => (
               <button 
-                key={size} 
+                key={index} 
                 className={`w-10 h-10 rounded-full flex items-center justify-center ${
                   selectedSize === size 
                     ? 'bg-black text-white' 
                     : 'bg-white border text-black'
                 }`}
-                onClick={() => setSelectedSize(size)}
+                onClick={() => setSelectedSize(size.sizeName)}
               >
-                {size}
+                {size.sizeName}
               </button>
             ))}
           </div>
         </div>
 
         {/* Quantity */}
-        <div className="mb-6">
-          <div className="mb-2">Số Lượng:</div>
+        <div className="mb-6 md:flex items-center">
+          <div className="mb-2 mr-2">Số Lượng: </div>
           <div className="flex items-center">
             <button 
               className="w-10 h-10 border rounded-l flex items-center justify-center cursor-pointer"
@@ -143,11 +175,17 @@ function Product() {
               <Plus size={16} />
             </button>
           </div>
+          <div className='pt-3 md:px-5 md:py-0'>
+            <p>
+              {product.quantity} sản phẩm có sẵn
+            </p>
+          </div>
         </div>
-
         {/* Action Buttons */}
         <div className="grid grid-cols-1 gap-4 mb-4">
-          <button className="bg-black text-white py-3 px-4 rounded flex items-center justify-center cursor-pointer">
+          <button className="bg-black text-white py-3 px-4 rounded flex items-center justify-center cursor-pointer"
+            onClick={()=>handleOnclickAddCart()}
+          >
             Thêm Vào Giỏ Hàng - {toLocalePrice(product.price)}
           </button>
           <button className="bg-red-500 text-white py-3 px-4 rounded cursor-pointer">

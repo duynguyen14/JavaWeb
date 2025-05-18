@@ -2,7 +2,7 @@
 import React from "react";
 import { Minus, Plus, Trash2 } from "lucide-react";
 
-function CartItemList({ products,setProduct,handleOnclickPlus,handeleOnclickDelete,handleOnclickSubtract }) {
+function CartItemList({ products,handleOnclickPlus,handeleOnclickDelete,handleOnclickSubtract }) {
   return (
   
     products&&products.length>0?(
@@ -21,21 +21,21 @@ function CartItemList({ products,setProduct,handleOnclickPlus,handeleOnclickDele
         </div>
   
         <div className="rounded-md">
-          {products.map((item,index) => (
+          {products.map((product,index) => (
             <div
-              key={item.id}
+              key={index}
               className="flex flex-col md:grid md:grid-cols-6 gap-4 p-4 border-t border-gray-200"
             >
               <div className="col-span-3 flex">
                 <img
-                  src={item.image}
-                  alt={item.name}
+                  src={`http://localhost:8080/images/${product.images[0]}.png`}
+                  alt={product.productName}
                   className="w-30 h-32 md:w-40 md:h-52 object-cover rounded mr-3"
                 />
                 <div>
-                  <h3 className="font-medium">{item.name}</h3>
+                  <h3 className="font-medium">{product.productName}</h3>
                   <p className="text-sm text-gray-600">
-                    Màu sắc: {item.color} &nbsp;&nbsp; Size: {item.size}
+                     &nbsp;&nbsp; Size: {product.sizeName}
                   </p>
                 </div>
               </div>
@@ -45,13 +45,13 @@ function CartItemList({ products,setProduct,handleOnclickPlus,handeleOnclickDele
                   </p>
                   <div className="flex items-start justify-center gap-2">
                   <button className="p-2 border rounded cursor-pointer"
-                    onClick={()=>handleOnclickSubtract(item)}
+                    onClick={()=>handleOnclickSubtract(product)}
                   >
                       <Minus size={16} />
                   </button>
-                  <span className="mt-1">{item.quantity}</span>
+                  <span className="mt-1">{product.quantity}</span>
                   <button className="p-2 border rounded cursor-pointer"
-                    onClick={()=>handleOnclickPlus(item)}
+                    onClick={()=>handleOnclickPlus(product)}
                   >
                       <Plus size={16} />
                   </button>
@@ -62,12 +62,12 @@ function CartItemList({ products,setProduct,handleOnclickPlus,handeleOnclickDele
                       Tổng tiền
                   </p>
                   <p className="font-semibold">
-                      {item.price.toLocaleString("vi-VN")}đ
+                      {product.price.toLocaleString("vi-VN")}đ
   
                   </p>
               </div>
               <button className=" flex justify-between md:justify-center "
-                onClick={()=>handeleOnclickDelete(item)}
+                onClick={()=>handeleOnclickDelete(product)}
               >
                   <p className="md:hidden">
                       Xoá sản phẩm

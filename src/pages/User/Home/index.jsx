@@ -9,7 +9,6 @@ import { useLocation } from "react-router-dom";
 import { request } from "../../../untils/request";
 function Home() {
   const location = useLocation();
-  const [newProduct, setNewProduct] = useState([]);
   const [showSuccess, setShowSuccess] = useState(false);
   useEffect(() => {
     if (location.state?.successLogin) {
@@ -65,7 +64,7 @@ function Home() {
           <NewProduct newProduct={newProduct} />
         </div>
         <div className="my-5 lg:my-10">
-          <ProductHot />
+          <ProductHot saleProduct={saleProduct}/>
         </div>
         <div className="my-5 lg:my-10">
           <Collections />
