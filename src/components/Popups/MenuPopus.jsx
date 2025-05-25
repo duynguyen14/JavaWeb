@@ -34,7 +34,7 @@ function MenuPopus({ismenu,setIsmenu}) {
     }
   return (
     <motion.div
-    className='font-normal bg-white w-full text-xs sm:text-base h-screen relative font-kumbh'
+    className='font-normal bg-white w-full text-xs sm:text-base h-screen relative font-kumbh z-50'
     initial={{opacity: 0, x: -50}}
     whileInView={{opacity: 1, x: 0}}
     transition={{duration: 0.5}}

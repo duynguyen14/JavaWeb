@@ -45,7 +45,7 @@ function WishlistPopup({ isLove, setIsLove }) {
       initial={{ opacity: 0, x: 50 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.5 }}
-      className=''
+      className='z-50'
     >
       {
         token?
@@ -123,7 +123,7 @@ function WishlistPopup({ isLove, setIsLove }) {
             <button
               onClick={() => {
                 setIsLove(false);
-                navigate("/login,");
+                navigate("/login");
               }}
               className='w-full bg-pink-500 text-white py-3 rounded-xl font-semibold hover:bg-pink-600 transition cursor-pointer'
             >

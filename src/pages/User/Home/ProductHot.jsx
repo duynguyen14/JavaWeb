@@ -4,8 +4,7 @@ import Image2 from "../../../assets/images/1168.png"
 import { motion } from 'framer-motion'
 import ProductItem from '../../../components/OtherComponent/ProductItem'
 import { Link } from 'react-router-dom'
-function ProductHot({saleProduct = []}) {
-    
+function ProductHot({saleProduct}) {
     return (
         <motion.div
             initial={{opacity:0 ,y:100}}
@@ -29,11 +28,10 @@ function ProductHot({saleProduct = []}) {
                                         transition={{duration: 1.2}}
                                         viewport={{ once: true }}
                             >
-                            
-
+                        
                                 <div className='relative'>
                                     <ProductItem discountPercent={item.discountPercent} id={item.id} sizes={item.productSizeDTOS} name={item.name} price={item.price} images={item.images} soldCount={item.soldCount}/>   
-                                    <div className="absolute top-0 left-0 bg-red-700 text-white text-xs font-semibold px-2 py-1 rounded-br-3xl z-10">
+                                    <div className="absolute top-0 left-0 bg-red-700 text-white text-xs font-semibold px-2 py-1 rounded-br-3xl">
                                             Best seller
                                     </div>
                                 </div>
@@ -45,9 +43,9 @@ function ProductHot({saleProduct = []}) {
                 }
             </div>
             <div className='flex justify-center w-full'>
-                <button className='btn-primary px-3 py-2 md:px-4 md:py-3 lg:px-8 lg:py-4'>
+                <Link className='btn-primary px-3 py-2 md:px-4 md:py-3 lg:px-8 lg:py-4'to={"/category"}>
                     Xem tất cả
-                </button>
+                </Link>
             </div>
         </motion.div>
   )

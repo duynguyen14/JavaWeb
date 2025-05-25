@@ -8,7 +8,16 @@ function Product() {
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState(null);
   const {id}=useParams();
-  const [product,setProduct]=useState(null);
+  // const [product,setProduct]=useState(null);
+  const [product,setProduct]=useState({
+    quantity: 1,
+    productSizeDTOS:[],
+    price: 1,
+    soldCount: 10,
+    name:"",
+    categoryName: "",
+    images: [],
+  });
   const [imageIndex,setImageIndex]=useState(0);
   const token =localStorage.getItem("token")
   const navigate =useNavigate();
@@ -51,7 +60,6 @@ function Product() {
     }
     try{
       const response = await request.post("/cart",{
-              
                 productId :product.id,
                 quantity: quantity,
                 size: selectedSize
@@ -182,13 +190,13 @@ function Product() {
           </div>
         </div>
         {/* Action Buttons */}
-        <div className="grid grid-cols-1 gap-4 mb-4">
-          <button className="bg-black text-white py-3 px-4 rounded flex items-center justify-center cursor-pointer"
+        <div className="grid  grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <button className="bg-red-500 text-white hover:bg-red-600 py-3 px-4 rounded-bl-2xl rounded-tr-2xl flex items-center justify-center cursor-pointer"
             onClick={()=>handleOnclickAddCart()}
           >
             Thêm Vào Giỏ Hàng - {toLocalePrice(product.price)}
           </button>
-          <button className="bg-red-500 text-white py-3 px-4 rounded cursor-pointer">
+          <button className="bg-gray-800 text-white hover:bg-black py-3 px-4 rounded-bl-2xl rounded-tr-2xl cursor-pointer">
             Mua Ngay
           </button>
         </div>

@@ -4,7 +4,6 @@ import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { FaRegHeart } from "react-icons/fa";
 import { FiShoppingBag } from "react-icons/fi";
 import { Link, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
 import { request } from '../../untils/request';
 function ProductItem({ id, name, price, images, soldCount, sizes, discountPercent }) {
   const [isHover, setIsHover] = useState(false);
@@ -20,6 +19,15 @@ function ProductItem({ id, name, price, images, soldCount, sizes, discountPercen
   };
 
   const handleSelectSize = async(size) => {
+    if(!token){
+      alert("Bạn vui lòng đăng nhập để thực hiện chức năng này!")
+      setTimeout(()=>{
+        navigate("/login")
+
+      },500)
+      return;
+    }
+
     if(!window.confirm("Bạn xác nhận thêm sản phẩm này vào giỏ hàng")){
       return;
     }
@@ -30,7 +38,7 @@ function ProductItem({ id, name, price, images, soldCount, sizes, discountPercen
         
           productId :id,
           quantity: 1,
-          size: size.sizeName
+          sizeName: size.sizeName
       },
     {
       headers:{
@@ -47,11 +55,11 @@ function ProductItem({ id, name, price, images, soldCount, sizes, discountPercen
     }
     catch(e){
       alert("Lỗi khi thêm sản phẩm vào giỏ")
-      if(e.data.code==2000){
+      if(e.response.data.code==2000){
         alert("Phiên của bạn đã hết hạn vui lòng đăng nhập lại")
         navigate("/login")
       }
-      console.log(e.data);
+      console.log(e.response);
     }
   };
 
@@ -63,10 +71,10 @@ function ProductItem({ id, name, price, images, soldCount, sizes, discountPercen
         onMouseEnter={() => setIsHover(true)}
         onMouseLeave={() => setIsHover(false)}
       >
-        <Link to={`product/${id}`}>
+        <Link to={`/product/${id}`}>
           <motion.img
             key={isHover ? "hover" : "normal"}
-            src={isHover ? `http://localhost:8080/images/${images[0]}.png` : `http://localhost:8080/images/${images[1]}.png`}
+            src={isHover&& images[1]!=null ? `http://localhost:8080/images/${images[1]}.png` : `http://localhost:8080/images/${images[0]}.png`}
             alt={name}
             initial={{ opacity: 0.8, scale: 1 }}
             animate={{ opacity: 1, scale: 1.02 }}
@@ -77,7 +85,7 @@ function ProductItem({ id, name, price, images, soldCount, sizes, discountPercen
 
         {/* Discount badge */}
         {discountPercent && (
-          <div className="absolute top-0 right-0 bg-orange-500 text-white text-xs md:text-sm font-bold px-2 py-1 rounded-bl-md z-10">
+          <div className="absolute top-0 right-0 bg-orange-500 text-white text-xs md:text-sm font-bold px-2 py-1 rounded-bl-md ">
             -{discountPercent}%
           </div>
         )}
@@ -100,7 +108,7 @@ function ProductItem({ id, name, price, images, soldCount, sizes, discountPercen
 
       {/* Product name and price */}
       <div className='text-sm md:text-base mx-1'>
-        <p className='my-3 text-justify h-[55px]'>{name.length > 60 ? name.slice(0, 30) + '...' : name}</p>
+        <p className='my-3 text-justify h-[55px]'>{name.length > 45 ? name.slice(0, 30) + '...' : name}</p>
         <div className='flex justify-between items-center relative'>
           <div>
             <div className='flex'>

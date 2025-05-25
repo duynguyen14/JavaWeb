@@ -1,39 +1,53 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-
-function NavPopups({ categoris, product, setIsNav }) {
+import Image from "../../assets/images/1168.png"
+import { Link } from 'react-router-dom';
+function NavPopups({setIsNav, link, submenu }) {
   const navigate = useNavigate();
-
-  const handleClick = (text) => {
-    setIsNav(null);
-    navigate(`/cartShopping?search=${encodeURIComponent(text)}`);
-  };
-
+  const categoris=[
+    {name:"Áo",detail:["Áo thun","Áo sơ mi","Áo khoác"]},
+    {name:"Quần",detail:["Quần thun","Quần sơ mi","Quần khoác"]},
+    {name:"Áo",detail:["Áo thun","Áo sơ mi","Áo khoác"]},
+    
+  ]
+   const product={
+      name:"Túi Xách Nhỏ In Hoạ Tiết Chuyển Màu",
+      price:"699 000",
+      image: Image
+    }
+    const handleOnclickTitle=(detail)=>{
+      navigate(`/category/${detail.link1}`)
+      setIsNav(false)
+    }
   return (
     <motion.div
       initial={{ opacity: 0, y: -15 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.25 }}
-      className='w-[1450px] h-full bg-white font-Montserrat rounded-3xl shadow-2xl border border-gray-200 flex overflow-hidden'
+      className='w-[1365px] h-full bg-white font-Montserrat rounded-md shadow-2xl border border-gray-200 flex overflow-hidden z-50'
     >
       {/* Danh mục bên trái */}
       <div className='basis-2/3 px-8 py-6 overflow-y-auto'>
-        <div className='grid grid-cols-2 lg:grid-cols-3 gap-6'>
-          {categoris?.map((cat, i) => (
+        <div className={` ${submenu[0].submenu2!=null ||submenu.length>3?'grid grid-cols-2 lg:grid-cols-3 gap-5':'block'}`}
+        >
+          {submenu?.map((cat, i) => (
             <div key={i}>
-              <h3 className='text-xl font-bold uppercase text-gray-800 mb-2'>
-                {cat.name}
-              </h3>
+              <Link className='text-base font-semibold uppercase text-gray-800 mb-2 cursor-pointer hover:text-red-500 py-5'to={cat.link1!=null ? `/category/${cat.link1}`: `/`} >
+                {cat.subName}
+              </Link>
               <ul className='space-y-2'>
-                {cat.detail?.map((detail, j) => (
+                {cat.submenu2?.map((detail, j) => (
                   <li key={j}>
                     <button
-                      onClick={() => handleClick(detail)}
-                      className='text-lg text-gray-600 hover:text-red-500 hover:underline transition cursor-pointer'
+                      className='font-normal text-sm text-gray-400 hover:text-red-500 hover:underline transition cursor-pointer'
                     >
-                      {detail}
+                      <div
+                        onClick={()=>handleOnclickTitle(detail)}
+                      >
+                        {detail.subname2}
+                      </div>
                     </button>
                   </li>
                 ))}
@@ -43,7 +57,7 @@ function NavPopups({ categoris, product, setIsNav }) {
         </div>
       </div>
 
-      {/* Sản phẩm nổi bật bên phải */}
+      {/* Sản phẩm nổi bật bên phải
       <div className='basis-1/3 bg-gray-50 px-6 py-6 border-l border-gray-200 flex flex-col justify-between'>
         <div>
           <h2 className='text-lg font-semibold uppercase text-gray-700 mb-4'>
@@ -69,9 +83,9 @@ function NavPopups({ categoris, product, setIsNav }) {
           ) : (
             <p className='text-sm text-gray-500'>Không có sản phẩm nổi bật.</p>
           )}
-        </div>
+        </div> */}
         {/* <p className='text-xs text-gray-400 text-right mt-4'>© 2025 YourShop</p> */}
-      </div>
+      {/* </div> */}
     </motion.div>
   );
 }

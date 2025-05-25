@@ -21,7 +21,7 @@ function UserPopUp({setIsUser,setIsPopUp}) {
     }
     return (
         <motion.div
-        className='px-2 pt-3 pb-14 font-kumbh'
+        className='px-2 pt-3 pb-14 z-50'
         initial={{opacity: 0, y: 100}}
         whileInView={{opacity: 1 , y: 0}}
         transition={{duration: 0.5}}

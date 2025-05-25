@@ -14,30 +14,111 @@ import UserPopUp from '../../../../Popups/UserPopUp';
 
 import { Link } from 'react-router-dom';
 import NavPopups from '../../../../Popups/NavPopups';
-import Image from "../../../../../assets/images/1168.png";
 import CartShoppingPopup from '../../../../Popups/CartShoppingPopup';
 import WishlistPopup from '../../../../Popups/WishlistPopup';
 
 function Header({setIsPopUp}) {
   const titles=[
-    {name: "Nam", link:""},
-    {name: "Nữ", link:""},
-    {name: "Trẻ em", link:""},
-    {name: "Phụ kiện thời trang", link:""},
-    {name: "Về chúng tôi", link:""},
+  {
+    name: "Nam",
+    link: "",
+    submenu: [
+      {
+        subName: "Áo",
+        submenu2: [
+          { subname2: "Áo thun", link1: "1" },
+          { subname2: "Áo sơ mi", link1: "2" },
+          { subname2: "Áo khoác", link1: "3" }
+        ]
+      },
+      {
+        subName: "Quần",
+        submenu2: [
+          { subname2: "Quần jeans", link1: "4" },
+          { subname2: "Quần short", link1: "5" },
+          { subname2: "Quần kaki", link1: "6" }
+        ]
+      },
+      {
+        subName: "Set bộ",
+        submenu2: [
+          { subname2: "Vest và Blazer", link1: "7" },
+          { subname2: "Đồ thể thao", link1: "8" }
+        ]
+      }
+    ]
+  },
+  {
+    name: "Nữ",
+    link: "",
+    submenu: [
+      {
+        subName: "Áo",
+        submenu2: [
+          { subname2: "Áo sơ mi Blouse", link1: "22" },
+          { subname2: "Áo thun", link1: "23" },
+          { subname2: "Áo khoác", link1: "24" }
+        ]
+      },
+      {
+        subName: "Quần",
+        submenu2: [
+          { subname2: "Quần jeans", link1: "26" },
+          { subname2: "Quần legging", link1: "27" }
+        ]
+      },
+      {
+        subName: "Set bộ",
+        submenu2: [
+          { subname2: "Đầm và váy", link1: "21" },
+          { subname2: "Chân váy", link1: "25" },
+          { subname2: "Đồ thể thao", link1: "28" }
+        ]
+      }
+    ]
+  },
+  {
+    name: "Trẻ em",
+    link: "",
+    submenu: [
+      {
+        subName: "Áo",
+        submenu2: [
+          { subname2: "Áo thun trẻ em", link1: "38" },
+          { subname2: "Áo khoác trẻ em", link1: "39" }
+        ]
+      },
+      {
+        subName: "Quần",
+        submenu2: [
+          { subname2: "Quần dài", link1: "40" },
+          { subname2: "Quần short", link1: "40" }
+        ]
+      },
+      {
+        subName: "Set bộ",
+        submenu2: [
+          { subname2: "Đầm và váy bé gái", link1: "41" },
+          { subname2: "Đồ ngủ cho bé", link1: "42" }
+        ]
+      }
+    ]
+  },
+    {name: "Phụ kiện thời trang", link:"",submenu:[
+      {subName: "Giày dép",link1:"31" },
+      {subName: "Túi xách", link1:"32"},
+      {subName: "Thắt lưng",link1:"33"},
+      {subName: "Mũ nón",link1:"34"},
+      {subName: "Thắt lưng",link1:"35"},
+      {subName: "Đồng hồ",link1:"36"},
+      {subName: "Trang sức",link1:"37"},
+    ]},
+    {name: "Về chúng tôi", link:"",submenu:[
+      {subName: "Về foxy Store",link1:"" },
+      {subName: "Chính sách của foxy Store", link1:""},
+      {subName: "Liên hệ với chúng tôi",link1:""},
+    ]},
   ]
-
-  const categoris=[
-    {name:"Áo",detail:["Áo thun","Áo sơ mi","Áo khoác"]},
-    {name:"Quần",detail:["Quần thun","Quần sơ mi","Quần khoác"]},
-    {name:"Áo",detail:["Áo thun","Áo sơ mi","Áo khoác"]},
-    
-  ]
-  const product={
-    name:"Túi Xách Nhỏ In Hoạ Tiết Chuyển Màu",
-    price:"699 000",
-    image: Image
-  }
   const [ismenu,setIsmenu]=useState(false);
   const [isSearch,setIsSearch]=useState(false);
   const [isUser,setIsUser]=useState(false);
@@ -89,7 +170,7 @@ function Header({setIsPopUp}) {
                 whileHover={{color: "#e43131", cursor: "pointer"}}
                 transition={{duration: 0.5}}
               >
-                <p className='px-1'>
+                <p className='px-1 text-base'>
                   {item.name}
                 </p>
                 <HiChevronDown className='text-sm font-bold'/>
@@ -98,17 +179,17 @@ function Header({setIsPopUp}) {
               {
                 isNav === index &&
                 <motion.div 
-                  className='absolute top-full left-[-53%] w-[1380px] z-20'
+                  className='absolute top-full left-[-62%] w-[1300px] z-20'
                   initial={{opacity:0, y:30}}
                   animate={{opacity: 1, y: 0}}
                   exit={{opacity: 0, y: 30}}
                   transition={{duration: 0.3}}
                 >
-                  <div className='w-full h-10 opacity-0'>
+                  <div className='w-full h-2 opacity-0'>
 
                   </div>
                   <div className=''>
-                    <NavPopups categoris={categoris} product={product} setIsNav={setIsNav}/>
+                    <NavPopups  setIsNav={setIsNav} link= {item.link} submenu= {item.submenu}/>
                   </div>
                 </motion.div>
               }
