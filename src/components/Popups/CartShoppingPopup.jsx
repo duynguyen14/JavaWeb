@@ -4,11 +4,15 @@ import { HiOutlineX } from "react-icons/hi";
 import Image from "../../assets/images/1168.png";
 import { useNavigate } from 'react-router-dom';
 import { request } from '../../untils/request';
+import { useDispatch, useSelector } from 'react-redux';
+import { getProductFromCart } from '../../redux/actions';
 
 function CartShoppingPopup({ isCart, setIsCart }) {
-  const [products,setProduct] = useState([]);
+  // const [products,setProduct] = useState([]);
   const navigate = useNavigate();
   const token =localStorage.getItem("token");
+  const dispatch =useDispatch();
+  const products = useSelector((state)=> state.cart.products)
   useEffect(()=>{
     const fetch =async()=>{
       try{
@@ -17,11 +21,12 @@ function CartShoppingPopup({ isCart, setIsCart }) {
             Authorization: `Bearer ${token}`
           }
         })
-        setProduct(response.data.result)
+        dispatch(getProductFromCart(response.data.result));
+        // setProduct(response.data.result)
         console.log(response);
       }
       catch(e){
-        if(e.response.code==2000){
+        if(e.response&&e.response.code==2000){
           alert("Phiên của bạn đã hết hạn vui lòng đăng nhập lại")
           navigate("/")
         }
@@ -35,7 +40,7 @@ function CartShoppingPopup({ isCart, setIsCart }) {
       initial={{ opacity: 0, x: 50 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.5 }}
-      className='w-full md:max-w-md lg:max-w-lg bg-white z-50 h-screen font-Montserrat border-l border-gray-200 rounded-l-md fixed top-0 right-0 shadow-xl flex flex-col justify-between'
+      className=' w-full md:max-w-md lg:max-w-lg bg-white z-10 h-screen font-Montserrat border-l border-gray-200 rounded-l-md fixed top-0 right-0 shadow-xl flex flex-col justify-between'
     >
       {/* Header */}
       <div className='flex justify-between items-center px-4 py-6 text-xl md:text-2xl font-semibold border-b border-gray-200'>
@@ -74,17 +79,12 @@ function CartShoppingPopup({ isCart, setIsCart }) {
         <button
           onClick={() => {
             setIsCart(false);
-            navigate("/cartShopping", { state: { products } });
+            navigate("/cartShopping");
           }}
           className='btn-primary w-full py-3 rounded-lg'
         >
           Xem giỏ hàng
         </button>
-
-        {/* Nếu muốn thêm nút đặt hàng, bật đoạn này lên */}
-        {/* <button className='mt-3 w-full bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 transition'>
-          Đặt hàng ngay
-        </button> */}
       </div>
     </motion.div>
   );

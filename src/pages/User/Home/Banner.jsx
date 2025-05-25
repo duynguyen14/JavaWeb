@@ -1,5 +1,6 @@
 import React from 'react'
 import { GoArrowUpRight } from "react-icons/go";
+import { Link } from 'react-router-dom';
 
 function Banner() {
   return (
@@ -21,9 +22,9 @@ function Banner() {
                   Thương hiệu
                 </p>
                 <button className='my-5 md:my-8 lg:px-10 lg:py-5 px-2 py-2 bg-white text-black rounded-full text-xs md:text-xl lg:text-2xl cursor-pointer hover:bg-red-600 hover:text-white transition-all duration-500 flex justify-around items-center '>
-                  <p>
+                  <Link to={"/category"}>
                     Khám phá ngay
-                  </p>
+                  </Link>
                   <p className='ml-2 lg:mt-1 lg:ml-5 font-bold text-base md:text-xl lg:text-4xl'>
                     <GoArrowUpRight/>
                   </p>

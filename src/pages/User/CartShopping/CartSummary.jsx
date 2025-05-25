@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-function CartSummary({ products,setProduct,handleOnclickOrder }) {
+function CartSummary({ products,handleOnclickOrder }) {
   const total = products.reduce((acc, p) => acc + p.price * p.quantity, 0);
   const navigate =useNavigate()
   return (

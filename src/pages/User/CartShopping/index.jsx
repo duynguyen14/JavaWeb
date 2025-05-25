@@ -1,87 +1,148 @@
-// pages/CartShopping.jsx
-import React, { useEffect, useState } from "react";
-import Image from "../../../assets/images/1168.png";
+import React, { useEffect } from "react";
 import CartItemList from "./CartItemList";
 import CartSummary from "./CartSummary";
 import CheckoutSteps from "./CheckoutSteps";
-// import { motion } from "framer-motion";
-// import { Toaster, toast } from 'react-hot-toast';
-import {request} from "../../../untils/request.js"
+import { request } from "../../../untils/request.js";
 import { useNavigate } from "react-router-dom";
-import { useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  getProductFromCart,
+  removeProductFromCart,
+  updateProductFromCart,
+} from "../../../redux/actions";
+import { i } from "framer-motion/client";
+
 function CartShopping() {
-  const location = useLocation();
-  const data = location.state?.products || [];
-  const [products,setProduct]=useState(data);
-  const token= localStorage.getItem("token")
-  console.log("token : ",token);
-  const navigate =useNavigate();
-  const handleOnclickPlus=(item)=>{
-   const updateProducts= products.map((product,index)=>{
-    return product.productId === item.productId ? {...product, quantity: product.quantity+1}: product
-   })
-   setProduct(updateProducts);
-   console.log("product",products);
-  }
-  const handleOnclickSubtract=(item)=>{
-    if(item.quantity==1){
-      if(window.confirm("Bạn chắc chắn muốn xoá sản phẩm này khỏi giỏ hàng")){
-         const updateProducts= products.filter(product=>product.productId!=item.productId);
-         setProduct(updateProducts)
-        //  toast("Xoá sản phẩm thành công!", {
-        //   theme: "colored",
-        //   type: "success",
-        //   position: "bottom-right",
-        // });
-        alert("Xoá sản phẩm khỏi giỏ hàng thành công!")
+  const token = localStorage.getItem("token");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const products = useSelector((state) => state.cart.products);
+
+  // Gọi API để lấy giỏ hàng khi load lại trang
+  useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        const res = await request.get("cart", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (res.data.code === 1000) {
+          dispatch(getProductFromCart(res.data.result)); // cập nhật Redux
+        }
+      } catch (error) {
+        if(error.response.data.code==2000){
+          alert("Phiên của bạn đã hết hạn vui lòng đăng nhập lại")
+          navigate("/login");
+        }
+        console.error("Lỗi khi lấy giỏ hàng:", error);
+      }
+    };
+
+    if (token) fetchCart();
+  }, [dispatch, token]);
+
+  // Tăng số lượng
+  const handleOnclickPlus = async(item) => {
+    try{
+        const response =await request.patch("cart/update",{
+            productSizeId: item.productSizeId,
+            quantity : item.quantity+1
+          ,
+        },
+        {
+          headers :{
+            Authorization :`Bearer ${token}`
+          }
+        }
+        )
+        console.log(response)
+        if(response.data.code==1000){
+          dispatch(updateProductFromCart(item.productSizeId, item.quantity + 1));
+        }
+      }
+      catch(e){
+        if(e.response.data.code==2000){
+          alert("Phiên của bạn đã hết hạn vui lòng đăng nhập lại")
+          return;
+        }
+      }
+  };
+
+  // Giảm số lượng
+  const handleOnclickSubtract = async(item) => {
+    if (item.quantity === 1) {
+      if (window.confirm("Bạn chắc chắn muốn xoá sản phẩm này khỏi giỏ hàng?")) {
+        dispatch(removeProductFromCart(item.productSizeId));
+        alert("Xoá sản phẩm khỏi giỏ hàng thành công!");
         return;
       }
+    } else {
+      try{
+        const response =await request.patch("cart/update",{
+            productSizeId: item.productSizeId,
+            quantity : item.quantity-1
+          ,
+        },
+        {
+          headers :{
+            Authorization :`Bearer ${token}`
+          }
+        }
+        )
+        console.log(response)
+        if(response.data.code==1000){
+          dispatch(updateProductFromCart(item.productSizeId, item.quantity - 1));
+        }
+      }
+      catch(e){
+        if(e.response.data.code==2000){
+          alert("Phiên của bạn đã hết hạn vui lòng đăng nhập lại")
+          return;
+        }
+      }
     }
-    const updateProducts= products.map((product,index)=>{
-      return product.productId === item.productId ? {...product, quantity: product.quantity-1}: product
-     })
-     setProduct(updateProducts);
-     console.log("product",products);
-  }
-  const handeleOnclickDelete=(item)=>{
-    if(!window.confirm("Bạn chắc chắn muốn xoá sản phẩm này khỏi giỏ hàng")){
-      return;
+  };
+
+  // Xoá sản phẩm
+  const handeleOnclickDelete = async (item) => {
+    if (!window.confirm("Bạn chắc chắn muốn xoá sản phẩm này khỏi giỏ hàng?")) return;
+
+    try {
+      const response = await request.delete(`cart/${item.productSizeId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.data.code === 1000) {
+        alert("Xoá sản phẩm thành công");
+        dispatch(removeProductFromCart(item.productSizeId));
+      }
+    } catch (e) {
+      console.error("Lỗi khi xoá sản phẩm:", e);
     }
-    const updateProducts= products.filter(product=>product.productId!=item.productId);
-    alert("xoá sản phẩm thành công")
-    setProduct(updateProducts);
-  }
-  // useEffect(()=>{
-  //   const fetch=async()=>{
-  //     try{
-  //       const response =await request.get("admin/demo",
-  //         {
-  //           headers: {
-  //             Authorization :`Bearer ${token}`,
-  //             "Content-Type": "application/json"
-  //           }
-  //         }
-  //       )
-  //       console.log(response.data)
-  //     }
-  //     catch(e){
-  //       console.log("Lỗi ",e.response.data)
-  //     }
-  //   }
-  //   fetch();
-  // },[])
-  const handleOnclickOrder=()=>{
-    navigate("/order", { state: { products } })
-  }
+  };
+
+  // Đặt hàng
+  const handleOnclickOrder = () => {
+    navigate("/order", { state: { products } });
+  };
+
   return (
     <div className="mx-auto py-10 border-gray-300 border-y-[1px]">
-      {/* <ToastContainer /> */}
       <div className="flex flex-col lg:flex-row gap-6">
-        <div className="">
-          <CheckoutSteps currentStep={1}/>
-          <CartItemList products={products} handleOnclickSubtract={handleOnclickSubtract} handleOnclickPlus={handleOnclickPlus} setProduct={setProduct} handeleOnclickDelete={handeleOnclickDelete}/>
+        <div>
+          <CheckoutSteps currentStep={1} />
+          <CartItemList
+            products={products}
+            handleOnclickSubtract={handleOnclickSubtract}
+            handleOnclickPlus={handleOnclickPlus}
+            handeleOnclickDelete={handeleOnclickDelete}
+          />
         </div>
-        <CartSummary products={products} setProduct={setProduct} handleOnclickOrder={handleOnclickOrder}/>
+        <CartSummary products={products} handleOnclickOrder={handleOnclickOrder} />
       </div>
     </div>
   );

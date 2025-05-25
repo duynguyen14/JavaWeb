@@ -12,4 +12,23 @@ const hideLoading=()=>{
         payload :false
     }
 }
-export {showLoading, hideLoading}
+
+const getProductFromCart=(products)=>{
+    return{
+        type: Type.cart.getProductInCart,
+        payload: products
+    }
+}
+const updateProductFromCart=(productSizeId, quantity)=>{
+    return{
+        type :Type.cart.updateProductInCart,
+        payload :{productSizeId, quantity}
+    }
+}
+const removeProductFromCart=(productSizeId)=>{
+    return{
+        type :Type.cart.removeProductInCart,
+        payload :productSizeId
+    }
+}
+export {showLoading, hideLoading,getProductFromCart,updateProductFromCart,removeProductFromCart}

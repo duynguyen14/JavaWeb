@@ -49,7 +49,7 @@ function SearchPopup({setIsSearch,setIsPopUp}) {
     whileInView={{opacity: 1, y:0}}
     transition={{duration: 0.5}}
     >
-      <div className='mx-3 md:mx-10 font-kumbh font-normal'>
+      <div className='mx-3 md:mx-10 z-50 '>
         {/* title */}
         <div className='flex justify-between items-center text-xl md:text-3xl py-5 md:py-10'>
           <p className=''>
