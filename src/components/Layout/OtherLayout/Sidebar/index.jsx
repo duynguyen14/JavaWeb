@@ -22,7 +22,7 @@ function Sidebar() {
     { icon: <User size={20} />, label: 'Thông tin cá nhân', link: '/profile' },
     { icon: <Truck size={20} />, label: 'Quản lý đơn hàng', link: '/ordermanagement' },
     { icon: <MapPin size={20} />, label: 'Thiết lập địa chỉ', link: '/address' },
-    { icon: <Heart size={20} />, label: 'Sản phẩm yêu thích', link: '/product/love' },
+    { icon: <Heart size={20} />, label: 'Sản phẩm yêu thích', link: '/product/favorite' },
     { icon: <HelpCircle size={20} />, label: 'Hỗ trợ tài khoản', link: '/support' },
     { icon: <LogOut size={20} />, label: 'Đăng xuất', link: '#', special: true },
   ];

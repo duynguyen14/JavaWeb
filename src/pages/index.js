@@ -32,6 +32,7 @@ import Employees from "./Admin/Employees";
 import { label, path } from "framer-motion/client";
 import OrderManagement from "./Admin/Orders";
 import Address from "./User/Address/index.jsx";
+import FavoriteProducts from "./User/Product/favorite.jsx";
 
 
 
@@ -48,8 +49,7 @@ const PublicPage=[
 
     {path:"/ordermanagement", component: OrderManagementUser ,layout: OtherLayout},
     {path:"/address",component :Address , layout:OtherLayout},
-
-
+    {path :"/product/favorite",component: FavoriteProducts, layout: OtherLayout },
     {path :"/register",component: Register, layout: UserLayout },
     {path :"/login",component: Login, layout: UserLayout },
     {path :"/oauth2/redirect",component: OAuthRedirect, layout: null },

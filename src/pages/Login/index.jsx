@@ -2,40 +2,83 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { IoEyeOff, IoEye } from "react-icons/io5";
 import { request } from '../../untils/request';
+import authService from '../../untils/auth';
+
 function Login() {
     const [showPassword, setShowPassword] = useState(false);
     const [user, setUser] = useState({
         email: "",
         password: "",
     });
-    const navigate =useNavigate();
+    const [errors, setErrors] = useState({
+        email: "",
+        password: "",
+    });
+    const navigate = useNavigate();
+
+    const validateField = (name, value) => {
+        let msg = "";
+        if (name === "email") {
+            if (!value) {
+                msg = "Vui lòng nhập email";
+            } else if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,}$/.test(value)) {
+                msg = "Email không hợp lệ";
+            }
+        }
+        if (name === "password") {
+            if (!value) {
+                msg = "Vui lòng nhập mật khẩu";
+            } else if (value.length < 8) {
+                msg = "Mật khẩu phải có ít nhất 8 ký tự";
+            } else if (!/[A-Z]/.test(value)) {
+                msg = "Mật khẩu phải có ít nhất 1 chữ in hoa";
+            } else if (!/[a-z]/.test(value)) {
+                msg = "Mật khẩu phải có ít nhất 1 chữ thường";
+            } else if (!/[0-9]/.test(value)) {
+                msg = "Mật khẩu phải có ít nhất 1 số";
+            } else if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(value)) {
+                msg = "Mật khẩu phải có ít nhất 1 ký tự đặc biệt";
+            }
+        }
+        return msg;
+    };
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setUser((prev) => ({
             ...prev,
             [name]: value,
         }));
+        setErrors((prev) => ({
+            ...prev,
+            [name]: validateField(name, value),
+        }));
     };
+
     const handleOnclickLogin = async () => {
-        if(!user.email || !user.password){
-            alert("Vui lòng điền đầy đủ thông tin đăng nhập")
+        // Kiểm tra lại tất cả trường trước khi gửi
+        const newErrors = {
+            email: validateField("email", user.email),
+            password: validateField("password", user.password),
+        };
+        setErrors(newErrors);
+        if (newErrors.email || newErrors.password) {
             return;
         }
 
         try {
             const response = await request.post("user/login", user);
-            console.log(response.data);
-            alert("Đăng nhập thành công")
-            localStorage.setItem("token",response.data.result.accessToken);
+            alert("Đăng nhập thành công");
+            localStorage.setItem("token", response.data.result.accessToken);
             setTimeout(() => {
                 navigate("/");
             }, 1000);
         }
-        catch(e){
+        catch (e) {
             alert("Đăng nhập thất bại");
-            console.log("Lỗi ",e);
+            console.log("Lỗi ", e);
         }
-    }
+    };
 
     return (
         <div className="bg-white flex flex-col justify-between border-gray-300 border-y-[1px]">
@@ -48,7 +91,7 @@ function Login() {
                         <p className="text-center mb-6">
                             Vui lòng nhập thông tin và tận hưởng trải nghiệm cá nhân hóa cùng FOXY
                         </p>
-                        <form className="space-y-4">
+                        <form className="space-y-4" autoComplete="off" onSubmit={e => e.preventDefault()}>
                             <div>
                                 <label className="block font-medium mb-1">
                                     Email / Tên đăng nhập <span className="text-red-600">*</span>
@@ -59,8 +102,11 @@ function Login() {
                                     value={user.email}
                                     onChange={handleChange}
                                     placeholder="Nhập email hoặc tên đăng nhập của Quý khách"
-                                    className="w-full px-4 py-3 border rounded focus:outline-none focus:ring-2 focus:ring-black"
+                                    className={`w-full px-4 py-3 border rounded focus:outline-none focus:ring-2 focus:ring-black ${errors.email ? "border-red-500" : ""}`}
                                 />
+                                {errors.email && (
+                                    <div className="text-red-600 text-sm mt-1">{errors.email}</div>
+                                )}
                             </div>
 
                             <div>
@@ -74,7 +120,7 @@ function Login() {
                                         value={user.password}
                                         onChange={handleChange}
                                         placeholder="Nhập mật khẩu"
-                                        className="w-full px-4 py-3 border rounded focus:outline-none focus:ring-2 focus:ring-black"
+                                        className={`w-full px-4 py-3 border rounded focus:outline-none focus:ring-2 focus:ring-black ${errors.password ? "border-red-500" : ""}`}
                                     />
                                     <div
                                         className="absolute right-3 top-3.5 text-xl text-gray-600 cursor-pointer"
@@ -83,6 +129,9 @@ function Login() {
                                         {showPassword ? <IoEye /> : <IoEyeOff />}
                                     </div>
                                 </div>
+                                {errors.password && (
+                                    <div className="text-red-600 text-sm mt-1">{errors.password}</div>
+                                )}
                             </div>
 
                             <div className="flex items-center">
@@ -95,7 +144,7 @@ function Login() {
                             <button
                                 type="button"
                                 className="cursor-pointer w-full bg-black text-white py-3 rounded-full hover:bg-red-600 transition uppercase"
-                                onClick={() => handleOnclickLogin()}
+                                onClick={handleOnclickLogin}
                             >
                                 ĐĂNG NHẬP
                             </button>
@@ -106,10 +155,8 @@ function Login() {
                                     type="button"
                                     className="cursor-pointer w-full flex items-center justify-center border border-gray-300 py-3 rounded hover:bg-gray-100 transition"
                                     onClick={() => {
-
                                         authService.login();
                                     }}
-
                                 >
                                     <img
                                         src="https://developers.google.com/identity/images/g-logo.png"

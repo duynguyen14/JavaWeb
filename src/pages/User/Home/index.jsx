@@ -17,6 +17,8 @@ function Home() {
       return () => clearTimeout(timer);
     }
   }, [location.state]);
+
+  const [newProduct,setNewProduct] =useState([]);
   const[saleProduct,setSaleProduct] =useState([])
 
   const handleOnclickLove=()=>{

@@ -15,7 +15,6 @@ class AuthService {
   }
 
   getToken() {
-    // ❌ Đừng lấy token từ URL ở đây nữa
     return localStorage.getItem('token');
   }
 
