@@ -9,15 +9,15 @@ export default function AddressItem({ address, onDelete, onSetDefault,onEdit  })
           {/* Name and Phone */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
             <h3 className="font-semibold text-gray-900 text-lg">{address.name}</h3>
-            <span className="text-gray-600 font-medium">{address.phone}</span>
+            <span className="text-gray-600 font-medium">{address.phoneNumber}</span>
           </div>
 
           {/* Address Lines */}
           <div className="space-y-1">
-            <p className="text-gray-700 leading-relaxed">{address.addressLine1}</p>
-            {address.addressLine2 && (
-              <p className="text-gray-700 leading-relaxed">{address.addressLine2}</p>
-            )}
+            <p className="text-gray-700 leading-relaxed">{address.city}</p>
+            {/* {address.addressLine2 && ( */}
+              <p className="text-gray-700 leading-relaxed">{address.detailAddress}</p>
+            {/* )} */}
           </div>
 
           {/* Default Badge */}
