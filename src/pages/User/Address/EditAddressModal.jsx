@@ -1,17 +1,21 @@
-// components/EditAddressModal.jsx
-import React from "react";
+import React, { useState } from "react";
 import { X } from "lucide-react";
 
-const EditAddressModal = ({
-  address,
-  onClose,
-  onChange,
-  onSave
-}) => {
+const EditAddressModal = ({ address, onClose, onChange, onSave }) => {
+  const [addressType, setAddressType] = useState(address?.type || "Nhà Riêng");
+
   if (!address) return null;
 
+  const handleChange = (field, value) => {
+    onChange({ ...address, [field]: value, type: addressType });
+  };
+
   return (
-    <div className="fixed inset-0 bg-gray-300 opacity-95 flex items-center justify-center z-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div
+        className="absolute inset-0 bg-secondary opacity-70"
+        onClick={onClose}
+      ></div>
       <div className="bg-white rounded-lg w-full max-w-md p-6 relative">
         <button
           onClick={onClose}
@@ -27,60 +31,71 @@ const EditAddressModal = ({
             <input
               type="text"
               placeholder="Họ và tên"
-              className="border border-gray-300 rounded p-2 w-full"
+              className="border border-gray-300 rounded p-2"
               value={address.name}
-              onChange={(e) =>
-                onChange({ ...address, name: e.target.value })
-              }
+              onChange={(e) => handleChange("name", e.target.value)}
             />
             <input
               type="text"
               placeholder="Số điện thoại"
-              className="border border-gray-300 rounded p-2 w-full"
-              value={address.phone}
-              onChange={(e) =>
-                onChange({ ...address, phone: e.target.value })
-              }
+              className="border border-gray-300 rounded p-2"
+              value={address.phoneNumber}
+              onChange={(e) => handleChange("phoneNumber", e.target.value)}
             />
           </div>
 
-          <input
-            type="text"
-            placeholder="Tỉnh/Thành phố"
+          <select
             className="border border-gray-300 rounded p-2 w-full"
-            value={address.addressLine2}
-            onChange={(e) =>
-              onChange({ ...address, addressLine2: e.target.value })
-            }
-          />
+            value={address.city}
+            onChange={(e) => handleChange("city", e.target.value)}
+          >
+            <option value="" disabled>Chọn tỉnh/thành</option>
+            <option value="Hà Nội">Hà Nội</option>
+            <option value="Hồ Chí Minh">Hồ Chí Minh</option>
+            <option value="Đà Nẵng">Đà Nẵng</option>
+            <option value="Hải Phòng">Hải Phòng</option>
+            <option value="Hà Nam">Hà Nam</option>
+          </select>
 
           <input
             type="text"
             placeholder="Địa chỉ cụ thể"
             className="border border-gray-300 rounded p-2 w-full"
-            value={address.addressLine1}
-            onChange={(e) =>
-              onChange({ ...address, addressLine1: e.target.value })
-            }
+            value={address.detailAddress}
+            onChange={(e) => handleChange("detailAddress", e.target.value)}
           />
 
-          <div className="flex items-center mt-2">
+          <div>
+            <p className="font-medium mb-2">Loại địa chỉ:</p>
+            <div className="flex space-x-4">
+              {["Nhà Riêng", "Văn Phòng"].map(type => (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => {
+                    setAddressType(type);
+                    handleChange("type", type);
+                  }}
+                  className={`px-4 py-2 rounded border ${
+                    addressType === type
+                      ? "border-red-500 text-red-500"
+                      : "border-gray-300 text-gray-700"
+                  }`}
+                >
+                  {type}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <label className="flex items-center space-x-2">
             <input
               type="checkbox"
-              id="editDefaultAddress"
               checked={address.isDefault}
-              onChange={(e) =>
-                onChange({ ...address, isDefault: e.target.checked })
-              }
-              className="mr-2"
+              onChange={(e) => handleChange("isDefault", e.target.checked)}
             />
-            <label
-              htmlFor="editDefaultAddress"
-              className="text-sm text-gray-700"
-            >
-              Đặt làm địa chỉ mặc định
-            </label>
-          </div>
+            <span>Đặt làm địa chỉ mặc định</span>
+          </label>
 
           <button
             onClick={onSave}

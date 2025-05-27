@@ -4,26 +4,37 @@ import { X, MapPin } from "lucide-react";
 export default function AddressFormModal({ onClose, onSave }) {
   const [form, setForm] = useState({
     name: "",
-    phone: "",
-    province: "",
-    addressDetail: ""
+    phoneNumber: "",
+    city: "",
+    detailAddress: "",
+    isDefault: false,
   });
   const [addressType, setAddressType] = useState("Nhà Riêng");
-  const [isDefault, setIsDefault] = useState(false);
 
   const handleSave = () => {
     onSave({
       name: form.name,
-      phone: form.phone,
-      addressLine1: form.addressDetail,
-      addressLine2: form.province
-    }, isDefault);
+      phoneNumber: form.phoneNumber,
+      city: form.city,
+      detailAddress: form.detailAddress,
+      isDefault: form.isDefault,
+    });
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-300 bg-opacity-90 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg w-full max-w-md p-6 relative">
-        <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* Lớp nền mờ */}
+      <div
+        className="absolute inset-0 bg-secondary opacity-70"
+        onClick={onClose}
+      ></div>
+
+      {/* Nội dung form */}
+      <div className="relative bg-white rounded-lg w-full max-w-md p-6 z-10">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+        >
           <X className="w-6 h-6" />
         </button>
 
@@ -42,17 +53,21 @@ export default function AddressFormModal({ onClose, onSave }) {
               type="text"
               placeholder="Số điện thoại"
               className="border border-gray-300 rounded p-2"
-              value={form.phone}
-              onChange={(e) => setForm({ ...form, phone: e.target.value })}
+              value={form.phoneNumber}
+              onChange={(e) =>
+                setForm({ ...form, phoneNumber: e.target.value })
+              }
             />
           </div>
 
           <select
             className="border border-gray-300 rounded p-2 w-full"
-            value={form.province}
-            onChange={(e) => setForm({ ...form, province: e.target.value })}
+            value={form.city}
+            onChange={(e) => setForm({ ...form, city: e.target.value })}
           >
-            <option value="" disabled>Chọn tỉnh/thành</option>
+            <option value="" disabled>
+              Chọn tỉnh/thành
+            </option>
             <option value="Hà Nội">Hà Nội</option>
             <option value="Hồ Chí Minh">Hồ Chí Minh</option>
             <option value="Đà Nẵng">Đà Nẵng</option>
@@ -64,8 +79,10 @@ export default function AddressFormModal({ onClose, onSave }) {
             type="text"
             placeholder="Địa chỉ cụ thể"
             className="border border-gray-300 rounded p-2 w-full"
-            value={form.addressDetail}
-            onChange={(e) => setForm({ ...form, addressDetail: e.target.value })}
+            value={form.detailAddress}
+            onChange={(e) =>
+              setForm({ ...form, detailAddress: e.target.value })
+            }
           />
 
           <div className="h-32 bg-gray-100 rounded flex items-center justify-center">
@@ -78,12 +95,14 @@ export default function AddressFormModal({ onClose, onSave }) {
           <div>
             <p className="font-medium mb-2">Loại địa chỉ:</p>
             <div className="flex space-x-4">
-              {["Nhà Riêng", "Văn Phòng"].map(type => (
+              {["Nhà Riêng", "Văn Phòng"].map((type) => (
                 <button
                   key={type}
                   onClick={() => setAddressType(type)}
                   className={`px-4 py-2 rounded border ${
-                    addressType === type ? "border-red-500 text-red-500" : "border-gray-300 text-gray-700"
+                    addressType === type
+                      ? "border-red-500 text-red-500"
+                      : "border-gray-300 text-gray-700"
                   }`}
                 >
                   {type}
@@ -95,8 +114,10 @@ export default function AddressFormModal({ onClose, onSave }) {
           <label className="flex items-center space-x-2">
             <input
               type="checkbox"
-              checked={isDefault}
-              onChange={(e) => setIsDefault(e.target.checked)}
+              checked={form.isDefault}
+              onChange={(e) =>
+                setForm({ ...form, isDefault: e.target.checked })
+              }
             />
             <span>Đặt làm địa chỉ mặc định</span>
           </label>
