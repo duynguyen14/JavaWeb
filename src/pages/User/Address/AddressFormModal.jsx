@@ -9,9 +9,28 @@ export default function AddressFormModal({ onClose, onSave }) {
     detailAddress: "",
     isDefault: false,
   });
+
   const [addressType, setAddressType] = useState("Nhà Riêng");
 
+  const [errors, setErrors] = useState({});
+
+  const validate = () => {
+    const newErrors = {};
+    if (!form.name.trim()) newErrors.name = "Họ và tên không được để trống";
+    if (!form.phoneNumber.trim()) {
+      newErrors.phoneNumber = "Số điện thoại không được để trống";
+    } else if (!/^\d{10,11}$/.test(form.phoneNumber)) {
+      newErrors.phoneNumber = "Số điện thoại không hợp lệ";
+    }
+    if (!form.city) newErrors.city = "Vui lòng chọn tỉnh/thành";
+    if (!form.detailAddress.trim())
+      newErrors.detailAddress = "Địa chỉ cụ thể không được để trống";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSave = () => {
+    if (!validate()) return;
     onSave({
       name: form.name,
       phoneNumber: form.phoneNumber,
@@ -42,48 +61,68 @@ export default function AddressFormModal({ onClose, onSave }) {
 
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            <input
-              type="text"
-              placeholder="Họ và tên"
-              className="border border-gray-300 rounded p-2"
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-            />
-            <input
-              type="text"
-              placeholder="Số điện thoại"
-              className="border border-gray-300 rounded p-2"
-              value={form.phoneNumber}
-              onChange={(e) =>
-                setForm({ ...form, phoneNumber: e.target.value })
-              }
-            />
+            <div>
+              <input
+                type="text"
+                placeholder="Họ và tên"
+                className="border border-gray-300 rounded p-2 w-full"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+              />
+              {errors.name && (
+                <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+              )}
+            </div>
+            <div>
+              <input
+                type="text"
+                placeholder="Số điện thoại"
+                className="border border-gray-300 rounded p-2 w-full"
+                value={form.phoneNumber}
+                onChange={(e) =>
+                  setForm({ ...form, phoneNumber: e.target.value })
+                }
+              />
+              {errors.phoneNumber && (
+                <p className="text-red-500 text-sm mt-1">{errors.phoneNumber}</p>
+              )}
+            </div>
           </div>
 
-          <select
-            className="border border-gray-300 rounded p-2 w-full"
-            value={form.city}
-            onChange={(e) => setForm({ ...form, city: e.target.value })}
-          >
-            <option value="" disabled>
-              Chọn tỉnh/thành
-            </option>
-            <option value="Hà Nội">Hà Nội</option>
-            <option value="Hồ Chí Minh">Hồ Chí Minh</option>
-            <option value="Đà Nẵng">Đà Nẵng</option>
-            <option value="Hải Phòng">Hải Phòng</option>
-            <option value="Hà Nam">Hà Nam</option>
-          </select>
+          <div>
+            <select
+              className="border border-gray-300 rounded p-2 w-full"
+              value={form.city}
+              onChange={(e) => setForm({ ...form, city: e.target.value })}
+            >
+              <option value="" disabled>
+                Chọn tỉnh/thành
+              </option>
+              <option value="Hà Nội">Hà Nội</option>
+              <option value="Hồ Chí Minh">Hồ Chí Minh</option>
+              <option value="Đà Nẵng">Đà Nẵng</option>
+              <option value="Hải Phòng">Hải Phòng</option>
+              <option value="Hà Nam">Hà Nam</option>
+            </select>
+            {errors.city && (
+              <p className="text-red-500 text-sm mt-1">{errors.city}</p>
+            )}
+          </div>
 
-          <input
-            type="text"
-            placeholder="Địa chỉ cụ thể"
-            className="border border-gray-300 rounded p-2 w-full"
-            value={form.detailAddress}
-            onChange={(e) =>
-              setForm({ ...form, detailAddress: e.target.value })
-            }
-          />
+          <div>
+            <input
+              type="text"
+              placeholder="Địa chỉ cụ thể"
+              className="border border-gray-300 rounded p-2 w-full"
+              value={form.detailAddress}
+              onChange={(e) =>
+                setForm({ ...form, detailAddress: e.target.value })
+              }
+            />
+            {errors.detailAddress && (
+              <p className="text-red-500 text-sm mt-1">{errors.detailAddress}</p>
+            )}
+          </div>
 
           <div className="h-32 bg-gray-100 rounded flex items-center justify-center">
             <button className="flex items-center text-gray-500">

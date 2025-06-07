@@ -10,7 +10,6 @@ import {
   removeProductFromCart,
   updateProductFromCart,
 } from "../../../redux/actions";
-import { i } from "framer-motion/client";
 
 function CartShopping() {
   const token = localStorage.getItem("token");

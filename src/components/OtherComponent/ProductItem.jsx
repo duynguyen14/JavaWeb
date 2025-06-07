@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { MdOutlineRemoveRedEye } from "react-icons/md";
-import { FaRegHeart } from "react-icons/fa";
+import { FaRegHeart, FaHeart } from "react-icons/fa";
 import { FiShoppingBag } from "react-icons/fi";
 import { Link, useNavigate } from 'react-router-dom';
 import { request } from '../../untils/request';
-function ProductItem({ id, name, price, images, soldCount, sizes, discountPercent }) {
+
+function ProductItem({ id, name, price, images, soldCount, sizes, discountPercent, love,handleOnclickDeleteLove }) {
   const [isHover, setIsHover] = useState(false);
   const [showSizes, setShowSizes] = useState(false);
   const [selectedSize, setSelectedSize] = useState(null);
-  const navigate =useNavigate();
-  const token =localStorage.getItem("token");
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+
   const toLocalePrice = (value) => {
     return value.toLocaleString('vi-VN', {
       style: 'currency',
@@ -18,54 +20,74 @@ function ProductItem({ id, name, price, images, soldCount, sizes, discountPercen
     });
   };
 
-  const handleSelectSize = async(size) => {
-    if(!token){
-      alert("Bạn vui lòng đăng nhập để thực hiện chức năng này!")
-      setTimeout(()=>{
-        navigate("/login")
-
-      },500)
+  const handleSelectSize = async (size) => {
+    if (!token) {
+      alert("Bạn vui lòng đăng nhập để thực hiện chức năng này!");
+      setTimeout(() => {
+        navigate("/login");
+      }, 500);
       return;
     }
 
-    if(!window.confirm("Bạn xác nhận thêm sản phẩm này vào giỏ hàng")){
-      return;
-    }
-      console.log(id)
-    try{
-      // call api
-      const response = await request.post("/cart",{
-        
-          productId :id,
+    if (!window.confirm("Bạn xác nhận thêm sản phẩm này vào giỏ hàng")) return;
+
+    try {
+      const response = await request.post(
+        "/cart",
+        {
+          productId: id,
           quantity: 1,
           sizeName: size.sizeName
-      },
-    {
-      headers:{
-        Authorization: `Bearer ${token}`
-      }
-    }
-    )
-    console.log(response.data)
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
       setSelectedSize(size);
       setShowSizes(false);
-     if(response.data.code==1000){
-      alert("Thêm sản phẩm thành công")
-     }
-    }
-    catch(e){
-      alert("Lỗi khi thêm sản phẩm vào giỏ")
-      if(e.response.data.code==2000){
-        alert("Phiên của bạn đã hết hạn vui lòng đăng nhập lại")
-        navigate("/login")
+      if (response.data.code === 1000) {
+        alert("Thêm sản phẩm thành công");
+      }
+    } catch (e) {
+      alert("Lỗi khi thêm sản phẩm vào giỏ");
+      if (e.response?.data?.code === 2000) {
+        alert("Phiên của bạn đã hết hạn vui lòng đăng nhập lại");
+        navigate("/login");
       }
       console.log(e.response);
     }
   };
+  const handleOnclickLove = async () => {
+    try {
+      if (!token) {
+        alert("Bạn vui lòng đăng nhập để thực hiện chức năng này!");
+        setTimeout(() => {
+          navigate("/login");
+        }, 500);
+        return;
+      }
+      if (!window.confirm("Xác nhận thêm sản phẩm vào danh sách yêu thích")) return;
 
+      const response = await request.post(
+        `favorite/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      alert("Thêm sản phẩm vào danh sách yêu thích thành công");
+      console.log(response.data);
+    } catch (e) {
+      console.log("error", e);
+    }
+  };
   return (
     <div className="relative">
-      {/* Image + hover effect */}
+      {/* Image */}
       <div
         className='overflow-hidden relative rounded-md cursor-pointer'
         onMouseEnter={() => setIsHover(true)}
@@ -74,7 +96,9 @@ function ProductItem({ id, name, price, images, soldCount, sizes, discountPercen
         <Link to={`/product/${id}`}>
           <motion.img
             key={isHover ? "hover" : "normal"}
-            src={isHover&& images[1]!=null ? `http://localhost:8080/images/${images[1]}.png` : `http://localhost:8080/images/${images[0]}.png`}
+            src={isHover && images[1] != null
+              ? `http://localhost:8080/images/${images[1]}.png`
+              : `http://localhost:8080/images/${images[0]}.png`}
             alt={name}
             initial={{ opacity: 0.8, scale: 1 }}
             animate={{ opacity: 1, scale: 1.02 }}
@@ -85,12 +109,12 @@ function ProductItem({ id, name, price, images, soldCount, sizes, discountPercen
 
         {/* Discount badge */}
         {discountPercent && (
-          <div className="absolute top-0 right-0 bg-orange-500 text-white text-xs md:text-sm font-bold px-2 py-1 rounded-bl-md ">
+          <div className="absolute top-0 right-0 bg-orange-500 text-white text-xs md:text-sm font-bold px-2 py-1 rounded-bl-md">
             -{discountPercent}%
           </div>
         )}
 
-        {/* Hover buttons */}
+        {/* Hover icons */}
         <motion.div
           className='absolute top-[5%] right-[5%] text-base md:text-xl xl:text-xl group'
           initial={{ opacity: 0, y: -20 }}
@@ -100,26 +124,41 @@ function ProductItem({ id, name, price, images, soldCount, sizes, discountPercen
           <p className='my-2 xl:my-5 p-1 xl:px-3 xl:py-3 bg-white rounded-full hover:bg-black hover:text-white transition-all duration-500'>
             <MdOutlineRemoveRedEye />
           </p>
-          <p className='my-2 xl:my-5 p-1 xl:px-3 xl:py-3 bg-white rounded-full hover:bg-pink-400 hover:text-white transition-all duration-500'>
-            <FaRegHeart />
-          </p>
+
+          {love ? (
+            <p className='my-2 xl:my-5 p-1 xl:px-3 xl:py-3 bg-white rounded-full text-pink-500'
+              onClick={()=>handleOnclickDeleteLove?.()}
+            >
+              <FaHeart />
+            </p>
+          ) : (
+            <p
+              className='my-2 xl:my-5 p-1 xl:px-3 xl:py-3 bg-white rounded-full hover:bg-pink-400 hover:text-white transition-all duration-500'
+              onClick={handleOnclickLove}
+            >
+              <FaRegHeart />
+            </p>
+          )}
         </motion.div>
       </div>
 
-      {/* Product name and price */}
+      {/* Info section */}
       <div className='text-sm md:text-base mx-1'>
-        <p className='my-3 text-justify h-[55px]'>{name.length > 45 ? name.slice(0, 30) + '...' : name}</p>
+        <p className='my-3 text-justify h-[55px] flex items-center gap-2'>
+          {name.length > 45 ? name.slice(0, 30) + '...' : name}
+        </p>
         <div className='flex justify-between items-center relative'>
           <div>
             <div className='flex'>
-              <p className='font-semibold line-through'
-                style={discountPercent!=null?{textDecorationLine: "line-through"}:{textDecorationLine: "none"}}
-              >{toLocalePrice(price)}</p>
-              {
-                discountPercent&& <p className='pl-4 font-semibold text-red-500'>
-                  {toLocalePrice(price -price*discountPercent/100)}
+              <p className='font-semibold'
+                style={discountPercent ? { textDecorationLine: "line-through" } : {}}>
+                {toLocalePrice(price)}
+              </p>
+              {discountPercent && (
+                <p className='pl-4 font-semibold text-red-500'>
+                  {toLocalePrice(price - price * discountPercent / 100)}
                 </p>
-              }
+              )}
             </div>
             <p className='font-base text-gray-400 pt-2'>Đã bán {soldCount}</p>
             {selectedSize && (
@@ -128,6 +167,7 @@ function ProductItem({ id, name, price, images, soldCount, sizes, discountPercen
               </p>
             )}
           </div>
+
           <div
             className='text-lg p-2 h-10 btn-secondary cursor-pointer'
             onClick={() => setShowSizes(!showSizes)}

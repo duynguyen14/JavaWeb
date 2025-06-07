@@ -1,45 +1,35 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { HiOutlineX } from "react-icons/hi";
 import { AiFillHeart } from "react-icons/ai";
-import Image from "../../assets/images/1168.png";
 import { useNavigate } from 'react-router-dom';
-// import { ToastContainer, toast } from 'react-toastify';
-// import 'react-toastify/dist/ReactToastify.css';
-const wishlistData = [
-  {
-    id: 1,
-    name: "Đầm Maxi Dự Tiệc Sang Trọng",
-    color: "Đỏ Ruby",
-    size: "S",
-    price: 1890000,
-    image: Image
-  },
-  {
-    id: 2,
-    name: "Áo Khoác Denim Vintage",
-    color: "Xanh Đậm",
-    size: "M",
-    price: 990000,
-    image: Image
-  }
-];
+import { request } from '../../untils/request';
 
 function WishlistPopup({ isLove, setIsLove }) {
-  const [wishlist, setWishlist] = useState(wishlistData);
+  const [wishlist, setWishlist] = useState([]);
   const navigate = useNavigate();
   const token =localStorage.getItem("token");
   const handleAddToCart = (item) => {
-    // console.log("Đã thêm vào giỏ:", item.name);
-    // Thêm xử lý thêm vào giỏ ở đây (Redux hoặc Context)
-    // toast("Thêm sản phẩm vào giỏ hàng thành công", {
-    //       theme: "colored",
-    //       type: "success",
-    //       position: "top-right",
-    
-    //     });
+    setIsLove(false);
+    navigate(`/product/${item.id}`)
   };
-
+  useEffect(()=>{
+    const fetch = async()=>{
+      try{
+        const response =await request.get("favorite/getAll",{
+          headers :{
+            Authorization :`Bearer ${token}`
+          }
+        })
+        console.log(response.data);
+        setWishlist(response.data.result);
+      }
+      catch(e){
+        console.log("error ",e)
+      }
+    }
+    fetch()
+  },[])
   return (
     <motion.div
       initial={{ opacity: 0, x: 50 }}
@@ -76,15 +66,14 @@ function WishlistPopup({ isLove, setIsLove }) {
                 <div key={product.id} className='flex gap-4 items-start border-b border-gray-200 pb-4'>
                   <div className='relative'>
                     <img
-                      src={product.image}
-                      alt={product.name}
+                      src={`http://localhost:8080/images/${product.images[0]}.png`} alt={product.name}
                       className='w-28 h-36 object-cover rounded-2xl shadow'
                     />
                     <AiFillHeart className='absolute top-1 right-1 text-pink-500 text-xl drop-shadow' />
                   </div>
                   <div className='flex-1'>
                     <h3 className='text-base font-semibold text-gray-800'>{product.name}</h3>
-                    <p className='text-sm text-gray-600'>Màu: {product.color} - Size: {product.size}</p>
+                    {/* <p className='text-sm text-gray-600'>Màu: {product.color} - Size: {product.size}</p> */}
                     <p className='text-base font-medium text-red-500 mt-1'>
                       {product.price.toLocaleString()}đ
                     </p>

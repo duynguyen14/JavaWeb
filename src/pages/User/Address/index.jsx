@@ -127,6 +127,7 @@ export default function Address() {
         id: address.id,
         name: address.name,
         detailAddress: address.detailAddress,
+        phoneNumber: address.phoneNumber,
         city: address.city,
         isDefault:true,
       },{

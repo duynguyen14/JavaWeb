@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { MapPin, Phone, Home, Building2, X, Check } from 'lucide-react'
-
 function ListAddressPopUp({ addresses, onClose, onSelect }) {
   const [selectedAddress, setSelectedAddress] = useState(null)
 
