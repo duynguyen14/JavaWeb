@@ -12,7 +12,14 @@ const hideLoading=()=>{
         payload :false
     }
 }
-
+const addProductToCart=(productSizeId,quantity)=>{
+    return{
+        type: Type.cart.addProductToCart,
+        payload:{
+            productSizeId,quantity
+        }
+    }
+}
 const getProductFromCart=(products)=>{
     return{
         type: Type.cart.getProductInCart,

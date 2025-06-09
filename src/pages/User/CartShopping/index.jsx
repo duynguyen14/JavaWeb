@@ -26,7 +26,7 @@ function CartShopping() {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log("Token gửi lên:", token);
+        // console.log("Token gửi lên:", token);
         if (res.data.code === 1000) {
           dispatch(getProductFromCart(res.data.result)); // cập nhật Redux
         }
@@ -126,6 +126,7 @@ function CartShopping() {
 
   // Đặt hàng
   const handleOnclickOrder = () => {
+    localStorage.setItem("cart", JSON.stringify(products));
     navigate("/order", { state: { products } });
   };
 

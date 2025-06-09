@@ -5,10 +5,18 @@ import { request } from '../../../untils/request';
 import ProductReviews from './ProductReviews';
 import ProductShowcase from './ProductShowcase';
 import ReviewForm from './ReviewForm';
+import { useDispatch, useSelector } from "react-redux";
+import {
+  getProductFromCart,
+  removeProductFromCart,
+  updateProductFromCart,
+} from "../../../redux/actions";
 function Product() {
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState(null);
   const { id } = useParams();
+  const dispatch = useDispatch();
+  const products = useSelector((state) => state.cart.products);
   const [product, setProduct] = useState({
     quantity: 1,
     productSizeDTOS: [],
