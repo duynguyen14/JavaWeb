@@ -1,25 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
 import { FiShoppingBag } from "react-icons/fi";
 import { Link, useNavigate } from 'react-router-dom';
 import { request } from '../../untils/request';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { addProductToCart } from '../../redux/actions';
 function ProductItem({ id, name, price, images, soldCount, sizes, discountPercent, love,handleOnclickDeleteLove }) {
   const [isHover, setIsHover] = useState(false);
   const [showSizes, setShowSizes] = useState(false);
   const [selectedSize, setSelectedSize] = useState(null);
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
-
+  const dispatch =useDispatch();
+  const products =useSelector(state=> state.cart.products);
   const toLocalePrice = (value) => {
     return value.toLocaleString('vi-VN', {
       style: 'currency',
       currency: 'VND',
     });
   };
-
   const handleSelectSize = async (size) => {
     if (!token) {
       alert("Bạn vui lòng đăng nhập để thực hiện chức năng này!");
@@ -49,6 +50,8 @@ function ProductItem({ id, name, price, images, soldCount, sizes, discountPercen
       setShowSizes(false);
       if (response.data.code === 1000) {
         alert("Thêm sản phẩm thành công");
+        dispatch(addProductToCart(response.data.result))
+        
       }
     } catch (e) {
       alert("Lỗi khi thêm sản phẩm vào giỏ");
@@ -59,6 +62,9 @@ function ProductItem({ id, name, price, images, soldCount, sizes, discountPercen
       console.log(e.response);
     }
   };
+  useEffect(()=>{
+      localStorage.setItem("cart", JSON.stringify(products))
+    },[products])
   const handleOnclickLove = async () => {
     try {
       if (!token) {

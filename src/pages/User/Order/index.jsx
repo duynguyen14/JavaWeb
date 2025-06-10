@@ -7,11 +7,12 @@ import ListProduct from './ListProduct';
 import { request } from '../../../untils/request';
 import AddressFormModal from '../Address/AddressFormModal';
 import ListAddressPopUp from '../../../components/Popups/ListAddressPopUp';
-
+import { order } from '../../../redux/actions';
+import { useDispatch } from 'react-redux';
 function Order() {
   const location = useLocation();
   const navigate = useNavigate();
-
+  const dispatch =useDispatch();
   const data = JSON.parse(localStorage.getItem("cart") || "[]")
   const queryParams = new URLSearchParams(location.search);
   const responseCode = queryParams.get('vnp_ResponseCode');
@@ -79,6 +80,7 @@ function Order() {
           alert('Đặt hàng thành công!');
           navigate('/ordermanagement');
           localStorage.removeItem("cart");
+          dispatch(order())
         }
       } catch (error) {
         console.error('Lỗi khi tạo đơn hàng:', error);
@@ -126,7 +128,9 @@ function Order() {
           }
         );
         alert('Đặt hàng thành công');
+        localStorage.removeItem("cart");
         navigate('/ordermanagement');
+        dispatch(order())
       } else if (selectedPaymentMethod === 'QR') {
         const amount = total();
         const response = await request.post('bill/create/payment',

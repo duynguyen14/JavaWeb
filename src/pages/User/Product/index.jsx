@@ -7,6 +7,7 @@ import ProductShowcase from './ProductShowcase';
 import ReviewForm from './ReviewForm';
 import { useDispatch, useSelector } from "react-redux";
 import {
+  addProductToCart,
   getProductFromCart,
   removeProductFromCart,
   updateProductFromCart,
@@ -31,7 +32,7 @@ function Product() {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
   const [checkReview, setCheckReview] = useState(false);
-
+  console.log("products : ",products);
   const handleSubmit = async() => {
     if (!rating || !comment.trim()) {
       alert('Vui lòng chọn số sao và nhập nội dung đánh giá.');
@@ -47,8 +48,8 @@ function Product() {
           Authorization :`Bearer ${token}`
         }
       })
-      console.log('Đánh giá:', { rating, comment });
-      console.log(response.data);
+      // console.log('Đánh giá:', { rating, comment });
+      // console.log(response.data);
       setProduct(pre=> ({
         ...pre,reviews:[...pre.reviews, response.data.result]
       }))
@@ -93,7 +94,7 @@ function Product() {
           request.get(`product/${id}`),
           request.get(`product/${id}/related`),
         ])
-        console.log(response1.data);
+        // console.log(response1.data);
         setProduct(response1.data.result)
         setProductRelateds(response2.data.result)
       }
@@ -124,6 +125,7 @@ function Product() {
           }
         }
       )
+      dispatch(addProductToCart(response.data.result))
       console.log(response.data)
       if (response.data.code == 1000) {
         alert("thêm sản phẩm vào giỏ hàng thành công")
@@ -137,6 +139,9 @@ function Product() {
       console.log("Loi ", e)
     }
   }
+  useEffect(()=>{
+    localStorage.setItem("cart", JSON.stringify(products))
+  },[products])
   const handleOnclickReview=async()=>{
     try{
       const response =await request.get(`reviews/check/${id}`, {

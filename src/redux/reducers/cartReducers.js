@@ -1,7 +1,7 @@
 import Type from "../types"
 
 const initalState = {
-    products: [],
+    products: JSON.parse(localStorage.getItem("cart"))||[],
 }
 const CartReducers = (state = initalState, action) => {
     switch (action.type) {
@@ -16,7 +16,7 @@ const CartReducers = (state = initalState, action) => {
                     ...state,
                     products: state.products.map(product =>
                         product.productSizeId === action.payload.productSizeId
-                            ? { ...product, quantity: product.quantity + action.payload.quantity }
+                            ? { ...product, quantity: action.payload.quantity }
                             : product
                     ),
                 };
@@ -47,6 +47,10 @@ const CartReducers = (state = initalState, action) => {
             return {
                 ...state,
                 products: state.products.filter(product => product.productSizeId !== action.payload)
+            }
+        case Type.cart.order:
+            return {
+                ...state, products:[]
             }
         default:
             return state

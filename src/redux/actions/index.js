@@ -12,12 +12,11 @@ const hideLoading=()=>{
         payload :false
     }
 }
-const addProductToCart=(productSizeId,quantity)=>{
+const addProductToCart=(product)=>{
     return{
         type: Type.cart.addProductToCart,
-        payload:{
-            productSizeId,quantity
-        }
+        payload: product
+        
     }
 }
 const getProductFromCart=(products)=>{
@@ -38,4 +37,9 @@ const removeProductFromCart=(productSizeId)=>{
         payload :productSizeId
     }
 }
-export {showLoading, hideLoading,getProductFromCart,updateProductFromCart,removeProductFromCart}
+const order=()=>{
+    return{
+        type : Type.cart.order,
+    }
+}
+export {showLoading, hideLoading,addProductToCart,getProductFromCart,updateProductFromCart,removeProductFromCart,order}

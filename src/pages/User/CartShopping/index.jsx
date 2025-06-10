@@ -10,13 +10,14 @@ import {
   removeProductFromCart,
   updateProductFromCart,
 } from "../../../redux/actions";
-
 function CartShopping() {
   const token = localStorage.getItem("token");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const products = useSelector((state) => state.cart.products);
-
+  useEffect(()=>{
+    localStorage.setItem("cart",JSON.stringify(products))
+  },[products])
   // Gọi API để lấy giỏ hàng khi load lại trang
   useEffect(() => {
     const fetchCart = async () => {
@@ -126,7 +127,7 @@ function CartShopping() {
 
   // Đặt hàng
   const handleOnclickOrder = () => {
-    localStorage.setItem("cart", JSON.stringify(products));
+    // localStorage.setItem("cart", JSON.stringify(products));
     navigate("/order", { state: { products } });
   };
 
