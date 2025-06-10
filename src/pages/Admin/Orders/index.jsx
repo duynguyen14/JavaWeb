@@ -27,13 +27,19 @@ function OrderManagement() {
   const [message, setMessage] = useState("");
   const [searchId, setSearchId] = useState("");
   const [statusPickerForOrderId, setStatusPickerForOrderId] = useState(null);
-
+  const token =localStorage.getItem("token");
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/v1/bills")
+    fetch("http://localhost:8080/api/v1/bill/admin",{
+      method:"GET",
+      headers:{
+         "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+      }
+    })
       .then((res) => res.json())
       .then((data) => {
         const mapped = data.map((bill) => ({
@@ -77,12 +83,17 @@ function OrderManagement() {
     setStatusPickerForOrderId(null);
 
     fetch(
-      `http://localhost:8080/api/v1/bills/${orderId}/status?status=${encodeURIComponent(
+      `http://localhost:8080/api/v1/bill/admin/${orderId}/status?status=${encodeURIComponent(
         newStatus
       )}`,
       {
         method: "PUT",
-      }
+        headers:{
+           "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        }
+      },
+      
     ).catch(() => setMessage("Lỗi khi cập nhật trạng thái đơn hàng"));
   };
 

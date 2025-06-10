@@ -1,19 +1,6 @@
 import { useEffect, useState } from "react";
 import { Pencil, Save, X, Eye, EyeOff, Upload } from "lucide-react";
-
-function parseJwt(token) {
-  try {
-    const base64Url = token.split(".")[1];
-    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-    const binaryData = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
-    const decodedText = new TextDecoder("utf-8").decode(binaryData);
-    return JSON.parse(decodedText);
-  } catch (e) {
-    console.error("Lỗi phân tích token:", e);
-    return null;
-  }
-}
-
+import { request } from "../../../untils/request";
 const Profile = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [error, setError] = useState(null);
@@ -30,34 +17,30 @@ const Profile = () => {
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
     if (!token) {
       setError("Chưa đăng nhập hoặc token không tồn tại");
       return;
     }
-
-    const decoded = parseJwt(token);
-    if (!decoded) {
-      setError("Token không hợp lệ");
-      return;
+    const fetch =async()=>{
+      try{
+        const response = await request.get("user/profile",{
+          headers:{
+            Authorization : `Bearer ${token}`
+          }
+        })
+        console.log(response.data)
+        setUserInfo(response.data.result)
+        setForm(response.data.result);
+      }
+      catch(e){
+        console.log("error ",e)
+      }
     }
-
-    console.log("Payload của token:", decoded);
-
-    const roles = decoded.scope || [];
-    const profileData = {
-      UserId: decoded.sub || "Không xác định",
-      UserName: decoded.sub || "Không xác định",
-      Email: decoded.email || "Không có email",
-      Status: "Hoạt động",
-      Gender: decoded.gender || "Không xác định",
-      DOB: decoded.dob || "", // Không cần parse Date nếu dob là chuỗi yyyy-MM-dd
-      Role: Array.isArray(roles) ? roles.join(", ") : roles || "Không có vai trò",
-    };
-    setUserInfo(profileData);
-    setForm(profileData);
+    fetch()
+    // setUserInfo(profileData);
   }, []);
 
   const validatePassword = (password) => {
@@ -75,7 +58,6 @@ const Profile = () => {
     }
     return null;
   };
-
   const validateDOB = (dob) => {
     const date = new Date(dob);
     const today = new Date();
@@ -116,7 +98,7 @@ const Profile = () => {
     setIsLoading(true);
     setMessage("");
 
-    const dobError = validateDOB(form.DOB);
+    const dobError = validateDOB(form.dob);
     if (dobError) {
       setMessage(dobError);
       setIsLoading(false);
@@ -124,7 +106,6 @@ const Profile = () => {
     }
 
     try {
-      const token = localStorage.getItem("accessToken");
       if (!token) {
         setMessage("Chưa đăng nhập hoặc token không tồn tại");
         setIsLoading(false);
@@ -132,49 +113,23 @@ const Profile = () => {
       }
 
       const userUpdateDTO = {
-        userName: form.UserName,
-        gender: form.Gender,
-        dob: form.DOB,
+        email: form.email,
+        userName: form.userName,
+        gender: form.gender,
+        dob: form.dob,
       };
       console.log("Sending userUpdateDTO:", userUpdateDTO);
-
-      const response = await fetch("http://localhost:8080/api/v1/user/profile", {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userUpdateDTO),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        setMessage(
-          `Lỗi ${response.status}: ${errorData.message || "Không thể cập nhật thông tin."}`
-        );
-        setIsLoading(false);
-        return;
-      }
-
-      const data = await response.json();
-      if (data.result) {
-        localStorage.setItem("accessToken", data.result);
-        const decoded = parseJwt(data.result);
-        setUserInfo({
-          ...userInfo,
-          UserName: decoded.sub || userInfo.UserName,
-          Gender: decoded.gender || userInfo.Gender,
-          DOB: decoded.dob || userInfo.DOB,
-          Email: decoded.email || userInfo.Email,
-        });
-        setForm({
-          ...form,
-          UserName: decoded.sub || form.UserName,
-          Gender: decoded.gender || form.Gender,
-          DOB: decoded.dob || form.DOB,
-          Email: decoded.email || form.Email,
-        });
-      }
+      const response =await request.patch("user/profile",userUpdateDTO,
+        {
+          headers:{
+            Authorization : `Bearer ${token}`
+          }
+        }
+      )
+      console.log(response.data.result);
+      setUserInfo(userUpdateDTO);
+      // setForm(userUpdateDTO)
+      localStorage.setItem("token",response.data.result)
       setEditMode(false);
       setAvatar(null);
       setAvatarUrl(null);
@@ -182,8 +137,6 @@ const Profile = () => {
     } catch (error) {
       console.error("Lỗi khi cập nhật thông tin:", error);
       setMessage("Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại.");
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -231,7 +184,6 @@ const Profile = () => {
     }
 
     try {
-      const token = localStorage.getItem("accessToken");
       if (!token) {
         setMessage("Chưa đăng nhập hoặc token không tồn tại");
         setIsLoading(false);
@@ -243,37 +195,22 @@ const Profile = () => {
         newPassword: passwordForm.newPassword,
       });
 
-      const response = await fetch("http://localhost:8080/api/v1/user/change-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          oldPassword: passwordForm.oldPassword,
-          newPassword: passwordForm.newPassword,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        setMessage(
-          `Lỗi ${response.status}: ${errorData.message || "Dữ liệu không hợp lệ. Vui lòng kiểm tra lại."}`
-        );
-        setIsLoading(false);
-        return;
+      const response =await request.post("user/change-password",{
+        oldPassword: passwordForm.oldPassword,
+        newPassword: passwordForm.newPassword,
+      },{
+        headers:{
+          Authorization :`Bearer ${token}`
+        }
       }
-
-      const data = await response.json();
-      setMessage(data.result || "Đổi mật khẩu thành công!");
+    )
+      setMessage(response.data.result || "Đổi mật khẩu thành công!");
       setPasswordForm({ oldPassword: "", newPassword: "", confirmPassword: "" });
       setShowChangePassword(false);
     } catch (error) {
       console.error("Lỗi khi đổi mật khẩu:", error);
       setMessage("Đã xảy ra lỗi khi đổi mật khẩu. Vui lòng thử lại.");
-    } finally {
-      setIsLoading(false);
-    }
+    } 
   };
 
   if (error) {
@@ -297,7 +234,7 @@ const Profile = () => {
               src={
                 avatarUrl ||
                 `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(
-                  userInfo.UserName
+                  userInfo.userName
                 )}`
               }
               alt="Avatar"
@@ -318,9 +255,9 @@ const Profile = () => {
           </div>
           <div className="flex-1 flex flex-col items-center md:items-start">
             <div className="font-bold text-3xl text-white mb-1">
-              {userInfo.UserName}
+              {userInfo.userName}
             </div>
-            <div className="text-indigo-100 text-lg mb-2">{userInfo.Email}</div>
+            <div className="text-indigo-100 text-lg mb-2">{userInfo.email}</div>
             <div className="flex gap-2 mt-2">
               <span
                 className={`inline-block px-3 py-1 rounded-full text-xs font-semibold
@@ -359,16 +296,16 @@ const Profile = () => {
                 <input
                   type="text"
                   className="w-full border rounded-lg px-3 py-2 bg-indigo-50 focus:ring-2 focus:ring-indigo-500"
-                  value={form.UserName || ""}
+                  value={form.userName || ""}
                   onChange={(e) =>
-                    setForm({ ...form, UserName: e.target.value })
+                    setForm({ ...form, userName: e.target.value })
                   }
                   required
                   disabled={isLoading}
                 />
               ) : (
                 <div className="text-gray-800 font-semibold">
-                  {userInfo.UserName || "Không xác định"}
+                  {userInfo.userName || "Chưa thiết lập"}
                 </div>
               )}
             </div>
@@ -377,7 +314,7 @@ const Profile = () => {
                 Email
               </label>
               <div className="text-gray-800 font-semibold">
-                {userInfo.Email || "Không có email"}
+                {userInfo.email || "Không có email"}
               </div>
             </div>
             <div>
@@ -387,18 +324,18 @@ const Profile = () => {
               {editMode ? (
                 <select
                   className="w-full border rounded-lg px-3 py-2 bg-indigo-50 focus:ring-2 focus:ring-indigo-500"
-                  value={form.Gender || "Không xác định"}
-                  onChange={(e) => setForm({ ...form, Gender: e.target.value })}
+                  value={form.gender || "Chưa thiết lập"}
+                  onChange={(e) => setForm({ ...form, gender: e.target.value })}
                   disabled={isLoading}
                 >
                   <option value="Nam">Nam</option>
                   <option value="Nữ">Nữ</option>
                   <option value="Khác">Khác</option>
-                  <option value="Không xác định">Không xác định</option>
+                  <option value="Chưa thiết lập">Chưa thiết lập</option>
                 </select>
               ) : (
                 <div className="text-gray-800 font-semibold">
-                  {userInfo.Gender || "Không xác định"}
+                  {userInfo.gender || "Chưa thiết lập"}
                 </div>
               )}
             </div>
@@ -410,14 +347,14 @@ const Profile = () => {
                 <input
                   type="date"
                   className="w-full border rounded-lg px-3 py-2 bg-indigo-50 focus:ring-2 focus:ring-indigo-500"
-                  value={form.DOB || ""}
-                  onChange={(e) => setForm({ ...form, DOB: e.target.value })}
+                  value={form.dob || ""}
+                  onChange={(e) => setForm({ ...form, dob: e.target.value })}
                   required
                   disabled={isLoading}
                 />
               ) : (
                 <div className="text-gray-800 font-semibold">
-                  {userInfo.DOB || "Không xác định"}
+                  {userInfo.dob || "Chưa thiết lập"}
                 </div>
               )}
             </div>

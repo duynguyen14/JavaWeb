@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Star, Check, X, Eye, EyeOff, MessageCircle, Send, AlertCircle } from 'lucide-react';
-
+import { request } from '../../../untils/request';
 function FeedbackManagement() {
   const [feedbacks, setFeedbacks] = useState([]);
   const [filterRating, setFilterRating] = useState('');
@@ -11,23 +11,28 @@ function FeedbackManagement() {
   const [error, setError] = useState(null);
   const [selectedReviewId, setSelectedReviewId] = useState(null);
   const [replyLoading, setReplyLoading] = useState(false);
-
+  const token =localStorage.getItem("token");
   // Fetch reviews from API
   useEffect(() => {
-    setLoading(true);
-    fetch('http://localhost:8080/api/v1/reviews')
-      .then(async (res) => {
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-        const data = await res.json();
-        setFeedbacks(data);
+    const fetch=async()=>{
+      setLoading(true);
+      try{
+        const response =await request.get("reviews/admin",{
+          headers:{
+            Authorization: `Bearer ${token}`
+          }
+        })
+        console.log(response.data)
+        setFeedbacks(response.data);
         setError(null);
-      })
-      .catch((err) => {
-        setError(err.message);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+        setLoading(false)
+      }
+      catch(e){
+        console.log("error ",e)
+      }
+
+    }
+    fetch();
   }, []);
 
   // Filter feedbacks based on rating, reply status, and search text
@@ -77,20 +82,15 @@ function FeedbackManagement() {
     setReplyLoading(true);
     const reviewId = replyModal.review.reviewId;
     const replyText = replyModal.value.trim();
-
     try {
-      const res = await fetch(`http://localhost:8080/api/v1/reviews/${reviewId}/reply`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reply: replyText }),
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || 'Lỗi khi gửi trả lời');
-      }
-
-      const updatedReview = await res.json();
+      const response = await request.put(`reviews/${reviewId}/admin/reply`,{
+        reply : replyText
+      },{
+        headers:{
+          Authorization: `Bearer ${token}`
+        }
+      })
+      const updatedReview = response.data
       setFeedbacks((fbs) =>
         fbs.map((f) => (f.reviewId === reviewId ? { ...f, reply: updatedReview.reply } : f))
       );

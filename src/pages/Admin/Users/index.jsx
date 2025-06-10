@@ -3,17 +3,23 @@ import { Plus, Search, X, UserPlus, Lock, Unlock, Eye, Shield } from 'lucide-rea
 
 // Định nghĩa danh sách roles
 const roles = [
-    { roleId: 1, roleName: 'Admin', description: 'Tài khoản Admin' },
-    { roleId: 2, roleName: 'User', description: 'Tài khoản người dùng' },
+    { roleId: 2, roleName: 'ADMIN', description: 'Tài khoản Admin' },
+    { roleId: 1, roleName: 'USER', description: 'Tài khoản người dùng' },
 ];
 const genders = ['Nam', 'Nữ', 'Khác'];
-
+const token =localStorage.getItem("token")
 // API functions
 const api = {
-    baseURL: 'http://localhost:8080/api/v1/users',
+    baseURL: 'http://localhost:8080/api/v1/admin/',
 
     async getUsers() {
-        const response = await fetch(this.baseURL);
+        const response = await fetch(`${this.baseURL}getAll`,{
+            method:"GET",
+            headers:{
+         "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+      }
+        });
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.message || 'Không thể lấy danh sách người dùng');
@@ -23,7 +29,13 @@ const api = {
     },
 
     async getUserById(id) {
-        const response = await fetch(`${this.baseURL}/${id}`);
+        const response = await fetch(`${this.baseURL}user/${id}`,{
+            method:"GET",
+            headers:{
+         "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+      }
+        });
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.message || 'Không thể lấy thông tin người dùng');
@@ -35,7 +47,11 @@ const api = {
     async createUser(userData) {
         const response = await fetch(this.baseURL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+
+             },
             body: JSON.stringify(userData),
         });
         if (!response.ok) {
@@ -47,9 +63,13 @@ const api = {
     },
 
     async updateUserStatus(id, status) {
-        const response = await fetch(`${this.baseURL}/${id}/status`, {
+        const response = await fetch(`${this.baseURL}user/${id}/status`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+
+             },
             body: JSON.stringify({ status }),
         });
         if (!response.ok) {
@@ -71,9 +91,13 @@ const api = {
     },
 
     async updateUserRoles(id, roleIds) {
-    const response = await fetch(`${this.baseURL}/${id}/role`, { 
+    const response = await fetch(`${this.baseURL}user/${id}/role`, { 
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+            
+        },
         body: JSON.stringify({ roleIds }), 
     });
     if (!response.ok) {
@@ -371,7 +395,7 @@ function UserManagement() {
                                 <td className="p-3">{user.dob ? new Date(user.dob).toLocaleDateString('vi-VN') : ''}</td>
                                 <td className="p-3">
                                     <span className={`px-2 py-1 rounded-full text-xs font-semibold
-                                        ${getPrimaryRole(user.roles) === 'Admin' ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-700'}`}>
+                                        ${getPrimaryRole(user.roles) === 'ADMIN' ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-700'}`}>
                                         {getPrimaryRole(user.roles)}
                                     </span>
                                 </td>

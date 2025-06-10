@@ -4,7 +4,7 @@ import {
   LineChart, Line, AreaChart, Area, PieChart, Pie, Cell
 } from "recharts";
 import { Download } from "lucide-react";
-
+import { request } from "../../../untils/request";
 const mockCategories = [
   { CategoryId: 1, Name: "Áo" },
   { CategoryId: 2, Name: "Quần" },
@@ -17,7 +17,7 @@ const mockRegions = [
 ];
 const COLORS = ["#6366f1", "#34d399", "#fbbf24", "#f472b6", "#a78bfa"];
 const OTHER_COLOR = "#cbd5e1";
-
+const token =localStorage.getItem("token")
 function RevenueManagement() {
   const [chartType, setChartType] = useState("bar");
   const [timeFrame, setTimeFrame] = useState("month");
@@ -34,15 +34,19 @@ function RevenueManagement() {
     if (filter.category) params.append("category", filter.category);
     if (filter.region) params.append("region", filter.region);
 
-    fetch(`http://localhost:8080/api/v1/bills?${params.toString()}`)
+    fetch(`http://localhost:8080/api/v1/bill/admin/revenue`,{
+      method:"GET", 
+      headers:{
+          Authorization: `Bearer ${token}`
+        }
+    })
       .then(res => res.json())
       .then(data => {
         const productMap = new Map();
         const revenueByMonth = Array(12).fill(0);
         let total = 0;
 
-        data.forEach(bill => {
-          if (bill.status?.toLowerCase() !== "hoàn tất") return;
+        data.result.forEach(bill => {  
           const billDate = new Date(bill.time);
           const billYear = billDate.getFullYear().toString();
           const billMonth = billDate.getMonth() + 1;
@@ -204,40 +208,6 @@ function RevenueManagement() {
               min="2000"
               max="2100"
             />
-          </div>
-
-          {/* Tháng */}
-          <div className="flex flex-col">
-            <label className="mb-2 font-semibold text-indigo-700">Tháng</label>
-            <select
-              className="border border-gray-300 rounded-lg px-4 py-2 w-24 shadow-sm hover:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-300"
-              value={filter.month}
-              onChange={e => setFilter(f => ({ ...f, month: e.target.value }))}
-            >
-              <option value="">Tất cả</option>
-              {[...Array(12).keys()].map(i => (
-                <option key={i + 1} value={i + 1}>
-                  {i + 1}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Vùng miền */}
-          <div className="flex flex-col">
-            <label className="mb-2 font-semibold text-indigo-700">Vùng miền</label>
-            <select
-              className="border border-gray-300 rounded-lg px-4 py-2 w-48 shadow-sm hover:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-300"
-              value={filter.region}
-              onChange={e => setFilter(f => ({ ...f, region: e.target.value }))}
-            >
-              <option value="">Tất cả</option>
-              {mockRegions.map(region => (
-                <option key={region.id} value={region.id}>
-                  {region.name}
-                </option>
-              ))}
-            </select>
           </div>
 
           {/* Loại biểu đồ */}

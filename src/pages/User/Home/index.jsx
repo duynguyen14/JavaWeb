@@ -75,9 +75,5 @@ function Home() {
     </div>
   );
 }
+export default Home;
 
-<<<<<<< HEAD
-export default Home;
-=======
-export default Home;
->>>>>>> 36d6739284144cc5bfa4c979aa8da9db684e6ebe

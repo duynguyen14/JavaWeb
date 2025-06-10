@@ -10,11 +10,13 @@ import { FaRegHeart } from "react-icons/fa";
 import { HiOutlineMenuAlt1 } from "react-icons/hi";
 import MenuPopus from '../../../../Popups/MenuPopus';
 import SearchPopup from '../../../../Popups/SearchPopup';
+// import Image from "../../../../../assets/images/1168.png";
+// import CartShoppingPopup from '../../../../Popups/CartShoppingPopup';
+// import WishlistPopup from '../../../../Popups/WishlistPopup';
 import UserPopUp from '../../../../Popups/UserPopUp';
 
 import { Link } from 'react-router-dom';
 import NavPopups from '../../../../Popups/NavPopups';
-<<<<<<< HEAD
 import CartShoppingPopup from '../../../../Popups/CartShoppingPopup';
 import WishlistPopup from '../../../../Popups/WishlistPopup';
 import { useSelector } from 'react-redux';
@@ -121,32 +123,6 @@ function Header({setIsPopUp}) {
       {subName: "Liên hệ với chúng tôi",link1:""},
     ]},
   ]
-=======
-import Image from "../../../../../assets/images/1168.png";
-import CartShoppingPopup from '../../../../Popups/CartShoppingPopup';
-import WishlistPopup from '../../../../Popups/WishlistPopup';
-
-function Header({setIsPopUp}) {
-  const titles=[
-    {name: "Nam", link:""},
-    {name: "Nữ", link:""},
-    {name: "Trẻ em", link:""},
-    {name: "Phụ kiện thời trang", link:""},
-    {name: "Về chúng tôi", link:""},
-  ]
-
-  const categoris=[
-    {name:"Áo",detail:["Áo thun","Áo sơ mi","Áo khoác"]},
-    {name:"Quần",detail:["Quần thun","Quần sơ mi","Quần khoác"]},
-    {name:"Áo",detail:["Áo thun","Áo sơ mi","Áo khoác"]},
-    
-  ]
-  const product={
-    name:"Túi Xách Nhỏ In Hoạ Tiết Chuyển Màu",
-    price:"699 000",
-    image: Image
-  }
->>>>>>> 36d6739284144cc5bfa4c979aa8da9db684e6ebe
   const [ismenu,setIsmenu]=useState(false);
   const [isSearch,setIsSearch]=useState(false);
   const [isUser,setIsUser]=useState(false);
@@ -163,11 +139,7 @@ function Header({setIsPopUp}) {
     setIsPopUp(true)
     setIsSearch(false)
   }
-<<<<<<< HEAD
   const cart =useSelector(state=> state.cart.products)
-=======
-
->>>>>>> 36d6739284144cc5bfa4c979aa8da9db684e6ebe
   return (
     <div className='relative w-full '>
       <div className='font-Montserrat flex justify-between py-5 items-center mx-5 xl:mx-20 relative '>
@@ -202,11 +174,8 @@ function Header({setIsPopUp}) {
                 whileHover={{color: "#e43131", cursor: "pointer"}}
                 transition={{duration: 0.5}}
               >
-<<<<<<< HEAD
                 <p className='px-1 text-base'>
-=======
-                <p className='px-1'>
->>>>>>> 36d6739284144cc5bfa4c979aa8da9db684e6ebe
+                {/* <p className='px-1'> */}
                   {item.name}
                 </p>
                 <HiChevronDown className='text-sm font-bold'/>
@@ -215,29 +184,17 @@ function Header({setIsPopUp}) {
               {
                 isNav === index &&
                 <motion.div 
-<<<<<<< HEAD
                   className='absolute top-full left-[-62%] w-[1300px] z-20'
-=======
-                  className='absolute top-full left-[-53%] w-[1380px] z-20'
->>>>>>> 36d6739284144cc5bfa4c979aa8da9db684e6ebe
                   initial={{opacity:0, y:30}}
                   animate={{opacity: 1, y: 0}}
                   exit={{opacity: 0, y: 30}}
                   transition={{duration: 0.3}}
                 >
-<<<<<<< HEAD
                   <div className='w-full h-2 opacity-0'>
 
                   </div>
                   <div className=''>
                     <NavPopups  setIsNav={setIsNav} link= {item.link} submenu= {item.submenu}/>
-=======
-                  <div className='w-full h-10 opacity-0'>
-
-                  </div>
-                  <div className=''>
-                    <NavPopups categoris={categoris} product={product} setIsNav={setIsNav}/>
->>>>>>> 36d6739284144cc5bfa4c979aa8da9db684e6ebe
                   </div>
                 </motion.div>
               }
@@ -259,25 +216,17 @@ function Header({setIsPopUp}) {
             >
               <FaRegHeart/>
             </p>
-<<<<<<< HEAD
             <p className=' my-icon relative'onClick={()=>setIsCart(!isCart)} >
                 <LuShoppingBag/>  
                 {
-                  cart&&
-                  <span className='absolute text-white bg-red-500 rounded-3xl text-xs xl:text-sm top-[-20%] px-1 xl:px-2 left-[60%] '>
+                  cart&&cart.length>0&&
+                  <span className='absolute text-white bg-red-500 rounded-3xl text-xs xl:text-sm top-[-20%] px-1 xl:px-2 xl:py-[2px] left-[60%] '>
                     {
                       cart.length
                     }
                   </span>
                 }
-=======
-            <p className=' my-icon'onClick={()=>setIsCart(!isCart)} >
-              {/* <Link to={"/cartShopping"}> */}
-                <LuShoppingBag/>  
-              {/* </Link> */}
->>>>>>> 36d6739284144cc5bfa4c979aa8da9db684e6ebe
             </p>
-
         </div>
       </div>
       {
