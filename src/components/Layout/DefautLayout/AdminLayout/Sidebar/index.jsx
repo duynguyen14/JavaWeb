@@ -21,14 +21,11 @@ import { Link, useLocation } from "react-router-dom";
 function Sidebar({ collapsed, setCollapsed }) {
   const location = useLocation();
   const pathname = location.pathname;
-  const [mobileOpen, setMobileOpen] = useState(false);
-
-  // Đóng sidebar di động khi đường dẫn thay đổi
+  const [mobileOpen, setMobileOpen] = useState(false)
   useEffect(() => {
     setMobileOpen(false);
   }, [pathname]);
 
-  // Đóng sidebar di động khi kích thước màn hình thay đổi thành desktop
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 1024) {
@@ -40,7 +37,6 @@ function Sidebar({ collapsed, setCollapsed }) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Xử lý phím ESC để đóng menu di động
   useEffect(() => {
     const handleEscKey = (event) => {
       if (event.key === "Escape" && mobileOpen) {
@@ -74,13 +70,13 @@ function Sidebar({ collapsed, setCollapsed }) {
     {
       name: "Quản lí danh mục",
       icon: <List size={18} />,
-      path: "/admin/categories",
+      path:"/admin/catalogs",
       badge: null,
     },
     {
       name: "Quản lí thể loại",
       icon: <Layers size={18} />,
-      path: "/admin/catalogs",
+      path:  "/admin/categories",
       badge: null,
     },
     {
@@ -114,9 +110,9 @@ function Sidebar({ collapsed, setCollapsed }) {
       badge: null,
     },
     {
-      name: "Tin nhắn",
+      name: "Báo cáo của hàng",
       icon: <MessageCircle size={18} />,
-      path: "/admin/messages",
+      path: "/admin/report-product",
       badge: "5",
     },
     {

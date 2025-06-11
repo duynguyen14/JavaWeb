@@ -62,7 +62,7 @@ function Product() {
       const response = await request.post("/cart",{
                 productId :product.id,
                 quantity: quantity,
-                size: selectedSize
+                sizeName: selectedSize
             },
             {
               headers:{

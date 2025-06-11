@@ -1,95 +1,99 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Plus, Pencil, Trash2, X } from "lucide-react";
+import { request } from "../../../untils/request";
 
-// Mock data
-const mockCategories = [
-  { CategoryId: 1, Name: "Áo" },
-  { CategoryId: 2, Name: "Quần" },
-  { CategoryId: 3, Name: "Giày" },
-];
 const mockProducts = [
   { ProductId: 1, Name: "Áo sơ mi trắng" },
   { ProductId: 2, Name: "Quần jean xanh" },
   { ProductId: 3, Name: "Giày thể thao" },
 ];
-const mockCoupons = [
-  {
-    CouponId: 1,
-    Code: "SUMMER20",
-    Type: "Phần trăm",
-    Value: 20,
-    UsageLimit: 100,
-    Used: 10,
-    Expiry: "2024-07-31",
-    Categories: [1, 2],
-    Products: [],
-  },
-  {
-    CouponId: 2,
-    Code: "GIAY50K",
-    Type: "Tiền mặt",
-    Value: 50000,
-    UsageLimit: 50,
-    Used: 5,
-    Expiry: "2024-08-15",
-    Categories: [],
-    Products: [3],
-  },
-];
 
-function CouponManagement() {
-  const [coupons, setCoupons] = useState(mockCoupons);
-  const [categories] = useState(mockCategories);
+function SaleManagement() {
+  const [sales, setSales] = useState([]);
   const [products] = useState(mockProducts);
-  const [search, setSearch] = useState("");
+  const [categories, setCategories] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState("add"); // add | edit
-  const [selectedCoupon, setSelectedCoupon] = useState(null);
+  const [modalType, setModalType] = useState("add");
+  const [selectedSale, setSelectedSale] = useState(null);
   const [form, setForm] = useState({
-    Code: "",
-    Type: "Phần trăm",
-    Value: "",
-    UsageLimit: "",
-    Expiry: "",
-    Categories: [],
-    Products: [],
+    name: "",
+    start: "",
+    end: "",
+    discountPercent: "",
+    products: [],
+    categories: [],
   });
 
-  // Lọc mã giảm giá
-  const filteredCoupons = coupons.filter(
-    (c) =>
-      c.Code.toLowerCase().includes(search.toLowerCase()) ||
-      (c.Type === "Phần trăm"
-        ? `${c.Value}%`
-        : c.Value.toLocaleString("vi-VN") + " đ"
-      ).includes(search)
-  );
+  // Lấy danh sách sale từ API
+  const fetchSales = () => {
+    request.get("sale/getAll")
+      .then(res => {
+        if (res.data && res.data.code === 1000 && Array.isArray(res.data.result)) {
+          setSales(
+            res.data.result.map(item => ({
+              id: item.id,
+              name: item.name,
+              start: item.start,
+              end: item.end,
+              discountPercent: item.discountPercent,
+              products: item.products || [],
+              categories: item.categories || [],
+              totalAppliedProducts: item.totalAppliedProducts ?? (item.products ? item.products.length : 0),
+            }))
+          );
+        } else {
+          setSales([]);
+        }
+      })
+      .catch(() => setSales([]));
+  };
+
+  // Fetch sales khi mount
+  useEffect(() => {
+    fetchSales();
+  }, []);
+
+  // Fetch categories từ API khi component mount
+  useEffect(() => {
+    request.get("category/getAll")
+      .then(res => {
+        if (res.data && res.data.code === 1000 && Array.isArray(res.data.result)) {
+          setCategories(
+            res.data.result.map(item => ({
+              CategoryId: item.categoryId,
+              Name: item.categoryName
+            }))
+          );
+        } else {
+          setCategories([]);
+        }
+      })
+      .catch(() => setCategories([]));
+  }, []);
 
   // Mở modal
-  const openModal = (type, coupon = null) => {
+  const openModal = (type, sale = null) => {
     setModalType(type);
     setShowModal(true);
-    if (type === "edit" && coupon) {
-      setSelectedCoupon(coupon);
+    if (type === "edit" && sale) {
+      setSelectedSale(sale);
       setForm({
-        Code: coupon.Code,
-        Type: coupon.Type,
-        Value: coupon.Value,
-        UsageLimit: coupon.UsageLimit,
-        Expiry: coupon.Expiry,
-        Categories: coupon.Categories || [],
-        Products: coupon.Products || [],
+        name: sale.name,
+        start: sale.start.slice(0, 16),
+        end: sale.end.slice(0, 16),
+        discountPercent: sale.discountPercent,
+        products: sale.products || [],
+        categories: sale.categories || [],
       });
     } else {
-      setSelectedCoupon(null);
+      setSelectedSale(null);
       setForm({
-        Code: "",
-        Type: "Phần trăm",
-        Value: "",
-        UsageLimit: "",
-        Expiry: "",
-        Categories: [],
-        Products: [],
+        name: "",
+        start: "",
+        end: "",
+        discountPercent: "",
+        products: [],
+        categories: [],
       });
     }
   };
@@ -97,168 +101,162 @@ function CouponManagement() {
   // Đóng modal
   const closeModal = () => {
     setShowModal(false);
-    setSelectedCoupon(null);
+    setSelectedSale(null);
     setForm({
-      Code: "",
-      Type: "Phần trăm",
-      Value: "",
-      UsageLimit: "",
-      Expiry: "",
-      Categories: [],
-      Products: [],
+      name: "",
+      start: "",
+      end: "",
+      discountPercent: "",
+      products: [],
+      categories: [],
     });
   };
 
-  // Thêm/sửa mã giảm giá
-  const handleSubmit = (e) => {
+  // Thêm/sửa sale
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const newCoupon = {
-      CouponId:
-        modalType === "add"
-          ? coupons.length
-            ? Math.max(...coupons.map((c) => c.CouponId)) + 1
-            : 1
-          : selectedCoupon.CouponId,
-      Code: form.Code,
-      Type: form.Type,
-      Value: Number(form.Value),
-      UsageLimit: Number(form.UsageLimit),
-      Used: modalType === "add" ? 0 : selectedCoupon.Used,
-      Expiry: form.Expiry,
-      Categories: form.Categories,
-      Products: form.Products,
+    const payload = {
+      name: form.name,
+      start: form.start,
+      end: form.end,
+      discountPercent: Number(form.discountPercent),
+      categoryIds: form.categories,
     };
-    if (modalType === "add") {
-      setCoupons([newCoupon, ...coupons]);
-    } else {
-      setCoupons(
-        coupons.map((c) =>
-          c.CouponId === selectedCoupon.CouponId ? newCoupon : c
-        )
-      );
-    }
-    closeModal();
-  };
-
-  // Xóa mã giảm giá
-  const handleDelete = (couponId) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa mã này?")) {
-      setCoupons(coupons.filter((c) => c.CouponId !== couponId));
+    try {
+      if (modalType === "add") {
+        await request.post("sale/create", payload);
+        alert("Thêm đợt giảm giá thành công!");
+      } else if (selectedSale) {
+        await request.put(`sale/update/${selectedSale.id}`, payload);
+        alert("Cập nhật đợt giảm giá thành công!");
+      }
+      fetchSales();
+      closeModal();
+    } catch (err) {
+      alert("Có lỗi xảy ra!");
     }
   };
 
-  // Toggle chọn category/product
-  const handleToggle = (type, id) => {
+  // Xóa sale
+  const handleDelete = async (saleId) => {
+    if (window.confirm("Bạn có chắc chắn muốn xóa đợt giảm giá này?")) {
+      try {
+        await request.delete(`sale/delete/${saleId}`);
+        alert("Xóa đợt giảm giá thành công!");
+        fetchSales();
+      } catch (err) {
+        alert("Có lỗi xảy ra khi xóa!");
+      }
+    }
+  };
+
+  // Toggle chọn sản phẩm (giữ lại logic cũ nếu cần)
+  const handleToggleProduct = (id) => {
     setForm((prev) => ({
       ...prev,
-      [type]: prev[type].includes(id)
-        ? prev[type].filter((x) => x !== id)
-        : [...prev[type], id],
+      products: prev.products.includes(id)
+        ? prev.products.filter((x) => x !== id)
+        : [...prev.products, id],
+    }));
+  };
+
+  // Toggle chọn thể loại
+  const handleToggleCategory = (id) => {
+    setForm((prev) => ({
+      ...prev,
+      categories: prev.categories.includes(Number(id))
+        ? prev.categories.filter((x) => x !== Number(id))
+        : [...prev.categories, Number(id)],
     }));
   };
 
   return (
     <div>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-        <h2 className="text-2xl font-bold">Quản lý mã giảm giá</h2>
+        <h2 className="text-2xl font-bold">Quản lý đợt giảm giá</h2>
         <button
           className="flex items-center bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition"
           onClick={() => openModal("add")}
         >
-          <Plus size={18} className="mr-2" /> Thêm mã mới
+          <Plus size={18} className="mr-2" /> Thêm đợt giảm giá
         </button>
-      </div>
-      <div className="flex items-center mb-4">
-        <div className="relative w-full md:w-1/3">
-          <input
-            type="text"
-            placeholder="Tìm kiếm mã giảm giá..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-indigo-50"
-          />
-        </div>
       </div>
       <div className="overflow-x-auto bg-white shadow-lg rounded-xl">
         <table className="min-w-full text-sm text-left">
           <thead className="bg-indigo-50 text-indigo-700">
             <tr>
-              <th className="p-3 font-semibold">Tên mã</th>
-              <th className="p-3 font-semibold">Loại</th>
-              <th className="p-3 font-semibold">Giá trị</th>
-              <th className="p-3 font-semibold">Số lượt dùng</th>
-              <th className="p-3 font-semibold">Ngày hết hạn</th>
+              <th className="p-3 font-semibold">Tên đợt giảm giá</th>
+              <th className="p-3 font-semibold">Ngày bắt đầu</th>
+              <th className="p-3 font-semibold">Ngày kết thúc</th>
+              <th className="p-3 font-semibold">% giảm</th>
               <th className="p-3 font-semibold">Áp dụng</th>
+              <th className="p-3 font-semibold">Tổng số sản phẩm</th>
               <th className="p-3 text-center font-semibold">Hành động</th>
             </tr>
           </thead>
           <tbody>
-            {filteredCoupons.map((coupon) => (
-              <tr key={coupon.CouponId} className="border-t hover:bg-indigo-50 transition">
-                <td className="p-3">{coupon.Code}</td>
-                <td className="p-3">{coupon.Type}</td>
+            {sales.map((sale) => (
+              <tr key={sale.id} className="border-t hover:bg-indigo-50 transition">
+                <td className="p-3">{sale.name}</td>
+                <td className="p-3">{sale.start.replace("T", " ").slice(0, 16)}</td>
+                <td className="p-3">{sale.end.replace("T", " ").slice(0, 16)}</td>
+                <td className="p-3">{sale.discountPercent}%</td>
                 <td className="p-3">
-                  {coupon.Type === "Phần trăm"
-                    ? `${coupon.Value}%`
-                    : coupon.Value.toLocaleString("vi-VN") + " đ"}
-                </td>
-                <td className="p-3">
-                  {coupon.Used}/{coupon.UsageLimit}
-                </td>
-                <td className="p-3">{coupon.Expiry}</td>
-                <td className="p-3">
-                  {coupon.Categories.length > 0 && (
+                  {sale.categories && sale.categories.length > 0 && (
                     <span>
-                      Danh mục:{" "}
-                      {coupon.Categories.map(
-                        (id) => categories.find((c) => c.CategoryId === id)?.Name
-                      ).join(", ")}
+                      Thể loại:{" "}
+                      {sale.categories
+                        .map(
+                          (id) =>
+                            categories.find((c) => c.CategoryId === Number(id))?.Name
+                        )
+                        .filter(Boolean)
+                        .join(", ")}
                     </span>
                   )}
-                  {coupon.Products.length > 0 && (
-                    <span>
-                      {coupon.Categories.length > 0 && <br />}
-                      Sản phẩm:{" "}
-                      {coupon.Products.map(
-                        (id) => products.find((p) => p.ProductId === id)?.Name
-                      ).join(", ")}
-                    </span>
-                  )}
-                  {coupon.Categories.length === 0 && coupon.Products.length === 0 && (
-                    <span className="text-gray-400">Tất cả</span>
-                  )}
+                  {(!sale.categories || sale.categories.length === 0) &&
+                    (!sale.products || sale.products.length === 0) && (
+                      <span className="text-gray-400">Chưa được áp dụng</span>
+                    )}
+                </td>
+                <td className="p-3">
+                  {typeof sale.totalAppliedProducts === "number"
+                    ? sale.totalAppliedProducts
+                    : (sale.products && Array.isArray(sale.products)
+                        ? sale.products.length
+                        : 0)}
                 </td>
                 <td className="p-3 flex justify-center space-x-2">
                   <button
                     className="text-indigo-600 hover:text-indigo-800 p-2 rounded-full hover:bg-indigo-100 transition"
                     title="Sửa"
-                    onClick={() => openModal("edit", coupon)}
+                    onClick={() => openModal("edit", sale)}
                   >
                     <Pencil size={18} />
                   </button>
                   <button
                     className="text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-100 transition"
                     title="Xóa"
-                    onClick={() => handleDelete(coupon.CouponId)}
+                    onClick={() => handleDelete(sale.id)}
                   >
                     <Trash2 size={18} />
                   </button>
                 </td>
               </tr>
             ))}
-            {filteredCoupons.length === 0 && (
+            {sales.length === 0 && (
               <tr>
                 <td colSpan="7" className="text-center p-4 text-gray-500">
-                  Không tìm thấy mã giảm giá.
+                  Không tìm thấy đợt giảm giá.
                 </td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
-      {/* Modal Thêm/Sửa mã giảm giá */}
+      {/* Modal Thêm/Sửa đợt giảm giá */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-10 backdrop-blur-[2px] transition-all">
+        <div className="fixed inset-0 z-50 flex items-center justify-center transition-all">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl p-6 relative animate-fade-in">
             <button
               className="absolute top-3 right-3 text-gray-400 hover:text-red-500"
@@ -269,92 +267,65 @@ function CouponManagement() {
             </button>
             <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
               {modalType === "add" ? <Plus size={22} /> : <Pencil size={20} />}
-              {modalType === "add" ? "Thêm mã giảm giá" : "Chỉnh sửa mã giảm giá"}
+              {modalType === "add" ? "Thêm đợt giảm giá" : "Chỉnh sửa đợt giảm giá"}
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">Tên mã</label>
+                  <label className="block text-sm font-medium mb-1">Tên đợt giảm giá</label>
                   <input
                     type="text"
                     required
-                    value={form.Code}
-                    onChange={e => setForm(f => ({ ...f, Code: e.target.value }))}
+                    value={form.name}
+                    onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                     className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 bg-indigo-50"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Loại</label>
-                  <select
-                    value={form.Type}
-                    onChange={e => setForm(f => ({ ...f, Type: e.target.value }))}
-                    className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 bg-indigo-50"
-                  >
-                    <option value="Phần trăm">Phần trăm (%)</option>
-                    <option value="Tiền mặt">Tiền mặt (VNĐ)</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Giá trị</label>
+                  <label className="block text-sm font-medium mb-1">Phần trăm giảm (%)</label>
                   <input
                     type="number"
                     required
                     min={1}
-                    value={form.Value}
-                    onChange={e => setForm(f => ({ ...f, Value: e.target.value }))}
+                    max={100}
+                    value={form.discountPercent}
+                    onChange={e => setForm(f => ({ ...f, discountPercent: e.target.value }))}
                     className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 bg-indigo-50"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Số lượt sử dụng</label>
+                  <label className="block text-sm font-medium mb-1">Ngày bắt đầu</label>
                   <input
-                    type="number"
+                    type="datetime-local"
                     required
-                    min={1}
-                    value={form.UsageLimit}
-                    onChange={e => setForm(f => ({ ...f, UsageLimit: e.target.value }))}
+                    value={form.start}
+                    onChange={e => setForm(f => ({ ...f, start: e.target.value }))}
                     className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 bg-indigo-50"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Ngày hết hạn</label>
+                  <label className="block text-sm font-medium mb-1">Ngày kết thúc</label>
                   <input
-                    type="date"
+                    type="datetime-local"
                     required
-                    value={form.Expiry}
-                    onChange={e => setForm(f => ({ ...f, Expiry: e.target.value }))}
+                    value={form.end}
+                    onChange={e => setForm(f => ({ ...f, end: e.target.value }))}
                     className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 bg-indigo-50"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Áp dụng cho danh mục</label>
+                <label className="block text-sm font-medium mb-1">Áp dụng cho thể loại</label>
                 <div className="flex flex-wrap gap-2">
                   {categories.map(cat => (
                     <label key={cat.CategoryId} className="flex items-center gap-1 cursor-pointer">
                       <input
                         type="checkbox"
-                        checked={form.Categories.includes(cat.CategoryId)}
-                        onChange={() => handleToggle("Categories", cat.CategoryId)}
+                        checked={form.categories.includes(cat.CategoryId)}
+                        onChange={() => handleToggleCategory(cat.CategoryId)}
                         className="accent-indigo-600"
                       />
                       <span className="text-sm">{cat.Name}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Áp dụng cho sản phẩm</label>
-                <div className="flex flex-wrap gap-2">
-                  {products.map(prod => (
-                    <label key={prod.ProductId} className="flex items-center gap-1 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={form.Products.includes(prod.ProductId)}
-                        onChange={() => handleToggle("Products", prod.ProductId)}
-                        className="accent-indigo-600"
-                      />
-                      <span className="text-sm">{prod.Name}</span>
                     </label>
                   ))}
                 </div>
@@ -382,4 +353,4 @@ function CouponManagement() {
   );
 }
 
-export default CouponManagement;
+export default SaleManagement;

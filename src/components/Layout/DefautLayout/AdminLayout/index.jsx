@@ -12,7 +12,7 @@ function AdminLayout({ children }) {
     const checkScreenSize = () => {
       const mobile = window.innerWidth < 1024;
       setIsMobile(mobile);
-      // Tự động thu gọn sidebar trên màn hình nhỏ
+      
       if (mobile && !sidebarCollapsed) {
         setSidebarCollapsed(true);
       }

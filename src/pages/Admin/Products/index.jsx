@@ -1,49 +1,50 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Plus, Pencil, Trash2, X, Image as ImageIcon, Layers, Filter, ChevronDown, ChevronUp, ChevronLeft, ChevronRight } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-// Mock data for demo
-const mockCategories = [
-  { CategoryId: 1, Name: "Áo" },
-  { CategoryId: 2, Name: "Quần" },
-  { CategoryId: 3, Name: "Giày" },
-];
+import { request } from "../../../untils/request";
 
+// Mock data for sizes (replace with real data from API if available)
 const mockSizes = [
   { SizeId: 1, SizeName: "S" },
   { SizeId: 2, SizeName: "M" },
   { SizeId: 3, SizeName: "L" },
   { SizeId: 4, SizeName: "XL" },
+  { SizeId: 5, SizeName: "XXL" },
 ];
 
-const mockProducts = [
-  {
-    ProductId: 1,
-    Name: "Áo sơ mi trắng",
-    Price: 350000,
-    Quantity: 10,
-    Description: "Áo sơ mi vải cotton cao cấp",
-    CategoryId: 1,
-    Images: [
-      { ImageId: 1, Image: "https://via.placeholder.com/80x80?text=Áo+1" }
-    ],
-    Sizes: [1, 2, 3],
-    Status: "Còn hàng"
-  },
-  {
-    ProductId: 2,
-    Name: "Quần jean xanh",
-    Price: 450000,
-    Quantity: 0,
-    Description: "Quần jean co giãn",
-    CategoryId: 2,
-    Images: [
-      { ImageId: 2, Image: "https://via.placeholder.com/80x80?text=Quần+1" }
-    ],
-    Sizes: [2, 3, 4],
-    Status: "Hết hàng"
-  },
-];
+// Hàm map tên size sang id
+function getSizeIdByName(name) {
+  // Đổi từ sizeList sang mockSizes
+  const found = mockSizes.find(s => s.SizeName === name);
+  return found ? found.SizeId : null;
+}
+
+// Hàm map 1 sản phẩm từ backend sang front end
+function mapProduct(item) {
+  return {
+    ProductId: item.id,
+    Name: item.name,
+    Price: item.price,
+    Quantity: item.quantity,
+    Description: item.description || "",
+    CategoryId: item.categoryId || 1, // nếu có
+    CategoryName: item.category || "", // Lấy đúng tên thể loại từ API
+    Images: item.images
+      ? item.images.map((imgId) => ({
+          ImageId: imgId,
+          Image: `http://localhost:8080/images/${imgId}.png`
+        }))
+      : [],
+    Sizes: item.productSizeDTOS && Array.isArray(item.productSizeDTOS)
+      ? item.productSizeDTOS.map(size => getSizeIdByName(size.sizeName)).filter(Boolean)
+      : (item.sizes && Array.isArray(item.sizes)
+          ? item.sizes.map(sizeName => getSizeIdByName(sizeName)).filter(Boolean)
+          : []
+        ),
+    Status: item.quantity > 0 ? "Còn hàng" : "Hết hàng"
+  };
+}
 
 function formatPrice(price) {
   return price.toLocaleString("vi-VN") + " đ";
@@ -51,8 +52,8 @@ function formatPrice(price) {
 
 function ProductManagement() {
   // State
-  const [products, setProducts] = useState(mockProducts);
-  const [categories] = useState(mockCategories);
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [sizes] = useState(mockSizes);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState({
@@ -63,7 +64,67 @@ function ProductManagement() {
   });
   const [showFilter, setShowFilter] = useState(false);
 
-  // Modal state
+  // Pagination state
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+
+  //api 
+  useEffect(() => {
+    const params = {};
+    // Nếu filter.category là rỗng, không truyền categoryId => lấy tất cả sản phẩm
+    if (filter.category && !isNaN(Number(filter.category))) {
+      params.categoryId = filter.category;
+    }
+    if (filter.priceMin) params.minPrice = filter.priceMin;
+    if (filter.priceMax) params.maxPrice = filter.priceMax;
+    if (search) params.name = search;
+    params.page = page - 1; // Nếu backend phân trang từ 0
+    params.size = 20;
+
+    request.get("products/search", { params })
+      .then(res => {
+        const result = res.data && res.data.result;
+        console.log("Kết quả tìm kiếm sản phẩm:", result);
+        if (res.data && res.data.code === 1000 && result && Array.isArray(result.content)) {
+          setProducts(result.content.map(mapProduct));
+          setTotalPages(result.totalPages > 0 ? result.totalPages : 1);
+          setTotalItems(
+            typeof result.totalElements === "number"
+              ? result.totalElements
+              : (result.content.length || 0)
+          );
+        } else if (Array.isArray(result)) {
+          setProducts(result.map(mapProduct));
+          setTotalPages(1);
+          setTotalItems(result.length);
+        } else {
+          setProducts([]);
+          setTotalPages(1);
+          setTotalItems(0);
+        }
+      })
+      .catch(err => {
+        console.error("Lỗi khi lấy sản phẩm:", err);
+      });
+  }, [filter.category, filter.status, filter.priceMin, filter.priceMax, search, page]);
+  useEffect(() => {
+    request.get("category/getAll")
+      .then(res => {
+        if (res.data && res.data.code === 1000 && Array.isArray(res.data.result)) {
+          setCategories(
+            res.data.result.map(item => ({
+              CategoryId: item.categoryId,
+              Name: item.categoryName
+            }))
+          );
+        }
+      })
+      .catch(err => {
+        console.error("Lỗi khi lấy danh sách thể loại:", err);
+      });
+  }, []);
+
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState("add"); // add | edit
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -77,7 +138,7 @@ function ProductManagement() {
     CategoryId: "",
     Images: [],
     Sizes: [],
-    Status: "Còn hàng"
+    soldCount:""
   });
 
   // Image management
@@ -94,33 +155,30 @@ function ProductManagement() {
     }));
   };
 
-  // Filtered products
-  const filteredProducts = products.filter((p) => {
-    const matchName = p.Name.toLowerCase().includes(search.toLowerCase());
-    const matchCategory = filter.category ? p.CategoryId === Number(filter.category) : true;
-    const matchStatus = filter.status ? p.Status === filter.status : true;
-    const matchPriceMin = filter.priceMin ? p.Price >= Number(filter.priceMin) : true;
-    const matchPriceMax = filter.priceMax ? p.Price <= Number(filter.priceMax) : true;
-    return matchName && matchCategory && matchStatus && matchPriceMin && matchPriceMax;
-  });
-
   // Open modal for add/edit
   const openModal = (type, product = null) => {
     setModalType(type);
     setShowModal(true);
     if (type === "edit" && product) {
-      setSelectedProduct(product);
+      // Luôn tìm sản phẩm gốc từ danh sách products
+      const prod = products.find(p => p.ProductId === product.ProductId);
+      if (!prod) {
+        toast.error("Không xác định được sản phẩm để sửa. Vui lòng thử lại!");
+        console.warn("Không tìm thấy sản phẩm với ProductId:", product.ProductId, product);
+        setShowModal(false);
+        return;
+      }
+      setSelectedProduct(prod);
       setForm({
-        Name: product.Name,
-        Price: product.Price,
-        Quantity: product.Quantity,
-        Description: product.Description,
-        CategoryId: product.CategoryId,
-        Images: product.Images || [],
-        Sizes: product.Sizes || [],
-        Status: product.Status || "Còn hàng"
+        Name: prod.Name,
+        Price: prod.Price,
+        Quantity: prod.Quantity,
+        Description: prod.Description,
+        CategoryId: prod.CategoryId,
+        Images: prod.Images || [],
+        Sizes: prod.Sizes || [],
       });
-      setImagePreviews(product.Images.map(img => img.Image));
+      setImagePreviews(prod.Images.map(img => img.Image));
       setImageFiles([]);
     } else {
       setSelectedProduct(null);
@@ -132,7 +190,6 @@ function ProductManagement() {
         CategoryId: "",
         Images: [],
         Sizes: [],
-        Status: "Còn hàng"
       });
       setImageFiles([]);
       setImagePreviews([]);
@@ -151,7 +208,7 @@ function ProductManagement() {
       CategoryId: "",
       Images: [],
       Sizes: [],
-      Status: "Còn hàng"
+      
     });
     setImageFiles([]);
     setImagePreviews([]);
@@ -171,36 +228,90 @@ function ProductManagement() {
   };
 
   // Add or update product
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const newProduct = {
-      ProductId: modalType === "add"
-        ? (products.length ? Math.max(...products.map(p => p.ProductId)) + 1 : 1)
-        : selectedProduct.ProductId,
-      Name: form.Name,
-      Price: Number(form.Price),
-      Quantity: Number(form.Quantity),
-      Description: form.Description,
-      CategoryId: Number(form.CategoryId),
-      Images: imagePreviews.map((img, idx) => ({
-        ImageId: idx + 1,
-        Image: img,
-      })),
-      Sizes: form.Sizes,
-      Status: form.Quantity > 0 ? "Còn hàng" : "Hết hàng"
-    };
-    if(!newProduct.Description || !newProduct.CategoryId || !newProduct.Name || !newProduct.Price || !newProduct.Quantity){
-      alert("vui lòng điền đầy đủ thông tin")
+    // Validate
+    if(!form.Description || !form.CategoryId || !form.Name || !form.Price || !form.Quantity){
+      toast.error("Vui lòng điền đầy đủ thông tin");
       return;
     }
-    if (modalType === "add") {
-      setProducts([newProduct, ...products]);
-      alert("thêm sản phẩm thành công")
-    } else {
-      setProducts(products.map(p => p.ProductId === selectedProduct.ProductId ? newProduct : p));
-      alert("cập nhật thông tin sản phẩm thành công")
+
+    // Chuẩn bị dữ liệu gửi lên backend
+    const payload = {
+      name: form.Name,
+      price: Number(form.Price),
+      quantity: Number(form.Quantity),
+      description: form.Description,
+      categoryId: Number(form.CategoryId),
+      sizeIds: form.Sizes,
+      // Nếu backend nhận images là file, gửi imageFiles, nếu là id hoặc url thì gửi Images
+      // Ở đây giả sử backend nhận file multipart
+    };
+
+    // Chuẩn bị formData nếu có ảnh
+    let dataToSend = payload;
+    let config = {};
+    if (imageFiles.length > 0) {
+      const formData = new FormData();
+      Object.entries(payload).forEach(([key, value]) => {
+        if (Array.isArray(value)) {
+          value.forEach(v => formData.append(key, v));
+        } else {
+          formData.append(key, value);
+        }
+      });
+      imageFiles.forEach(file => formData.append("images", file));
+      dataToSend = formData;
+      config = { headers: { "Content-Type": "multipart/form-data" } };
     }
-    closeModal();
+
+    try {
+      if (modalType === "add") {
+        await request.post("products/add", dataToSend, config);
+        toast.success("Thêm sản phẩm thành công");
+      } else {
+        // Kiểm tra ProductId
+        if (!selectedProduct || !selectedProduct.ProductId) {
+          toast.error("Không xác định được sản phẩm để cập nhật!");
+          return;
+        }
+        // Đảm bảo truyền đúng id sản phẩm cho API
+        await request.put(`products/update/${selectedProduct.ProductId}`, dataToSend, config);
+        toast.success("Cập nhật sản phẩm thành công");
+      }
+      closeModal();
+      const params = {};
+      if (filter.category && !isNaN(Number(filter.category))) {
+        params.categoryId = filter.category;
+      }
+      if (filter.priceMin) params.minPrice = filter.priceMin;
+      if (filter.priceMax) params.maxPrice = filter.priceMax;
+      if (search) params.name = search;
+      params.page = page - 1;
+      params.size = 20;
+      const res = await request.get("products/search", { params });
+      const result = res.data && res.data.result;
+      if (res.data && res.data.code === 1000 && result && Array.isArray(result.content)) {
+        setProducts(result.content.map(mapProduct));
+        setTotalPages(result.totalPages > 0 ? result.totalPages : 1);
+        setTotalItems(
+          typeof result.totalElements === "number"
+            ? result.totalElements
+            : (result.content.length || 0)
+        );
+      } else if (Array.isArray(result)) {
+        setProducts(result.map(mapProduct));
+        setTotalPages(1);
+        setTotalItems(result.length);
+      } else {
+        setProducts([]);
+        setTotalPages(1);
+        setTotalItems(0);
+      }
+    } catch (err) {
+      toast.error("Có lỗi xảy ra khi lưu sản phẩm");
+      console.error(err);
+    }
   };
 
   // Delete product
@@ -231,10 +342,14 @@ function ProductManagement() {
 
   // Next/Prev image in popup
   const handlePrevImage = () => {
-    setPopupIndex((prev) => (prev === 0 ? popupImages.length - 1 : prev - 1));
+    setPopupIndex((prev) =>
+      popupImages.length === 0 ? 0 : (prev === 0 ? popupImages.length - 1 : prev - 1)
+    );
   };
   const handleNextImage = () => {
-    setPopupIndex((prev) => (prev === popupImages.length - 1 ? 0 : prev + 1));
+    setPopupIndex((prev) =>
+      popupImages.length === 0 ? 0 : (prev === popupImages.length - 1 ? 0 : prev + 1)
+    );
   };
 
   // Slide state for product detail
@@ -270,6 +385,11 @@ function ProductManagement() {
       prev === detailProduct.Images.length - 1 ? 0 : prev + 1
     );
   };
+
+  // Khi chọn bộ lọc, reset lại page về 1
+  useEffect(() => {
+    setPage(1);
+  }, [filter, search]);
 
   // Render
   return (
@@ -321,10 +441,11 @@ function ProductManagement() {
       {showFilter && (
         <div className="bg-indigo-50 rounded-lg p-4 mb-4 flex flex-wrap gap-4 items-center">
           <div>
-            <label className="block text-xs font-medium mb-1">Danh mục</label>
+            <label className="block text-xs font-medium mb-1">Thể loại</label>
             <select
               value={filter.category}
-              onChange={e => setFilter(f => ({ ...f, category: e.target.value }))}
+              onChange={e => setFilter(f => ({ ...f, category: e.target.value }))
+              }
               className="border rounded px-2 py-1"
             >
               <option value="">Tất cả</option>
@@ -377,26 +498,29 @@ function ProductManagement() {
               <th className="p-3 font-semibold">Tên sản phẩm</th>
               <th className="p-3 font-semibold">Giá</th>
               <th className="p-3 font-semibold">Số lượng</th>
-              <th className="p-3 font-semibold">Danh mục</th>
+              <th className="p-3 font-semibold">Thể loại</th>
               <th className="p-3 font-semibold">Trạng thái</th>
               <th className="p-3 font-semibold">Size</th>
               <th className="p-3 text-center font-semibold">Hành động</th>
             </tr>
           </thead>
           <tbody>
-            {filteredProducts.map(product => (
-              <React.Fragment key={product.ProductId}>
+            {products.map((product, idx) => (
+              <React.Fragment key={product.ProductId || idx}>
                 <tr
                   className={`border-t hover:bg-indigo-50 transition cursor-pointer`}
-                  onClick={() => setExpandedRow(expandedRow === product.ProductId ? null : product.ProductId)}
                 >
                   <td className="p-3">
                     {product.Images && product.Images.length > 0 ? (
                       <img
                         src={product.Images[0].Image}
                         alt={product.Name}
-                        className="w-16 h-16 object-cover rounded shadow"
-                        title="Xem chi tiết sản phẩm"
+                        className="w-16 h-16 object-cover rounded shadow cursor-pointer"
+                        title="Xem ảnh sản phẩm"
+                        onClick={e => {
+                          e.stopPropagation();
+                          handleOpenImagePopup(product.Images.map(img => img.Image));
+                        }}
                       />
                     ) : (
                       <span className="text-gray-400"><ImageIcon size={32} /></span>
@@ -405,7 +529,7 @@ function ProductManagement() {
                   <td className="p-3">{product.Name}</td>
                   <td className="p-3">{formatPrice(product.Price)}</td>
                   <td className="p-3">{product.Quantity}</td>
-                  <td className="p-3">{categories.find(c => c.CategoryId === product.CategoryId)?.Name || ""}</td>
+                  <td className="p-3">{product.CategoryName}</td>
                   <td className="p-3">
                     <span className={`px-2 py-1 rounded-full text-xs font-semibold
                       ${product.Status === "Còn hàng" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
@@ -435,25 +559,47 @@ function ProductManagement() {
                     </button>
                   </td>
                 </tr>
-                {expandedRow === product.ProductId && (
-                  <tr>
-                    <td colSpan={8} className="bg-indigo-50 p-6 animate-fade-in">
-                      <div>
-                        <span className="font-medium">Mô tả: </span>
-                        <span>{product.Description || <span className="italic text-gray-400">Không có mô tả</span>}</span>
-                      </div>
-                    </td>
-                  </tr>
-                )}
               </React.Fragment>
             ))}
-            {filteredProducts.length === 0 && (
+            {products.length === 0 && (
               <tr>
                 <td colSpan="8" className="text-center p-4 text-gray-500">Không tìm thấy sản phẩm.</td>
               </tr>
             )}
           </tbody>
         </table>
+        {/* Pagination UI */}
+        <div className="flex justify-between items-center px-4 py-3">
+          <div className="text-sm text-gray-500">
+            Tổng: {totalItems} sản phẩm | Trang {page}/{totalPages}
+          </div>
+          <div className="flex gap-1">
+            <button
+              className="px-2 py-1 text-xs rounded border bg-white hover:bg-indigo-50 disabled:opacity-50"
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              disabled={page <= 1}
+            >
+              &lt;
+            </button>
+            {[...Array(totalPages)].map((_, idx) => (
+              <button
+                key={idx + 1}
+                className={`px-2 py-1 text-xs rounded border ${page === idx + 1 ? "bg-indigo-600 text-white" : "bg-white hover:bg-indigo-50"}`}
+                onClick={() => setPage(idx + 1)}
+                disabled={page === idx + 1}
+              >
+                {idx + 1}
+              </button>
+            ))}
+            <button
+              className="px-2 py-1 text-xs rounded border bg-white hover:bg-indigo-50 disabled:opacity-50"
+              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              disabled={page >= totalPages}
+            >
+              &gt;
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Modal Thêm/Sửa sản phẩm */}
@@ -506,14 +652,14 @@ function ProductManagement() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Danh mục</label>
+                  <label className="block text-sm font-medium mb-1">Thể loại</label>
                   <select
                     // required
                     value={form.CategoryId}
                     onChange={e => setForm(f => ({ ...f, CategoryId: e.target.value }))}
                     className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 bg-indigo-50"
                   >
-                    <option value="">Chọn danh mục</option>
+                    <option value="">Thể loại</option>
                     {categories.map(c => (
                       <option key={c.CategoryId} value={c.CategoryId}>{c.Name}</option>
                     ))}
@@ -555,7 +701,7 @@ function ProductManagement() {
                   ))}
                 </div>
               </div>
-              {/* Size management */}
+              
               <div>
                 <label className="block text-sm font-medium mb-1">Size</label>
                 <div className="flex flex-wrap gap-2">
@@ -644,8 +790,8 @@ function ProductManagement() {
                 <h3 className="text-2xl font-bold text-indigo-700 mb-2">{detailProduct.Name}</h3>
                 <div className="mb-2 text-lg font-semibold text-indigo-600">{formatPrice(detailProduct.Price)}</div>
                 <div className="mb-2">
-                  <span className="font-medium">Danh mục: </span>
-                  {categories.find(c => c.CategoryId === detailProduct.CategoryId)?.Name || ""}
+                  <span className="font-medium">Thể loại: </span>
+                  {detailProduct.CategoryName}
                 </div>
                 <div className="mb-2">
                   <span className="font-medium">Số lượng: </span>

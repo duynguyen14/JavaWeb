@@ -31,6 +31,7 @@ import Payment from "./Admin/Payment";
 import Revenue from "./Admin/Revenue";
 import Messages from "./Admin/Messages";
 import Employees from "./Admin/Employees";
+import ReportProduct from "./Admin/ReportProduct";
 import { label, path } from "framer-motion/client";
 import OrderManagement from "./Admin/Orders";
 import FavoriteProducts from "./User/Product/favorite.jsx";
@@ -71,6 +72,7 @@ const PublicPage=[
     {path :"/admin/revenue",component: Revenue, layout: AdminLayout },
     {path :"/admin/messages",component: Messages, layout: AdminLayout },
     {path :"/admin/employees",component: Employees, layout: AdminLayout },
+    {path :"/admin/report-product",component: ReportProduct, layout: AdminLayout },
     
 
 ]
