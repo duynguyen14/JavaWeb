@@ -44,7 +44,12 @@ function CatalogsManagement() {
     if (type === "edit" && catalog) {
       setSelectedCatalog(catalog);
       setForm({ Name: catalog.Name });
+    if (type === "edit" && catalog) {
+      setSelectedCatalog(catalog);
+      setForm({ Name: catalog.Name });
     } else {
+      setSelectedCatalog(null);
+      setForm({ Name: "" });
       setSelectedCatalog(null);
       setForm({ Name: "" });
     }
@@ -53,6 +58,8 @@ function CatalogsManagement() {
   // Đóng modal
   const closeModal = () => {
     setShowModal(false);
+    setSelectedCatalog(null);
+    setForm({ Name: "" });
     setSelectedCatalog(null);
     setForm({ Name: "" });
   };
@@ -290,6 +297,7 @@ function CatalogsManagement() {
       </div>
     </div>
   );
+}
 }
 
 export default CatalogsManagement;

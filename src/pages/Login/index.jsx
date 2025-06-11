@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { IoEyeOff, IoEye } from "react-icons/io5";
-import { request } from '../../untils/request';
-import authService from '../../untils/auth';
-
+import { request } from '../../untils/request.js';
+import authService from '../../untils/auth.js';
+import {jwtDecode} from "jwt-decode";
 function Login() {
     const [showPassword, setShowPassword] = useState(false);
     const [user, setUser] = useState({
@@ -25,21 +25,21 @@ function Login() {
                 msg = "Email không hợp lệ";
             }
         }
-        if (name === "password") {
-            if (!value) {
-                msg = "Vui lòng nhập mật khẩu";
-            } else if (value.length < 8) {
-                msg = "Mật khẩu phải có ít nhất 8 ký tự";
-            } else if (!/[A-Z]/.test(value)) {
-                msg = "Mật khẩu phải có ít nhất 1 chữ in hoa";
-            } else if (!/[a-z]/.test(value)) {
-                msg = "Mật khẩu phải có ít nhất 1 chữ thường";
-            } else if (!/[0-9]/.test(value)) {
-                msg = "Mật khẩu phải có ít nhất 1 số";
-            } else if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(value)) {
-                msg = "Mật khẩu phải có ít nhất 1 ký tự đặc biệt";
-            }
-        }
+        // if (name === "password") {
+        //     if (!value) {
+        //         msg = "Vui lòng nhập mật khẩu";
+        //     } else if (value.length < 8) {
+        //         msg = "Mật khẩu phải có ít nhất 8 ký tự";
+        //     } else if (!/[A-Z]/.test(value)) {
+        //         msg = "Mật khẩu phải có ít nhất 1 chữ in hoa";
+        //     } else if (!/[a-z]/.test(value)) {
+        //         msg = "Mật khẩu phải có ít nhất 1 chữ thường";
+        //     } else if (!/[0-9]/.test(value)) {
+        //         msg = "Mật khẩu phải có ít nhất 1 số";
+        //     } else if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(value)) {
+        //         msg = "Mật khẩu phải có ít nhất 1 ký tự đặc biệt";
+        //     }
+        // }
         return msg;
     };
 
@@ -70,8 +70,15 @@ function Login() {
             const response = await request.post("user/login", user);
             alert("Đăng nhập thành công");
             localStorage.setItem("token", response.data.result.accessToken);
+            const decoded =jwtDecode(response.data.result.accessToken);
+            console.log(decoded);
             setTimeout(() => {
-                navigate("/");
+                if(decoded && decoded.scope.includes("USER")){
+                        navigate("/");
+                }
+                else{
+                    navigate("/admin")
+                }
             }, 1000);
         }
         catch (e) {

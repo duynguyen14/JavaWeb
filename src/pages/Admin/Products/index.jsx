@@ -394,17 +394,6 @@ function ProductManagement() {
   // Render
   return (
     <div>
-      <ToastContainer 
-        position="top-right"
-        autoClose={10000} // tự động đóng sau 3 giây
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
         <h2 className="text-2xl font-bold">Quản lý sản phẩm</h2>
         <button
@@ -623,7 +612,7 @@ function ProductManagement() {
                   <label className="block text-sm font-medium mb-1">Tên sản phẩm</label>
                   <input
                     type="text"
-                    // required
+                    required
                     value={form.Name}
                     onChange={e => setForm(f => ({ ...f, Name: e.target.value }))}
                     className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 bg-indigo-50"
@@ -633,7 +622,7 @@ function ProductManagement() {
                   <label className="block text-sm font-medium mb-1">Giá</label>
                   <input
                     type="number"
-                    // required
+                    required
                     min={0}
                     value={form.Price}
                     onChange={e => setForm(f => ({ ...f, Price: e.target.value }))}
@@ -644,7 +633,7 @@ function ProductManagement() {
                   <label className="block text-sm font-medium mb-1">Số lượng</label>
                   <input
                     type="number"
-                    // required
+                    required
                     min={0}
                     value={form.Quantity}
                     onChange={e => setForm(f => ({ ...f, Quantity: e.target.value }))}
@@ -654,7 +643,7 @@ function ProductManagement() {
                 <div>
                   <label className="block text-sm font-medium mb-1">Thể loại</label>
                   <select
-                    // required
+                    required
                     value={form.CategoryId}
                     onChange={e => setForm(f => ({ ...f, CategoryId: e.target.value }))}
                     className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 bg-indigo-50"
@@ -823,7 +812,7 @@ function ProductManagement() {
 
       {/* Popup xem nhiều ảnh */}
       {showImagePopup && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-60 transition-all">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 transition-all">
           <div className="relative bg-white rounded-xl shadow-2xl p-4 flex flex-col items-center max-w-lg w-full">
             <button
               className="absolute top-2 right-2 text-gray-400 hover:text-red-500"

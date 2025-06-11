@@ -35,30 +35,34 @@ import ReportProduct from "./Admin/ReportProduct";
 import { label, path } from "framer-motion/client";
 import OrderManagement from "./Admin/Orders";
 import FavoriteProducts from "./User/Product/favorite.jsx";
+import OrderDetail from "./User/OrderDetail/index.jsx";
+import WishListProduct from "./User/WishListProduct/indes.jsx";
 
 
 
 
 
 const PublicPage=[
+    // user
     {path :"/",component: Home, layout: UserLayout },
-    {path :"/profile",component: Profile, layout: OtherLayout },
-
     {path :"/product/:id",component: Product, layout: UserLayout },
     {path:"/order",component:Order, layout:UserLayout},
     {path :"/cartShopping",component: CartShopping, layout: UserLayout },
-
-    {path:"/ordermanagement", component: OrderManagementUser ,layout: OtherLayout},
-    {path:"/address",component :Address , layout:OtherLayout},
+    {path :"/register",component: Register, layout: UserLayout },
+    {path :"/login",component: Login, layout: UserLayout },
 
     {path:"/category/:id",component :Category , layout: CategoryLayout},
     {path:"/category",component :Category , layout: CategoryLayout},
 
-    {path :"/register",component: Register, layout: UserLayout },
-    {path :"/login",component: Login, layout: UserLayout },
+    {path :"/order/:id",component: OrderDetail, layout: OtherLayout },
+    {path :"/profile",component: Profile, layout: OtherLayout },
+    {path:"/ordermanagement", component: OrderManagementUser ,layout: OtherLayout},
+    {path:"/address",component :Address , layout:OtherLayout},
+    {path:"/wishlist",component :WishListProduct , layout:OtherLayout},
+    
     {path :"/oauth2/redirect",component: OAuthRedirect, layout: null },
 
-
+    // admin
     {path :"/admin",component: DashboardAdmin, layout: AdminLayout },
     {path :"/admin/account",component: ProfileAdmin, layout: AdminLayout },
     {path :"/admin/users",component: Users, layout: AdminLayout },

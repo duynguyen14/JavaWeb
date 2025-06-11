@@ -1,7 +1,6 @@
 import React from 'react'
 import { GoArrowUpRight } from "react-icons/go";
 import { Link } from 'react-router-dom';
-
 function Banner() {
   return (
     <div>

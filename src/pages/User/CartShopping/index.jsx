@@ -10,14 +10,14 @@ import {
   removeProductFromCart,
   updateProductFromCart,
 } from "../../../redux/actions";
-import { i } from "framer-motion/client";
-
 function CartShopping() {
   const token = localStorage.getItem("token");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const products = useSelector((state) => state.cart.products);
-
+  useEffect(()=>{
+    localStorage.setItem("cart",JSON.stringify(products))
+  },[products])
   // Gọi API để lấy giỏ hàng khi load lại trang
   useEffect(() => {
     const fetchCart = async () => {
@@ -27,7 +27,7 @@ function CartShopping() {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log("Token gửi lên:", token);
+        // console.log("Token gửi lên:", token);
         if (res.data.code === 1000) {
           dispatch(getProductFromCart(res.data.result)); // cập nhật Redux
         }
@@ -127,6 +127,7 @@ function CartShopping() {
 
   // Đặt hàng
   const handleOnclickOrder = () => {
+    // localStorage.setItem("cart", JSON.stringify(products));
     navigate("/order", { state: { products } });
   };
 

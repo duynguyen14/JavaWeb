@@ -10,12 +10,16 @@ import { FaRegHeart } from "react-icons/fa";
 import { HiOutlineMenuAlt1 } from "react-icons/hi";
 import MenuPopus from '../../../../Popups/MenuPopus';
 import SearchPopup from '../../../../Popups/SearchPopup';
+// import Image from "../../../../../assets/images/1168.png";
+// import CartShoppingPopup from '../../../../Popups/CartShoppingPopup';
+// import WishlistPopup from '../../../../Popups/WishlistPopup';
 import UserPopUp from '../../../../Popups/UserPopUp';
 
 import { Link } from 'react-router-dom';
 import NavPopups from '../../../../Popups/NavPopups';
 import CartShoppingPopup from '../../../../Popups/CartShoppingPopup';
 import WishlistPopup from '../../../../Popups/WishlistPopup';
+import { useSelector } from 'react-redux';
 
 function Header({setIsPopUp}) {
   const titles=[
@@ -135,7 +139,7 @@ function Header({setIsPopUp}) {
     setIsPopUp(true)
     setIsSearch(false)
   }
-
+  const cart =useSelector(state=> state.cart.products)
   return (
     <div className='relative w-full '>
       <div className='font-Montserrat flex justify-between py-5 items-center mx-5 xl:mx-20 relative '>
@@ -171,6 +175,7 @@ function Header({setIsPopUp}) {
                 transition={{duration: 0.5}}
               >
                 <p className='px-1 text-base'>
+                {/* <p className='px-1'> */}
                   {item.name}
                 </p>
                 <HiChevronDown className='text-sm font-bold'/>
@@ -211,12 +216,17 @@ function Header({setIsPopUp}) {
             >
               <FaRegHeart/>
             </p>
-            <p className=' my-icon'onClick={()=>setIsCart(!isCart)} >
-              {/* <Link to={"/cartShopping"}> */}
+            <p className=' my-icon relative'onClick={()=>setIsCart(!isCart)} >
                 <LuShoppingBag/>  
-              {/* </Link> */}
+                {
+                  cart&&cart.length>0&&
+                  <span className='absolute text-white bg-red-500 rounded-3xl text-xs xl:text-sm top-[-20%] px-1 xl:px-2 xl:py-[2px] left-[60%] '>
+                    {
+                      cart.length
+                    }
+                  </span>
+                }
             </p>
-
         </div>
       </div>
       {
