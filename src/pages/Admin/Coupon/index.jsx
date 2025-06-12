@@ -47,6 +47,7 @@ function SaleManagement() {
               totalAppliedProducts: item.totalAppliedProducts ?? (item.products ? item.products.length : 0),
             }))
           );
+          console.log(res.data)
         } else {
           setSales([]);
         }
