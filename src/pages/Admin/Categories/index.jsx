@@ -10,10 +10,16 @@ function CategoryManagement() {
   const [form, setForm] = useState({ Name: "", CatalogId: "" });
   const [catalogs, setCatalogs] = useState([]);
 
+  const token = localStorage.getItem("token");
+
   // Lấy danh sách thể loại
   const fetchCategories = async () => {
     try {
-      const res = await request.get("/category/detail");
+      const res = await request.get("/category/detail", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       const data = res.data;
       if (data.code === 1000 && Array.isArray(data.result)) {
         setCategories(
@@ -38,7 +44,11 @@ function CategoryManagement() {
   useEffect(() => {
     const fetchCatalogs = async () => {
       try {
-        const res = await request.get("/catalog/active");
+        const res = await request.get("/catalog/active", {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
         const data = res.data;
         if (data.code === 1000 && Array.isArray(data.result)) {
           setCatalogs(
@@ -86,6 +96,10 @@ function CategoryManagement() {
         await request.post("/category/create", {
           name: form.Name,
           catalogId: Number(form.CatalogId),
+        }, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         });
         await fetchCategories();
         alert("Thêm thể loại thành công!");
@@ -100,6 +114,11 @@ function CategoryManagement() {
           {
             name: form.Name,
             catalogId: Number(form.CatalogId),
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
           }
         );
         await fetchCategories();
@@ -116,7 +135,12 @@ function CategoryManagement() {
     if (window.confirm("Bạn có chắc chắn muốn xóa thể loại này?")) {
       try {
         await request.delete(
-          `/category/delete/${categoryId}`
+          `/category/delete/${categoryId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
         );
         await fetchCategories();
         alert("Xóa thể loại thành công!");

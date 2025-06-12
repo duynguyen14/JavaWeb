@@ -69,6 +69,9 @@ function ProductManagement() {
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
 
+  // Lấy token từ localStorage (hoặc nơi bạn lưu)
+  const token = localStorage.getItem("token");
+
   //api 
   useEffect(() => {
     const params = {};
@@ -82,7 +85,12 @@ function ProductManagement() {
     params.page = page - 1; // Nếu backend phân trang từ 0
     params.size = 20;
 
-    request.get("products/search", { params })
+    request.get("products/search", {
+      params,
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
       .then(res => {
         const result = res.data && res.data.result;
         console.log("Kết quả tìm kiếm sản phẩm:", result);
@@ -109,7 +117,11 @@ function ProductManagement() {
       });
   }, [filter.category, filter.status, filter.priceMin, filter.priceMax, search, page]);
   useEffect(() => {
-    request.get("category/getAll")
+    request.get("category/getAll", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
       .then(res => {
         if (res.data && res.data.code === 1000 && Array.isArray(res.data.result)) {
           setCategories(
@@ -142,8 +154,8 @@ function ProductManagement() {
   });
 
   // Image management
-  const [imageFiles, setImageFiles] = useState([]);
-  const [imagePreviews, setImagePreviews] = useState([]);
+  const [imageFiles, setImageFiles] = useState([]); // Ảnh mới chọn (File)
+  const [imagePreviews, setImagePreviews] = useState([]); // Preview cho cả ảnh cũ và mới
 
   // Size management
   const handleSizeToggle = (sizeId) => {
@@ -160,26 +172,19 @@ function ProductManagement() {
     setModalType(type);
     setShowModal(true);
     if (type === "edit" && product) {
-      // Luôn tìm sản phẩm gốc từ danh sách products
-      const prod = products.find(p => p.ProductId === product.ProductId);
-      if (!prod) {
-        toast.error("Không xác định được sản phẩm để sửa. Vui lòng thử lại!");
-        console.warn("Không tìm thấy sản phẩm với ProductId:", product.ProductId, product);
-        setShowModal(false);
-        return;
-      }
-      setSelectedProduct(prod);
+      setSelectedProduct(product);
       setForm({
-        Name: prod.Name,
-        Price: prod.Price,
-        Quantity: prod.Quantity,
-        Description: prod.Description,
-        CategoryId: prod.CategoryId,
-        Images: prod.Images || [],
-        Sizes: prod.Sizes || [],
+        Name: product.Name,
+        Price: product.Price,
+        Quantity: product.Quantity,
+        Description: product.Description,
+        CategoryId: product.CategoryId,
+        Images: product.Images || [],
+        Sizes: product.Sizes || [],
       });
-      setImagePreviews(prod.Images.map(img => img.Image));
-      setImageFiles([]);
+      // Preview gồm ảnh cũ (url) + ảnh mới (nếu có)
+      setImagePreviews((product.Images || []).map(img => img.Image));
+      setImageFiles([]); // reset file mới
     } else {
       setSelectedProduct(null);
       setForm({
@@ -214,82 +219,122 @@ function ProductManagement() {
     setImagePreviews([]);
   };
 
-  // Handle image upload
+  // Khi chọn ảnh mới, thêm vào danh sách preview (không ghi đè ảnh cũ)
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-    setImageFiles(files);
-    setImagePreviews(files.map(file => URL.createObjectURL(file)));
+    setImageFiles(prev => [...prev, ...files]);
+    setImagePreviews(prev => [
+      ...prev,
+      ...files.map(file => URL.createObjectURL(file))
+    ]);
   };
 
-  // Remove image preview
+  // Xóa ảnh ở vị trí idx (có thể là ảnh cũ hoặc mới)
   const handleRemoveImage = (idx) => {
-    setImageFiles((prev) => prev.filter((_, i) => i !== idx));
-    setImagePreviews((prev) => prev.filter((_, i) => i !== idx));
+    // Nếu là ảnh cũ (trong form.Images), xóa khỏi form.Images và imagePreviews
+    if (idx < form.Images.length) {
+      setForm(prev => ({
+        ...prev,
+        Images: prev.Images.filter((_, i) => i !== idx)
+      }));
+      setImagePreviews(prev => prev.filter((_, i) => i !== idx));
+    } else {
+      // Nếu là ảnh mới, xóa khỏi imageFiles và imagePreviews
+      const fileIdx = idx - form.Images.length;
+      setImageFiles(prev => prev.filter((_, i) => i !== fileIdx));
+      setImagePreviews(prev => prev.filter((_, i) => i !== idx));
+    }
   };
 
   // Add or update product
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Validate
+
     if(!form.Description || !form.CategoryId || !form.Name || !form.Price || !form.Quantity){
       toast.error("Vui lòng điền đầy đủ thông tin");
       return;
     }
-
-    // Chuẩn bị dữ liệu gửi lên backend
-    const payload = {
-      name: form.Name,
-      price: Number(form.Price),
-      quantity: Number(form.Quantity),
-      description: form.Description,
-      categoryId: Number(form.CategoryId),
-      sizeIds: form.Sizes,
-      // Nếu backend nhận images là file, gửi imageFiles, nếu là id hoặc url thì gửi Images
-      // Ở đây giả sử backend nhận file multipart
-    };
-
-    // Chuẩn bị formData nếu có ảnh
-    let dataToSend = payload;
-    let config = {};
-    if (imageFiles.length > 0) {
+    let dataToSend;
+    let config = { headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` } };
+    if (modalType === "add") {
+      const payload = {
+        name: form.Name,
+        price: Number(form.Price),
+        quantity: Number(form.Quantity),
+        description: form.Description,
+        categoryId: Number(form.CategoryId),
+        sizeId: form.Sizes,
+      };
       const formData = new FormData();
-      Object.entries(payload).forEach(([key, value]) => {
-        if (Array.isArray(value)) {
-          value.forEach(v => formData.append(key, v));
-        } else {
-          formData.append(key, value);
-        }
-      });
+      formData.append("product", JSON.stringify(payload));
       imageFiles.forEach(file => formData.append("images", file));
       dataToSend = formData;
-      config = { headers: { "Content-Type": "multipart/form-data" } };
-    }
-
-    try {
-      if (modalType === "add") {
-        await request.post("products/add", dataToSend, config);
-        toast.success("Thêm sản phẩm thành công");
-      } else {
-        // Kiểm tra ProductId
-        if (!selectedProduct || !selectedProduct.ProductId) {
-          toast.error("Không xác định được sản phẩm để cập nhật!");
+      try {
+        const res = await request.post("/products", dataToSend, config);
+        if (res.data && res.data.code === 1000) {
+          toast.success("Thêm sản phẩm thành công");
+        } else {
+          toast.error("Thêm sản phẩm thất bại");
           return;
         }
-        // Đảm bảo truyền đúng id sản phẩm cho API
-        await request.put(`products/update/${selectedProduct.ProductId}`, dataToSend, config);
-        toast.success("Cập nhật sản phẩm thành công");
+      } catch (err) {
+        toast.error("Có lỗi xảy ra khi lưu sản phẩm");
+        console.error(err);
+        return;
       }
-      closeModal();
-      const params = {};
-      if (filter.category && !isNaN(Number(filter.category))) {
-        params.categoryId = filter.category;
+    } else {
+      if (!selectedProduct || !selectedProduct.ProductId) {
+        toast.error("Không xác định được sản phẩm để cập nhật!");
+        return;
       }
-      if (filter.priceMin) params.minPrice = filter.priceMin;
-      if (filter.priceMax) params.maxPrice = filter.priceMax;
-      if (search) params.name = search;
-      params.page = page - 1;
-      params.size = 20;
-      const res = await request.get("products/search", { params });
+      // Lấy tên ảnh cũ còn lại (sau khi xóa preview)
+      const oldImageNames = (form.Images || []).map(img => {
+        const parts = img.Image.split("/");
+        return parts[parts.length - 1];
+      });
+      const payload = {
+        name: form.Name,
+        price: Number(form.Price),
+        quantity: Number(form.Quantity),
+        description: form.Description,
+        categoryId: Number(form.CategoryId),
+        sizeIds: form.Sizes,
+        oldImageNames: oldImageNames,
+      };
+      const formData = new FormData();
+      formData.append("product", JSON.stringify(payload));
+      imageFiles.forEach(file => formData.append("images", file));
+      try {
+        const res = await request.put(`products/${selectedProduct.ProductId}`,formData,config);
+        if (res.data && res.data.code === 1000) {
+          toast.success("Cập nhật sản phẩm thành công");
+        } else {
+          toast.error("Cập nhật sản phẩm thất bại");
+          return;
+        }
+      } catch (err) {
+        toast.error("Có lỗi xảy ra khi lưu sản phẩm");
+        console.error(err);
+        return;
+      }
+    }
+    closeModal();
+    const params = {};
+    if (filter.category && !isNaN(Number(filter.category))) {
+      params.categoryId = filter.category;
+    }
+    if (filter.priceMin) params.minPrice = filter.priceMin;
+    if (filter.priceMax) params.maxPrice = filter.priceMax;
+    if (search) params.name = search;
+    params.page = page - 1;
+    params.size = 20;
+    try {
+      const res = await request.get("products/search", {
+        params,
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       const result = res.data && res.data.result;
       if (res.data && res.data.code === 1000 && result && Array.isArray(result.content)) {
         setProducts(result.content.map(mapProduct));
@@ -309,8 +354,7 @@ function ProductManagement() {
         setTotalItems(0);
       }
     } catch (err) {
-      toast.error("Có lỗi xảy ra khi lưu sản phẩm");
-      console.error(err);
+      // ignore
     }
   };
 
@@ -477,7 +521,6 @@ function ProductManagement() {
           </div>
         </div>
       )}
-
       {/* Product Table */}
       <div className="overflow-x-auto bg-white shadow-lg rounded-xl">
         <table className="min-w-full text-sm text-left">
@@ -606,7 +649,7 @@ function ProductManagement() {
               {modalType === "add" ? <Plus size={22} /> : <Pencil size={20} />}
               {modalType === "add" ? "Thêm sản phẩm" : "Chỉnh sửa sản phẩm"}
             </h3>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1">Tên sản phẩm</label>
@@ -718,6 +761,8 @@ function ProductManagement() {
                 <button
                   type="submit"
                   className="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition font-semibold"
+                  tabIndex={0}
+                  disabled={false}
                 >
                   {modalType === "add" ? "Thêm" : "Lưu"}
                 </button>

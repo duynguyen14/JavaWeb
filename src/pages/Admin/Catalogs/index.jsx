@@ -9,12 +9,16 @@ function CatalogsManagement() {
   const [form, setForm] = useState({ Name: "" });
   const [catalogs, setCatalogs] = useState([]);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  const token = localStorage.getItem("token");
 
-  // Fetch catalogs from API on mount
   useEffect(() => {
     const fetchCatalogs = async () => {
       try {
-        const res = await request.get("/catalog/getAll");
+        const res = await request.get("/catalog/getAll", {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
         const data = res.data;
         if (data.code === 1000 && Array.isArray(data.result)) {
           setCatalogs(
@@ -71,6 +75,10 @@ function CatalogsManagement() {
       try {
         const res = await request.post("catalog/create", {
           name: form.Name,
+        }, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         });
         if (res.data && res.data.code === 1000) {
           // Refetch or append new catalog
@@ -89,7 +97,12 @@ function CatalogsManagement() {
       try {
         const res = await request.put(
           `catalog/update/${selectedCatalog.CatalogId}`,
-          { name: form.Name }
+          { name: form.Name },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
         );
         if (res.data && res.data.code === 1000) {
           setCatalogs(
@@ -114,7 +127,11 @@ function CatalogsManagement() {
 
   const confirmDelete = async () => {
     try {
-      const res = await request.delete(`catalog/delete/${confirmDeleteId}`);
+      const res = await request.delete(`catalog/delete/${confirmDeleteId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       if (res.data && res.data.code === 1000) {
         setCatalogs(
           catalogs.map((c) =>
@@ -166,7 +183,7 @@ function CatalogsManagement() {
                       <span className="font-bold text-lg text-gray-900">{catalog.Name}</span>
                       <br />
                       <span className="ml-2 text-xs text-gray-500 font-medium">
-                        ({catList.length} thể loại)
+                        ({catalog.categoryCount ?? catList.length} thể loại)
                       </span>
                     </div>
                   </div>

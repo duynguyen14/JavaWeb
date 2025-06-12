@@ -20,6 +20,9 @@ const ReportsDashboard = () => {
     fetchAllReports();
   }, [dateRange]);
 
+  // Lấy token từ localStorage (hoặc nơi bạn lưu)
+  const token = localStorage.getItem("token");
+
   const fetchAllReports = async () => {
     setLoading(true);
     try {
@@ -37,7 +40,11 @@ const ReportsDashboard = () => {
 
   const fetchInventoryReport = async () => {
     try {
-      const data = await request.get(`/inventory`);
+      const data = await request.get(`/inventory`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       setInventoryData(data.data);
     } catch (error) {
       console.error('Error fetching inventory report:', error);
@@ -50,6 +57,9 @@ const ReportsDashboard = () => {
         params: {
           startDate: dateRange.startDate,
           endDate: dateRange.endDate
+        },
+        headers: {
+          Authorization: `Bearer ${token}`
         }
       });
       setRevenueData(data.data);
@@ -64,6 +74,9 @@ const ReportsDashboard = () => {
         params: {
           startDate: dateRange.startDate,
           endDate: dateRange.endDate
+        },
+        headers: {
+          Authorization: `Bearer ${token}`
         }
       });
       setDetailedRevenueData(data.data);
@@ -74,7 +87,11 @@ const ReportsDashboard = () => {
 
   const fetchSummary = async () => {
     try {
-      const data = await request.get(`/summary`);
+      const data = await request.get(`/summary`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       setSummary(data.data);
     } catch (error) {
       console.error('Error fetching summary:', error);
@@ -83,7 +100,12 @@ const ReportsDashboard = () => {
 
   const downloadInventoryReport = async () => {
     try {
-      const response = await request.get(`/inventory/export`, { responseType: 'blob' });
+      const response = await request.get(`/inventory/export`, {
+        responseType: 'blob',
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       const url = window.URL.createObjectURL(response.data);
       const a = document.createElement('a');
       a.href = url;
@@ -104,7 +126,10 @@ const ReportsDashboard = () => {
           startDate: dateRange.startDate,
           endDate: dateRange.endDate
         },
-        responseType: 'blob'
+        responseType: 'blob',
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       });
       const url = window.URL.createObjectURL(response.data);
       const a = document.createElement('a');

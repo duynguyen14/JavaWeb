@@ -24,9 +24,15 @@ function SaleManagement() {
     categories: [],
   });
 
-  // Lấy danh sách sale từ API
+  // Lấy token từ localStorage (hoặc nơi bạn lưu)
+  const token = localStorage.getItem("token");
+
   const fetchSales = () => {
-    request.get("sale/getAll")
+    request.get("sale/getAll", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
       .then(res => {
         if (res.data && res.data.code === 1000 && Array.isArray(res.data.result)) {
           setSales(
@@ -55,7 +61,11 @@ function SaleManagement() {
 
   // Fetch categories từ API khi component mount
   useEffect(() => {
-    request.get("category/getAll")
+    request.get("category/getAll", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
       .then(res => {
         if (res.data && res.data.code === 1000 && Array.isArray(res.data.result)) {
           setCategories(
@@ -124,10 +134,18 @@ function SaleManagement() {
     };
     try {
       if (modalType === "add") {
-        await request.post("sale/create", payload);
+        await request.post("sale/create", payload, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
         alert("Thêm đợt giảm giá thành công!");
       } else if (selectedSale) {
-        await request.put(`sale/update/${selectedSale.id}`, payload);
+        await request.put(`sale/update/${selectedSale.id}`, payload, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
         alert("Cập nhật đợt giảm giá thành công!");
       }
       fetchSales();
@@ -141,7 +159,11 @@ function SaleManagement() {
   const handleDelete = async (saleId) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa đợt giảm giá này?")) {
       try {
-        await request.delete(`sale/delete/${saleId}`);
+        await request.delete(`sale/delete/${saleId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
         alert("Xóa đợt giảm giá thành công!");
         fetchSales();
       } catch (err) {

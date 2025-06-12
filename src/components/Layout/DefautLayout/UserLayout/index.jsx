@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import Header from './Header'
 import Footer from './Footer'
+import ChatBot from '../../../Popups/ChatBot';
 
 function UserLayout({children}) {
   const [isPopUp,setIsPopUp]=useState(false);
@@ -13,6 +14,7 @@ function UserLayout({children}) {
         {children}
     </div>
     <Footer/>     
+    <ChatBot/>
     </div>
   )
 }

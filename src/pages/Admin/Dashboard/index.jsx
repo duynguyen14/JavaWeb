@@ -67,10 +67,16 @@ const [categoryView, setCategoryView] = useState('distribution');
     }
   };
 
+  const token = localStorage.getItem("token");
+
   // api cho doanh thu và số đơn hàng
-   const [stats, setStats] = useState({ totalRevenue: 0, totalOrder: 0 });
+  const [stats, setStats] = useState({ totalRevenue: 0, totalOrder: 0 });
   useEffect(() => {
-    request.get("bill/stats")
+    request.get("bill/stats", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
       .then((response) => {
         console.log("API response:", response.data); 
         setStats(response.data);
@@ -81,36 +87,48 @@ const [categoryView, setCategoryView] = useState('distribution');
   }, []);
 
   // top sản phẩm ratring cao 
-     const[topProducts, setTopProducts] = useState([]);
-        useEffect(() => {
-          request.get("products/tops")
-          .then((response) => {
-            if(response.data.code ===1000){
-              setTopProducts(response.data.result);
-            }
-          })
-          .catch((error) => {
-            alert("Lỗi khi lấy dữ liệu sản phẩm nổi bật",error);
-          });
-        }, []);
-  // Recent 
-  const [recentOrders, setRecentOrders] = useState([]);
-useEffect(() => {
-  request.get("bill/recent")
+  const [topProducts, setTopProducts] = useState([]);
+  useEffect(() => {
+    request.get("products/tops", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
     .then((response) => {
-      if (response.data.code === 1000) {
-        setRecentOrders(response.data.result);
-        console.log("Đơn hàng gần đây:", response.data);
+      if(response.data.code ===1000){
+        setTopProducts(response.data.result);
       }
     })
     .catch((error) => {
-      console.error("Lỗi khi lấy đơn hàng gần đây:", error);
+      alert("Lỗi khi lấy dữ liệu sản phẩm nổi bật",error);
     });
-}, []);
-// api đánh giá
+  }, []);
+  // Recent 
+  const [recentOrders, setRecentOrders] = useState([]);
+  useEffect(() => {
+    request.get("bill/recent", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+      .then((response) => {
+        if (response.data.code === 1000) {
+          setRecentOrders(response.data.result);
+          console.log("Đơn hàng gần đây:", response.data);
+        }
+      })
+      .catch((error) => {
+        console.error("Lỗi khi lấy đơn hàng gần đây:", error);
+      });
+  }, []);
+  // api đánh giá
   const [reviews, setReviews] = useState([]);
   useEffect(() => {
-    request.get("reviews/recent")
+    request.get("reviews/recent", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
       .then((response) => {
         if (response.data.code === 1000) {
           setReviews(response.data.result);
@@ -128,71 +146,90 @@ const [monthlyData, setMonthlyData] = useState([]);
 const [quarterlyData, setQuarterlyData] = useState([]);
   // api cho chart
   useEffect(() => {
-  // Doanh thu theo ngày
-  request.get("chart/revenue/daily")
-    .then(res => {
-      if (res.data.code === 1000) {
-        console.log("dailyData", dailyData);
-        setDailyData(res.data.result.map(item => ({
-          name: item.date,
-          value: item.totalRevenue
-        })));
+    // Doanh thu theo ngày
+    request.get("chart/revenue/daily", {
+      headers: {
+        Authorization: `Bearer ${token}`
       }
-    });
-
-  // Doanh thu theo tháng
-  request.get("chart/revenue/monthly")
-    .then(res => {
-      if (res.data.code === 1000) {
-        setMonthlyData(res.data.result.map(item => ({
-          name: item.month,
-          value: item.totalRevenue
-        })));
-      }
-    });
-
-  // Doanh thu theo quý
-  request.get("chart/revenue/quarterly")
-    .then(res => {
-      if (res.data.code === 1000) {
-        setQuarterlyData(res.data.result.map(item => ({
-          name: item.quarter,
-          value: item.totalRevenue
-        })));
-      }
-    });
-}, []);
-// State cho dữ liệu danh mục
-const [categoryData, setCategoryData] = useState([]);
-const [categorySalesData, setCategorySalesData] = useState([]);
-
-useEffect(() => {
-  // Phân bố sản phẩm theo danh mục
-  request.get("chart/catalog/products")
-    .then(res => {
-      if (res.data && res.data.code === 1000 && Array.isArray(res.data.result)) {
-        setCategoryData(
-          res.data.result.map(item => ({
-            name: item.catalogName,
-            value: item.productCount
-          }))
-        );
-      }
-    });
-
-  // Doanh thu theo danh mục
-  request.get("chart/catalog/revenue")
-    .then(res => {
-      if (res.data && res.data.code === 1000 && Array.isArray(res.data.result)) {
-        setCategorySalesData(
-          res.data.result.map(item => ({
-            name: item.catalogName,
+    })
+      .then(res => {
+        if (res.data.code === 1000) {
+          setDailyData(res.data.result.map(item => ({
+            name: item.date,
             value: item.totalRevenue
-          }))
-        );
+          })));
+        }
+      });
+
+    // Doanh thu theo tháng
+    request.get("chart/revenue/monthly", {
+      headers: {
+        Authorization: `Bearer ${token}`
       }
-    });
-}, []);
+    })
+      .then(res => {
+        if (res.data.code === 1000) {
+          setMonthlyData(res.data.result.map(item => ({
+            name: item.month,
+            value: item.totalRevenue
+          })));
+        }
+      });
+
+    // Doanh thu theo quý
+    request.get("chart/revenue/quarterly", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+      .then(res => {
+        if (res.data.code === 1000) {
+          setQuarterlyData(res.data.result.map(item => ({
+            name: item.quarter,
+            value: item.totalRevenue
+          })));
+        }
+      });
+  }, []);
+  // State cho dữ liệu danh mục
+  const [categoryData, setCategoryData] = useState([]);
+  const [categorySalesData, setCategorySalesData] = useState([]);
+
+  useEffect(() => {
+    // Phân bố sản phẩm theo danh mục
+    request.get("chart/catalog/products", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+      .then(res => {
+        if (res.data && res.data.code === 1000 && Array.isArray(res.data.result)) {
+          setCategoryData(
+            res.data.result.map(item => ({
+              name: item.catalogName,
+              value: item.productCount
+            }))
+          );
+        }
+      });
+
+    // Doanh thu theo danh mục
+    request.get("chart/catalog/revenue", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+      .then(res => {
+        if (res.data && res.data.code === 1000 && Array.isArray(res.data.result)) {
+          setCategorySalesData(
+            res.data.result.map(item => ({
+              name: item.catalogName,
+              value: item.totalRevenue
+            }))
+          );
+        }
+      });
+  }, []);
 
   // Chọn dữ liệu dựa trên khung thời gian
  const getSalesData = () => {

@@ -97,12 +97,12 @@ function Sidebar({ collapsed, setCollapsed }) {
       path: "/admin/coupon",
       badge: "8",
     },
-    {
-      name: "Quản lý thanh toán",
-      icon: <CreditCard size={18} />,
-      path: "/admin/payment",
-      badge: "8",
-    },
+    // {
+    //   name: "Quản lý thanh toán",
+    //   icon: <CreditCard size={18} />,
+    //   path: "/admin/payment",
+    //   badge: "8",
+    // },
     {
       name: "Quản lý doanh thu",
       icon: <BarChart2 size={18} />,
@@ -115,12 +115,12 @@ function Sidebar({ collapsed, setCollapsed }) {
       path: "/admin/report-product",
       badge: "5",
     },
-    {
-      name: "Quản lí nhân viên",
-      icon: <Users2 size={18} />,
-      path: "/admin/employees",
-      badge: null,
-    },
+    // {
+    //   name: "Quản lí nhân viên",
+    //   icon: <Users2 size={18} />,
+    //   path: "/admin/employees",
+    //   badge: null,
+    // },
     {
       name: "Tài khoản",
       icon: <User size={18} />,
