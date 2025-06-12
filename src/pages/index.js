@@ -59,7 +59,6 @@ const PublicPage=[
     {path:"/ordermanagement", component: OrderManagementUser ,layout: OtherLayout},
     {path:"/address",component :Address , layout:OtherLayout},
     {path:"/wishlist",component :WishListProduct , layout:OtherLayout},
-    
     {path :"/oauth2/redirect",component: OAuthRedirect, layout: null },
 
     // admin
